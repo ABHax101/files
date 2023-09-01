@@ -1,0 +1,227 @@
+<html>
+    <head>
+        <title id="title">Enloe Time (Unofficial)</title>
+        <style>
+            h1 {
+                font-size: 25vh;
+                font-family: monospace;
+            }
+
+            html {
+                color: #0bf;
+                background-color: #303030;
+            }
+        </style>
+    </head>
+    <body style="font-size: 4vmax;">
+        <p id="daytype" style="font-size: 2vmax">Loading...</p>
+        <!--a href="actschedule" style="color: orange; font-family:monospace;top:2em;right:0;position:absolute;">
+           ACT Schedule
+        </a>
+        <a href="reloc" style="color: orange; font-family:monospace;top:3em;right:0;position:absolute;">
+           Student Destinations
+        </a-->
+        <!--a href="wks" style="font-family:monospace;top:2em;right:0;position:absolute;color:orange">
+           WorkKeys Room Placements
+        </a-->
+
+        <div id="checkboxes" style="font-family: monospace;">
+            <input type="checkbox" id="bl" style="width: 20px; height: 20px;" />
+            <label for="bl" style="font-size: 15px; vertical-align: 5px;">B-lunch</label>
+            <br />
+            <!--p hidden style="margin: 0; padding: 0;">Upcoming days with<br>different schedules:<br>
+            <br>11/23-11/25: No School</p>
+            <!--input type="checkbox" id="hr"-->
+            <!--label for="hr">Homeroom</label-->
+            <!--br-->
+            <!--input type="checkbox" checked hidden id="er">
+            <!--label for="er">Early Release</label-->
+        </div>
+        <div id="main" style="padding: 10px 0 0 0; margin: 0;">
+            <p id="txt" style="margin: 0; font-family: monospace; font-weight: bold; left: 0; position: absolute; top: 25vh; width: 100vw; text-align: center;">Loading...</p>
+        </div>
+        <script>
+            var now = new Date()
+            document.getElementById('daytype').innerText= (Math.floor((now - new Date(now.getFullYear(),0,0)) / (1000*60*60*24)) % 2 == 0 ? "(A Day)" : "(B Day)")
+
+            let lm = -1;
+            let ld = -1;
+            let ly = -1;
+            let constart = false;
+            let tvar = null;
+            let name = null;
+            let pass = null;
+            let intid = -1;
+            let title = "";
+            let notifs = 0;
+            let ats = 0;
+            let intSet = false;
+            let minute = new Date().getMinutes();
+            let timestampmin = -1;
+            let charCount = 0;
+            let msgCount = 0;
+            let pastMsg = null;
+            let xhr = new XMLHttpRequest();
+            let timeMap = new Map();
+            let stBoxes = window.localStorage.getItem("boxes");
+            if (stBoxes)
+                stBoxes.split("-").forEach((x) => {
+                    let xelem = document.getElementById(x);
+                    if (xelem) xelem.checked = true;
+                });
+            for (let box of document.querySelectorAll("input[type=checkbox]"))
+                box.onchange = (e) => {
+                    update();
+                    updateStorage();
+                };
+            setInterval(() => update(), 200);
+            function updateStorage() {
+                window.localStorage.setItem(
+                    "boxes",
+                    Array.from(document.getElementById("checkboxes").children)
+                        .filter((x) => x.checked)
+                        .map((x) => x.id)
+                        .sort()
+                        .join("-")
+                );
+            }
+            function update() {
+                let now = new Date();
+                now.setSeconds(now.getSeconds() + offsetSecs);
+                let nxt = getNext();
+                let diff = nxt.date - now;
+                diff = Math.floor(diff / 1000);
+                let secs = diff % 60;
+                diff = Math.floor(diff / 60);
+                let mins = diff % 60;
+                diff = Math.floor(diff / 60);
+                let hrs = diff;
+                let timestr = `${hrs === 0 ? "" : hrs.toString().padStart(2, "0") + ":"}${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
+                document.getElementById("txt").innerText = `${timestr} left of ${nxt.name}`;
+                if (title !== timestr) {
+                    document.title = timestr;
+                    title = timestr;
+                }
+            }
+            let offsetSecs = 0;
+            let pepRally = false;
+            function getNext(d, p) {
+                let now = d === undefined ? new Date() : d;
+                now.setSeconds(now.getSeconds() + offsetSecs);
+                if (p) console.log(now);
+                updateTimeMap(now);
+                let arr;
+                if (!pepRally) {
+                    arr = timeMap.get(
+                        Array.from(document.getElementById("checkboxes").children)
+                            .filter((x) => x.checked)
+                            .map((x) => x.id)
+                            .concat(["hr"])
+                            .sort()
+                            .join("-")
+                    );
+                } else {
+                    let year = now.getFullYear();
+                    let month = now.getMonth();
+                    let day = now.getDate();
+                    let bLunch = document.getElementById("bl").checked;
+                    arr = bLunch
+                        ? [
+                              { date: new Date(year, month, day, 07, 25), name: "Before School" },
+                              { date: new Date(year, month, day, 09, 38), name: "4th Period - ACT" },
+                              { date: new Date(year, month, day, 11, 57), name: "1st Period - ACT" },
+                              { date: new Date(year, month, day, 12, 32), name: "3rd Period" },
+                              { date: new Date(year, month, day, 13, 06), name: "Lunch" },
+                              { date: new Date(year, month, day, 14, 20), name: "2nd Period" },
+                          ]
+                        : [
+                              { date: new Date(year, month, day, 07, 25), name: "Before School" },
+                              { date: new Date(year, month, day, 09, 38), name: "4th Period - ACT" },
+                              { date: new Date(year, month, day, 11, 57), name: "1st Period - ACT" },
+                              { date: new Date(year, month, day, 12, 31), name: "Lunch" },
+                              { date: new Date(year, month, day, 13, 06), name: "3rd Period" },
+                              { date: new Date(year, month, day, 14, 20), name: "2nd Period" },
+                          ];
+                }
+                let next = arr.find((x) => x.date > now);
+                if (next === undefined) {
+                    let ret = Object.assign({}, arr[0]);
+                    ret.date = new Date(ret.date);
+                    ret.date.setDate(ret.date.getDate() + (ret.date.getDay() === 5 ? 3 : ret.date.getDay() === 6 ? 2 : 1));
+                    return (now.getDate() < 10 && now.getMonth() == 3) || (now.getDate() >= 30 && now.getMonth() == 2) ? { date: new Date(2023, 3, 10, 07, 25), name: "Spring Break" } : ret;
+                }
+                return next;
+            }
+            function updateTimeMap(now) {
+                let year = now.getFullYear();
+                let month = now.getMonth();
+                let day = now.getDate();
+                if (ly === year && lm === month && ld === day) return;
+                ly = year;
+                lm = month;
+                ld = day;
+                timeMap.set("", [
+                    { date: new Date(year, month, day, 07, 25), name: "Before School" },
+                    { date: new Date(year, month, day, 08, 52), name: "1st Period" },
+                    { date: new Date(year, month, day, 10, 35), name: "2nd Period" },
+                    { date: new Date(year, month, day, 11, 16), name: "Lunch" },
+                    { date: new Date(year, month, day, 12, 47), name: "3rd Period" },
+                    { date: new Date(year, month, day, 14, 20), name: "4th Period" },
+                ]);
+                timeMap.set("hr", [
+                    { date: new Date(year, month, day, 07, 25), name: "Before School" },
+                    { date: new Date(year, month, day, 08, 50), name: "1st Period" },
+                    { date: new Date(year, month, day, 09, 08), name: "Homeroom" },
+                    { date: new Date(year, month, day, 10, 39), name: "2nd Period" },
+                    { date: new Date(year, month, day, 11, 20), name: "Lunch" },
+                    { date: new Date(year, month, day, 12, 49), name: "3rd Period" },
+                    { date: new Date(year, month, day, 14, 20), name: "4th Period" },
+                ]);
+                timeMap.set("bl", [
+                    { date: new Date(year, month, day, 07, 25), name: "Before School" },
+                    { date: new Date(year, month, day, 08, 52), name: "1st Period" },
+                    { date: new Date(year, month, day, 10, 35), name: "2nd Period" },
+                    { date: new Date(year, month, day, 12, 08), name: "3rd Period" },
+                    { date: new Date(year, month, day, 12, 47), name: "Lunch" },
+                    { date: new Date(year, month, day, 14, 20), name: "4th Period" },
+                ]);
+                timeMap.set("bl-hr", [
+                    { date: new Date(year, month, day, 07, 25), name: "Before School" },
+                    { date: new Date(year, month, day, 08, 50), name: "1st Period" },
+                    { date: new Date(year, month, day, 09, 08), name: "Homeroom" },
+                    { date: new Date(year, month, day, 10, 39), name: "2nd Period" },
+                    { date: new Date(year, month, day, 12, 10), name: "3rd Period" },
+                    { date: new Date(year, month, day, 12, 49), name: "Lunch" },
+                    { date: new Date(year, month, day, 14, 20), name: "4th Period" },
+                ]);
+                timeMap.set("er", [
+                    { date: new Date(year, month, day, 07, 25), name: "Before School" },
+                    { date: new Date(year, month, day, 08, 30), name: "1st Period" },
+                    { date: new Date(year, month, day, 09, 41), name: "2nd Period" },
+                    { date: new Date(year, month, day, 10, 52), name: "3rd Period" },
+                    { date: new Date(year, month, day, 12, 03), name: "4th Period" },
+                    { date: new Date(year, month, day, 12, 20), name: "Lunch pickup time" },
+                ]);
+                timeMap.set("bl-er", timeMap.get("er"));
+                timeMap.set("er-hr", [
+                    { date: new Date(year, month, day, 07, 25), name: "Before School" },
+                    { date: new Date(year, month, day, 08, 26), name: "1st Period" },
+                    { date: new Date(year, month, day, 08, 44), name: "Homeroom" },
+                    { date: new Date(year, month, day, 09, 51), name: "2nd Period" },
+                    { date: new Date(year, month, day, 10, 58), name: "3rd Period" },
+                    { date: new Date(year, month, day, 12, 05), name: "4th Period" },
+                    { date: new Date(year, month, day, 12, 20), name: "Lunch pickup time" },
+                ]);
+                timeMap.set("bl-er-hr", timeMap.get("er-hr"));
+            }
+            function fmtDt(d) {
+                let hrs = d.getHours() % 12;
+                if (hrs == 0) hrs = 12;
+                return hrs.toString().padStart(2, "0") + ":" + d.getMinutes().toString().padStart(2, "0");
+            }
+            function atBottom(x) {
+                return x.scrollTop - (x.scrollHeight - x.clientHeight) > -1;
+            }
+        </script>
+    </body>
+</html>
