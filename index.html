@@ -66,6 +66,7 @@
             let xhr = new XMLHttpRequest();
             let timeMap = new Map();
             let stBoxes = window.localStorage.getItem("boxes");
+            let bl = document.getElementById("bl").checked;
             if (stBoxes)
                 stBoxes.split("-").forEach((x) => {
                     let xelem = document.getElementById(x);
