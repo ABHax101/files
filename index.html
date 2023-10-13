@@ -98,8 +98,8 @@
                 let hrs = diff;
                 let timestr = `${hrs === 0 ? "" : hrs.toString().padStart(2, "0") + ":"}${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
                 document.getElementById("txt").innerText = `${timestr} left of ${nxt.name}`;
-                if (title !== timestr) {
-                    document.title = timestr;
+                if (title !== `${timestr} - Enloe Time (Unofficial)`) {
+                    document.title = `${timestr} - Enloe Time (Unofficial)`;
                     title = timestr;
                 }
             }
