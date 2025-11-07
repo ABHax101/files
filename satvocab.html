@@ -1,0 +1,1458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAT Vocab Practice</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 700px;
+            width: 100%;
+            padding: 40px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 30px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+        
+        .stat {
+            text-align: center;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .question-container {
+            margin-bottom: 30px;
+        }
+        
+        .question {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 25px;
+            line-height: 1.6;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .choices {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .choice {
+            padding: 18px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 16px;
+            background: white;
+        }
+        
+        .choice:hover {
+            border-color: #667eea;
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+        }
+        
+        .choice.selected {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+        
+        .choice.correct {
+            background: #10b981;
+            color: white;
+            border-color: #10b981;
+        }
+        
+        .choice.incorrect {
+            background: #ef4444;
+            color: white;
+            border-color: #ef4444;
+        }
+        
+        .choice.disabled {
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+        
+        .button {
+            width: 100%;
+            padding: 15px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .button:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        
+        .button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: 500;
+            text-align: center;
+        }
+        
+        .feedback.correct {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        .feedback.incorrect {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 SAT Vocab Vibe Matcher</h1>
+        </div>
+        
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-label">Question</div>
+                <div class="stat-value" id="questionNum">1</div>
+            </div>
+            <div class="stat">
+                <div class="stat-label">Correct</div>
+                <div class="stat-value" id="correctCount">0</div>
+            </div>
+            <div class="stat">
+                <div class="stat-label">Accuracy</div>
+                <div class="stat-value" id="accuracy">0%</div>
+            </div>
+        </div>
+        
+        <div class="question-container">
+            <div class="question" id="question"></div>
+            <div class="choices" id="choices"></div>
+        </div>
+        
+        <div id="feedback"></div>
+        
+        <button class="button" id="nextBtn" onclick="nextQuestion()">Next Question</button>
+    </div>
+
+    <script>
+        const wordListText = `abase	(v.) to humiliate, degrade; belittle, demean
+abate	(v.) to lessen or reduce; subside, dwindle
+abdicate	(v.) to give up power; resign, relinquish
+abduct	(v.) to kidnap or seize by force; snatch, carry off
+aberration	(n.) a deviation from the norm; anomaly, irregularity
+abet	(v.) to assist in wrongdoing; aid, encourage
+abhor	(v.) to hate deeply; detest, loathe
+abide	(v.) to tolerate or follow; accept, obey
+abject	(adj.) hopeless and miserable; wretched, degraded
+abjure	(v.) to formally reject; renounce, forswear
+abnegation	(n.) self-denial; renunciation, rejection
+abort	(v.) to terminate early; cancel, halt
+abridge	(v.) to shorten; condense, trim
+abrogate	(v.) to cancel by authority; repeal, annul
+abrupt	(adj.) sudden or curt; hasty, blunt
+abscond	(v.) to run away secretly; flee, bolt
+absolution	(n.) formal forgiveness; pardon, mercy
+abstain	(v.) to hold back voluntarily; refrain, avoid
+abstruse	(adj.) difficult to understand; obscure, puzzling
+accede	(v.) to agree or comply; consent, yield
+accentuate	(v.) to emphasize or highlight; stress, underscore
+accessible	(adj.) easy to reach or understand; available, approachable
+accessory	(n.) a supplementary item; add-on, ornament
+acclaim	(v.) to praise publicly; applaud, commend
+accolade	(n.) an award or honor; praise, recognition
+accommodating	(adj.) willing to help; obliging, cooperative
+accord	(n.) agreement or harmony; consensus, unity
+accost	(v.) to approach aggressively; confront, hassle
+account for	(v.) to explain or justify; clarify, rationalize
+accretion	(n.) gradual growth; buildup, accumulation
+acerbic	(adj.) sharp or bitter in tone; harsh, sarcastic
+acquiesce	(v.) to give in passively; comply, yield
+acrimony	(n.) bitterness or hostility; resentment, rancor
+acumen	(n.) keen insight or skill; shrewdness, expertise
+acute	(adj.) sharp or severe; intense, keen
+adamant	(adj.) unyielding or firm; stubborn, resolute
+adept	(adj.) highly skilled; proficient, expert
+adhere	(v.) to stick to or follow; cling, comply
+admonish	(v.) to warn or scold; reprimand, caution
+adorn	(v.) to decorate or beautify; embellish, garnish
+adroit	(adj.) skillful and clever; adept, nimble
+adulation	(n.) excessive praise; flattery, worship
+adulterate	(v.) to make impure; contaminate, dilute
+adumbrate	(v.) to foreshadow or suggest; outline, hint
+adverse	(adj.) unfavorable or harmful; negative, detrimental
+advocate	(v.) to support or argue for; promote, endorse
+aerial	(adj.) related to the air; airborne, flying
+aesthetic	(adj.) concerned with beauty; artistic, tasteful
+affable	(adj.) friendly and easy to talk to; sociable, approachable
+affinity	(n.) a natural connection or liking; attraction, bond
+affluent	(adj.) wealthy and well-off; rich, prosperous
+affront	(n.) an insult or offense; slight, indignity
+aggrandize	(v.) to increase in power or wealth; glorify, magnify
+aggravate	(v.) to make worse; worsen, intensify
+aggregate	(n.) a whole formed by parts; sum, total
+aggrieved	(adj.) feeling wronged or offended; resentful, upset
+agile	(adj.) quick and nimble; graceful, spry
+agnostic	(n.) one who doubts religious certainty; skeptic, doubter
+agriculture	(n.) farming or cultivation; agronomy, husbandry
+aisle	(n.) a walkway between rows; corridor, passage
+alacrity	(n.) eager readiness; enthusiasm, willingness
+alias	(n.) a false or assumed name; pseudonym, nickname
+allay	(v.) to ease or calm; soothe, alleviate
+allege	(v.) to claim without proof; assert, accuse
+alleviate	(v.) to lessen or relieve; ease, mitigate
+allocate	(v.) to assign or distribute; designate, allot
+aloof	(adj.) emotionally distant; detached, reserved
+altercation	(n.) a noisy argument; dispute, quarrel
+amalgamate	(v.) to combine or unite; merge, blend
+ambiguous	(adj.) unclear or having multiple meanings; vague, equivocal
+ambivalent	(adj.) having mixed feelings; uncertain, conflicted
+ameliorate	(v.) to improve or make better; enhance, upgrade
+amenable	(adj.) open to suggestion; cooperative, agreeable
+amenity	(n.) a useful feature; convenience, facility
+amiable	(adj.) friendly and pleasant; good-natured, warm
+amicable	(adj.) done in a friendly way; peaceful, cordial
+amorous	(adj.) full of love or desire; romantic, affectionate
+amorphous	(adj.) without a clear shape; shapeless, vague
+anachronistic	(adj.) out of place in time; outdated, misplaced
+analgesic	(n.) pain reliever; painkiller, anesthetic
+analogous	(adj.) comparable or similar; alike, equivalent
+anarchist	(n.) one who opposes all government; rebel, revolutionary
+anathema	(n.) something hated or cursed; abomination, pariah
+anecdote	(n.) a short personal story; tale, narrative
+anesthesia	(n.) loss of sensation; numbing, sedation
+anguish	(n.) great pain or suffering; agony, torment
+animated	(adj.) full of life or excitement; lively, spirited
+animosities toward	(n.) strong hostility; hatred, resentment
+annex	(v.) to add or attach; acquire, append
+annul	(v.) to cancel legally; void, invalidate
+anomaly	(n.) something unusual; irregularity, exception
+anonymous	(adj.) unnamed or unknown; unidentified, incognito
+antagonism	(n.) hostility or opposition; conflict, enmity
+antecedent	(n.) something that comes before; precursor, predecessor
+antediluvian	(adj.) extremely old; ancient, outdated
+anthology	(n.) a collection of writings; compilation, selection
+antipathy	(n.) a strong dislike; aversion, hostility
+antiquated	(adj.) outdated or old-fashioned; obsolete, archaic
+antiseptic	(adj.) clean or sterile; disinfected, germ-free
+antithesis	(n.) the direct opposite; contrast, reverse
+anxiety	(n.) nervousness or worry; unease, apprehension
+apathetic	(adj.) lacking interest or emotion; indifferent, unconcerned
+apocryphal	(adj.) of doubtful authenticity; false, dubious
+appalling	(adj.) shocking or horrifying; dreadful, terrible
+appease	(v.) to calm or satisfy; pacify, soothe
+appraise	(v.) to evaluate or assess; estimate, judge
+apprehend	(v.) to arrest or understand; capture, grasp
+approbation	(n.) approval or praise; commendation, endorsement
+appropriate	(v.) to take or assign; seize, allocate
+aquatic	(adj.) relating to water; marine, watery
+arable	(adj.) suitable for farming; fertile, cultivable
+arbiter	(n.) a judge or mediator; referee, umpire
+arbitrary	(adj.) based on whim, not reason; random, capricious
+arbitration	(n.) legal settling of disputes; mediation, negotiation
+arboreal	(adj.) related to trees; woody, tree-dwelling
+arcane	(adj.) mysterious or secret; obscure, esoteric
+archaic	(adj.) old and no longer used; outdated, ancient
+archetypal	(adj.) representing an ideal example; classic, standard
+ardor	(n.) intense passion or enthusiasm; zeal, fervor
+arid	(adj.) extremely dry; barren, parched
+arrogate	(v.) to claim without right; seize, appropriate
+artifact	(n.) an object made by humans; relic, antiquity
+artisan	(n.) a skilled craftsperson; craftsman, maker
+ascertain	(v.) to find out for certain; determine, verify
+ascetic	(adj.) practicing strict self-discipline; austere, self-denying
+ascribe	(v.) to attribute to a cause; credit, assign
+aspersion	(n.) a damaging remark; slander, defamation
+aspire	(v.) to strive toward a goal; aim, desire
+assail	(v.) to attack violently; assault, criticize
+asserted	(v.) declared confidently; claimed, stated
+assess	(v.) to evaluate or judge; appraise, rate
+assiduous	(adj.) hardworking and diligent; persistent, industrious
+assuage	(v.) to ease or relieve; soothe, calm
+astute	(adj.) sharp or clever; perceptive, shrewd
+asylum	(n.) protection or shelter; refuge, sanctuary
+atone	(v.) to make up for a wrong; repent, redeem
+atrophy	(v.) to waste away; wither, degenerate
+attain	(v.) to reach or accomplish; achieve, secure
+atypical	(adj.) not normal or usual; irregular, uncommon
+audacious	(adj.) bold and daring; fearless, brazen
+audible	(adj.) able to be heard; perceptible, clear
+augment	(v.) to increase or enlarge; expand, boost
+auspicious	(adj.) favorable or promising; fortunate, encouraging
+austere	(adj.) strict or plain; severe, simple
+avarice	(n.) extreme greed; materialism, cupidity
+avenge	(v.) to take revenge for; retaliate, punish
+aversion	(n.) strong dislike; loathing, repulsion
+balk	(v.) to hesitate or refuse; resist, recoil
+ballad	(n.) a narrative poem or song; folk song, ode
+banal	(adj.) lacking originality; cliché, trite
+bane	(n.) a cause of distress or annoyance; curse, burden
+bard	(n.) a poet or singer; minstrel, troubadour
+bashful	(adj.) shy or easily embarrassed; timid, reserved
+battery	(n.) a beating or group of similar items; assault, set
+beguile	(v.) to charm or deceive; mislead, enchant
+behemoth	(n.) something enormous; giant, titan
+beneficial	(adj.) helpful or good; advantageous, favorable
+benevolent	(adj.) kind and generous; charitable, compassionate
+benign	(adj.) harmless or gentle; mild, nonthreatening
+bequeath	(v.) to leave in a will; hand down, pass on
+berate	(v.) to scold harshly; rebuke, reprimand
+bereft	(adj.) deprived or lacking; empty, without
+beseech	(v.) to beg urgently; implore, plead
+bias	(n.) a preference or prejudice; inclination, favoritism
+bilk	(v.) to cheat or defraud; swindle, deceive
+blandish	(v.) to flatter or coax; charm, cajole
+blemish	(n.) an imperfection; flaw, defect
+blight	(n.) something that ruins or destroys; plague, curse
+boisterous	(adj.) noisy and rowdy; loud, rambunctious
+bombastic	(adj.) overly wordy or inflated; pompous, pretentious
+boon	(n.) a blessing or benefit; advantage, aid
+bourgeois	(adj.) middle-class, conventional; materialistic, commonplace
+brazen	(adj.) shameless or bold; audacious, impudent
+brusque	(adj.) abrupt or blunt; curt, rude
+buffet	(v.) to strike repeatedly; batter, pummel
+burnish	(v.) to polish or shine; buff, smooth
+buttress	(v.) to support or strengthen; reinforce, uphold
+cacophony	(n.) harsh, jarring sound; dissonance, noise
+cadence	(n.) rhythm or flow; tempo, beat
+cajole	(v.) to persuade with flattery; coax, wheedle
+calamity	(n.) a great disaster or misfortune; catastrophe, tragedy
+calibrate	(v.) to adjust or measure precisely; fine-tune, align
+callous	(adj.) emotionally insensitive; heartless, unfeeling
+calumny	(n.) a false and malicious accusation; slander, defamation
+camaraderie	(n.) mutual trust among friends; fellowship, companionship
+candid	(adj.) honest and direct; frank, open
+candor	(n.) openness and honesty; sincerity, truthfulness
+canny	(adj.) clever and careful; shrewd, astute
+canvas	(n.) a heavy fabric or painting surface; tarp, backdrop
+capacious	(adj.) spacious or roomy; ample, expansive
+capitulate	(v.) to surrender or give in; yield, submit
+capricious	(adj.) impulsive and unpredictable; erratic, whimsical
+captivate	(v.) to attract or charm; enchant, fascinate
+carouse	(v.) to party or drink loudly; revel, celebrate
+carp	(v.) to complain or find fault; nag, grumble
+catalog	(v.) to list or classify; organize, inventory
+catalyze	(v.) to trigger or accelerate; activate, spark
+catastrophic	(adj.) disastrous or ruinous; devastating, calamitous
+caucus	(n.) a meeting of party leaders; assembly, gathering
+caustic	(adj.) severely sarcastic or biting; scathing, corrosive
+cavort	(v.) to leap or dance around excitedly; frolic, romp
+censure	(v.) to criticize harshly; condemn, reprimand
+cerebral	(adj.) intellectual rather than emotional; analytical, rational
+chaos	(n.) complete disorder or confusion; turmoil, mayhem
+chastise	(v.) to scold or punish; reprimand, berate
+cherish	(v.) to deeply value or hold dear; treasure, adore
+chide	(v.) to mildly scold; rebuke, lecture
+choreography	(n.) planned dance movements; routine, staging
+chronicle	(v.) to record in detail; document, recount
+chronological	(adj.) arranged by time order; sequential, historical
+circuitous	(adj.) indirect or roundabout; winding, meandering
+circumlocution	(n.) wordy or evasive language; verbosity, periphrasis
+circumscribed	(adj.) limited or restricted; confined, bounded
+circumspect	(adj.) cautious and careful; prudent, wary
+circumvent	(v.) to avoid by cleverness; evade, bypass
+clairvoyant	(adj.) able to foresee the future; psychic, prophetic
+clamor	(n.) loud noise or shouting; uproar, outcry
+clandestine	(adj.) secret or hidden; covert, undercover
+clarify	(v.) to make clear or understandable; explain, illuminate
+cleave	(v.) to split or cling tightly; chop, adhere
+clemency	(n.) mercy or leniency; forgiveness, compassion
+clergy	(n.) religious leaders; ministers, priests
+cloying	(adj.) overly sweet or sentimental; syrupy, saccharine
+coagulate	(v.) to thicken or clot; congeal, curdle
+coalesce	(v.) to come together as one; merge, unite
+cobbler	(n.) a person who repairs shoes; shoemaker, cordwainer
+coerce	(v.) to force or pressure; compel, intimidate
+cogent	(adj.) convincing and clear; persuasive, compelling
+cognizant	(adj.) aware or informed; conscious, mindful
+coherent	(adj.) logically connected; consistent, rational
+collaboration	(n.) working together; partnership, cooperation
+collateral	(n.) security for a loan; guarantee, backing
+colloquial	(adj.) informal in language; conversational, casual
+collusion	(n.) secret cooperation for deceit; conspiracy, complicity
+colossus	(n.) a giant or huge thing; titan, behemoth
+combustion	(n.) act of burning; ignition, explosion
+commendation	(n.) praise or award; recognition, honor
+commensurate	(adj.) in proportion or equal; corresponding, equivalent
+commodious	(adj.) spacious and comfortable; roomy, ample
+commonplace	(adj.) ordinary or unremarkable; usual, routine
+compelling	(adj.) forceful and convincing; persuasive, gripping
+compensate	(v.) to make up for; repay, offset
+complacency	(n.) self-satisfaction, often with ignorance; smugness, contentment
+complement	(v.) to complete or enhance; match, balance
+compliant	(adj.) willing to obey; obedient, submissive
+complicit	(adj.) involved in wrongdoing; guilty, conniving
+compliment	(n.) a polite expression of praise; flattery, accolade
+compound	(v.) to make worse or add to; worsen, intensify
+comprehensive	(adj.) complete and thorough; exhaustive, all-inclusive
+compress	(v.) to press together or condense; compact, squeeze
+comprises	(v.) consists of; includes, contains
+compunction	(n.) a feeling of guilt or regret; remorse, regret
+concealed	(adj.) hidden or kept secret; covered, disguised
+concede	(v.) to admit or yield; acknowledge, surrender
+conciliatory	(adj.) intended to make peace; appeasing, pacifying
+concise	(adj.) brief and to the point; succinct, compact
+concoct	(v.) to invent or devise; create, fabricate
+concomitant	(adj.) accompanying or concurrent; simultaneous, related
+concord	(n.) agreement or harmony; peace, unity
+condolence	(n.) expression of sympathy; compassion, solace
+condone	(v.) to accept or overlook; excuse, tolerate
+conduit	(n.) a channel or passage; pipe, means
+confection	(n.) a sweet or fancy dish; treat, dessert
+confidant	(n.) a trusted person; friend, adviser
+confined to	(adj.) restricted to a space or idea; limited, constrained
+conflagration	(n.) a large fire; blaze, inferno
+confluence	(n.) a meeting or joining; convergence, union
+conformist	(n.) one who follows rules or norms; follower, traditionalist
+confound	(v.) to confuse or puzzle; baffle, stump
+congeal	(v.) to thicken or solidify; harden, clot
+congenial	(adj.) pleasant and friendly; agreeable, likable
+congregation	(n.) a gathering of people, often for worship; assembly, crowd
+congruity	(n.) harmony or agreement; consistency, compatibility
+connive	(v.) to secretly cooperate or plot; conspire, scheme
+consecrate	(v.) to declare sacred; bless, dedicate
+consensus	(n.) general agreement; unity, accord
+consequently	(adv.) as a result; therefore, thus
+consign	(v.) to deliver or hand over; assign, entrust
+consolation	(n.) comfort after loss or disappointment; solace, relief
+consonant	(adj.) in agreement or harmony; consistent, compatible
+constituent	(n.) a part or component; element, ingredient
+constrain	(v.) to force or limit; restrict, confine
+construct	(v.) to build or form; assemble, create
+construe	(v.) to interpret or understand; analyze, explain
+consummate	(adj.) complete or perfect; masterful, skilled
+consumption	(n.) the act of using or eating; intake, expenditure
+contemporaneous	(adj.) occurring at the same time; simultaneous, concurrent
+contentious	(adj.) argumentative or controversial; quarrelsome, combative
+contingent on	(adj.) dependent on something else; conditional, reliant
+contravene	(v.) to violate or go against; breach, oppose
+contrite	(adj.) feeling regretful; remorseful, apologetic
+contrived	(adj.) artificial or forced; unnatural, labored
+contusion	(n.) a bruise or injury; swelling, bump
+conundrum	(n.) a difficult puzzle or problem; dilemma, riddle
+convene	(v.) to bring together or assemble; gather, summon
+convention	(n.) a meeting or norm; conference, tradition
+convivial	(adj.) sociable and lively; cheerful, festive
+convoluted	(adj.) complex and difficult to follow; tangled, intricate
+copious	(adj.) abundant or plentiful; ample, profuse
+cordial	(adj.) warm and friendly; polite, pleasant
+coronation	(n.) the act of crowning a monarch; enthronement, inauguration
+corpulence	(n.) obesity or heaviness; fatness, bulk
+corroborate	(v.) to confirm or support; verify, validate
+corrosive	(adj.) eating away gradually; caustic, abrasive
+cosmopolitan	(adj.) worldly or sophisticated; cultured, global
+counteract	(v.) to oppose or neutralize; offset, counterbalance
+coup	(n.) a sudden takeover; overthrow, rebellion
+covert	(adj.) secret or hidden; concealed, undercover
+covet	(v.) to desire wrongfully; crave, envy
+credulity	(n.) readiness to believe; gullibility, naivety
+crescendo	(n.) a gradual increase in intensity; climax, buildup
+criteria	(n.) standards by which something is judged; benchmarks, requirements
+culmination	(n.) the peak or final result; climax, conclusion
+culpable	(adj.) deserving blame; guilty, responsible
+cultivate	(v.) to grow or develop; nurture, foster
+cumulative	(adj.) increasing or growing over time; collective, total
+cunning	(adj.) sly or clever; crafty, shrewd
+cupidity	(n.) greed for money or possessions; avarice, materialism
+cursory	(adj.) quick and superficial; brief, hasty
+curt	(adj.) rudely brief; blunt, abrupt
+curtail	(v.) to cut short or reduce; limit, diminish
+daunting	(adj.) intimidating or overwhelming; discouraging, disheartening
+dearth	(n.) a lack or scarcity; shortage, deficiency
+debacle	(n.) a sudden failure; disaster, fiasco
+debase	(v.) to lower in value or dignity; degrade, cheapen
+debauch	(v.) to corrupt morally; seduce, deprave
+debunk	(v.) to expose as false; disprove, refute
+deceptive	(adj.) misleading or dishonest; false, deceitful
+decisive	(adj.) conclusive or determined; resolute, firm
+decorous	(adj.) proper and polite; respectful, civilized
+decry	(v.) to criticize openly; condemn, denounce
+deface	(v.) to damage the surface of; vandalize, mar
+defamatory	(adj.) harmful to someone's reputation; slanderous, libelous
+defer	(v.) to postpone or yield to another; delay, submit
+deferential	(adj.) showing respect or submission; respectful, humble
+defied	(v.) resisted or opposed; challenged, disobeyed
+defile	(v.) to pollute or corrupt; sully, taint
+deft	(adj.) skillful or quick; nimble, adept
+defunct	(adj.) no longer existing or functioning; obsolete, extinct
+delegate	(v.) to assign duties or authority; entrust, appoint
+deleterious	(adj.) harmful or damaging; injurious, detrimental
+deliberate	(adj.) done on purpose; intentional, calculated
+delineate	(v.) to describe or outline clearly; define, portray
+demagogue	(n.) a leader who appeals to emotions and prejudice; agitator, firebrand
+demarcation	(n.) a boundary or distinction; separation, division
+demean	(v.) to lower in dignity or standing; degrade, humiliate
+demure	(adj.) modest and reserved; shy, timid
+denigrate	(v.) to criticize unfairly; belittle, defame
+denounce	(v.) to publicly condemn; criticize, censure
+depleted	(adj.) used up or emptied; drained, exhausted
+deplore	(v.) to express strong disapproval; regret, lament
+depravity	(n.) moral corruption; wickedness, evil
+deprecate	(v.) to express disapproval of; criticize, belittle
+derelict	(adj.) abandoned or neglected; run-down, dilapidated
+deride	(v.) to mock or ridicule; scorn, taunt
+derivative	(adj.) unoriginal or copied; imitative, uninspired
+derived from	(v.) obtained or taken from; sourced, extracted
+desecrate	(v.) to violate something sacred; defile, profane
+desiccated	(adj.) dried out or lifeless; dehydrated, arid
+desolate	(adj.) empty and bleak; barren, abandoned
+despondent	(adj.) hopeless or depressed; disheartened, downcast
+despot	(n.) a ruler with absolute power; tyrant, dictator
+destitute	(adj.) extremely poor; impoverished, needy
+deter	(v.) to discourage or prevent; hinder, dissuade
+deviates	(v.) strays from a path or standard; diverges, departs
+devious	(adj.) dishonest or tricky; deceitful, underhanded
+dialect	(n.) a regional form of a language; vernacular, idiom
+diaphanous	(adj.) light and delicate; sheer, translucent
+didactic	(adj.) intended to teach; instructive, moralistic
+diffident	(adj.) shy or lacking confidence; timid, hesitant
+diffuse	(v.) to spread widely; disperse, scatter
+dilatory	(adj.) slow or delaying; sluggish, procrastinating
+diligent	(adj.) hardworking and careful; industrious, thorough
+diminutive	(adj.) extremely small; tiny, petite
+dirge	(n.) a funeral song; lament, elegy
+disaffected	(adj.) dissatisfied or rebellious; alienated, discontent
+disavow	(v.) to deny responsibility or support; reject, disclaim
+discern	(v.) to recognize or detect; perceive, notice
+disclose	(v.) to reveal or make known; divulge, share
+discomfit	(v.) to embarrass or confuse; unsettle, fluster
+disconcerting	(adj.) causing unease or confusion; unsettling, troubling
+discordant	(adj.) lacking harmony; jarring, clashing
+discrepancy	(n.) a lack of agreement; inconsistency, difference
+discretion	(n.) careful judgment or freedom to decide; prudence, choice
+discursive	(adj.) rambling or unfocused; digressive, wordy
+disdain	(n.) contempt or scorn; disgust, disrespect
+disgruntled	(adj.) dissatisfied or unhappy; annoyed, resentful
+disheartened	(adj.) discouraged or demoralized; dispirited, dejected
+disorienting	(adj.) confusing or unsettling; bewildering, puzzling
+disparage	(v.) to speak negatively about; belittle, insult
+disparate	(adj.) fundamentally different; distinct, unrelated
+dispatch	(v.) to send off quickly; transmit, deliver
+dispel	(v.) to drive away or eliminate; dismiss, scatter
+disperse	(v.) to scatter or spread; distribute, diffuse
+disrepute	(n.) a state of disgrace or low regard; dishonor, shame
+dissemble	(v.) to hide true feelings; pretend, feign
+disseminate	(v.) to spread widely; broadcast, circulate
+dissent	(n.) disagreement or opposition; protest, objection
+dissipate	(v.) to scatter or vanish; dissolve, disappear
+dissonance	(n.) lack of harmony or agreement; conflict, discord
+dissuade	(v.) to persuade not to do something; deter, discourage
+distend	(v.) to expand or swell; bulge, enlarge
+dither	(v.) to hesitate or be indecisive; waver, falter
+diverge	(v.) to move apart or differ; separate, deviate
+diverse	(adj.) showing variety; different, varied
+divine	(adj.) relating to a god or heavenly being; sacred, holy
+divisive	(adj.) causing disagreement or division; polarizing, controversial
+divulge	(v.) to make known; reveal, disclose
+docile	(adj.) easily taught or managed; obedient, submissive
+dogmatic	(adj.) stubbornly opinionated; rigid, inflexible
+dormant	(adj.) inactive or asleep; resting, latent
+dour	(adj.) stern and gloomy; severe, sullen
+dubious	(adj.) doubtful or questionable; uncertain, suspicious
+duplicity	(n.) deceitfulness or double-dealing; dishonesty, fraud
+duress	(n.) threats or pressure; coercion, force
+dynamic	(adj.) energetic and constantly changing; active, lively
+ebullient	(adj.) cheerful and full of energy; enthusiastic, exuberant
+eclectic	(adj.) drawn from various sources; diverse, varied
+eclipses	(v.) overshadows or surpasses; obscures, outshines
+ecstatic	(adj.) extremely happy; thrilled, overjoyed
+edict	(n.) an official order or proclamation; decree, mandate
+efface	(v.) to erase or wipe out; remove, obliterate
+effervescent	(adj.) lively and enthusiastic; bubbly, spirited
+efficacious	(adj.) effective and efficient; successful, potent
+effrontery	(n.) bold and rude behavior; audacity, impudence
+effulgent	(adj.) radiant or shining brightly; luminous, glowing
+egregious	(adj.) remarkably bad; shocking, outrageous
+elaborate	(adj.) detailed and complicated; intricate, ornate
+elated	(adj.) extremely happy; joyful, ecstatic
+elegy	(n.) a poem for the dead; lament, dirge
+elicit	(v.) to draw out or bring forth; evoke, extract
+eloquent	(adj.) persuasive and expressive in speech; articulate, fluent
+elucidate	(v.) to make clear or explain; clarify, illuminate
+elude	(v.) to escape or avoid; evade, dodge
+elusive	(adj.) difficult to find or catch; slippery, intangible
+emaciated	(adj.) extremely thin or weak; gaunt, skeletal
+embellish	(v.) to decorate or add details; adorn, exaggerate
+embezzle	(v.) to steal money from one's trust; misappropriate, siphon
+emend	(v.) to correct or revise; edit, alter
+eminent	(adj.) famous and respected; distinguished, renowned
+emollient	(adj.) soothing or softening; moisturizing, calming
+emote	(v.) to express emotions dramatically; act, display
+empathy	(n.) the ability to understand others' feelings; compassion, understanding
+empirical	(adj.) based on observation or experience; experimental, factual
+emulate	(v.) to imitate or strive to equal; copy, mimic
+enamor	(v.) to be filled with love for; captivate, enchant
+encore	(n.) a repeated performance; return, repetition
+encumber	(v.) to burden or weigh down; hinder, obstruct
+enervate	(v.) to weaken or drain energy; exhaust, debilitate
+enfranchise	(v.) to give voting rights; empower, liberate
+engender	(v.) to cause or give rise to; generate, provoke
+engulfs	(v.) to swallow up or overwhelm; consume, flood
+enigmatic	(adj.) mysterious or puzzling; cryptic, obscure
+enmity	(n.) hatred or hostility; animosity, antagonism
+ennui	(n.) boredom from lack of interest; weariness, tedium
+entail	(v.) to involve or require; include, necessitate
+enthrall	(v.) to captivate or fascinate; enchant, mesmerize
+entrenching	(v.) establishing firmly; securing, embedding
+ephemeral	(adj.) lasting a very short time; fleeting, brief
+epistolary	(adj.) relating to letters or letter writing; written, correspondent
+epitome	(n.) a perfect example; embodiment, archetype
+equanimity	(n.) calmness under pressure; composure, serenity
+equivocate	(v.) to speak ambiguously or avoid the truth; hedge, evade
+erudite	(adj.) having deep scholarly knowledge; learned, educated
+eschew	(v.) to deliberately avoid; shun, abstain
+esoteric	(adj.) understood by a select few; obscure, cryptic
+espouse	(v.) to support or adopt; embrace, advocate
+ethereal	(adj.) light and delicate; airy, heavenly
+etymology	(n.) origin and history of words; word source, derivation
+euphoric	(adj.) extremely happy; elated, overjoyed
+evanescent	(adj.) quickly fading or disappearing; fleeting, short-lived
+evince	(v.) to show clearly; reveal, display
+exacerbate	(v.) to make worse; aggravate, intensify
+exalt	(v.) to praise highly; glorify, honor
+exasperate	(v.) to irritate or annoy greatly; infuriate, provoke
+excavate	(v.) to dig up or uncover; unearth, extract
+exculpate	(v.) to clear from blame; absolve, acquit
+excursion	(n.) a short trip or outing; journey, expedition
+execrable	(adj.) extremely bad; appalling, awful
+exhort	(v.) to strongly urge; encourage, implore
+exigent	(adj.) requiring immediate attention; urgent, pressing
+exonerate	(v.) to free from blame or guilt; absolve, acquit
+exorbitant	(adj.) unreasonably high; excessive, outrageous
+expedient	(adj.) convenient and practical; advantageous, effective
+expiate	(v.) to make amends for; atone, redress
+expunge	(v.) to erase or remove; delete, obliterate
+expurgate	(v.) to censor or clean up; edit, sanitize
+extant	(adj.) still existing; surviving, present
+extol	(v.) to praise highly; exalt, laud
+extraneous	(adj.) irrelevant or unnecessary; unrelated, superfluous
+extricate	(v.) to free from difficulty; disentangle, extract
+exult	(v.) to rejoice greatly; celebrate, cheer
+fabricate	(v.) to invent or lie; falsify, concoct
+façade	(n.) a false appearance; front, disguise
+facile	(adj.) superficial or easily achieved; simplistic, effortless
+fallacious	(adj.) misleading or false; incorrect, illogical
+fastidious	(adj.) very attentive to detail; meticulous, fussy
+fathom	(v.) to understand fully; grasp, comprehend
+fatuous	(adj.) silly or foolish; absurd, inane
+fecund	(adj.) fertile or productive; fruitful, prolific
+felicitous	(adj.) well-suited or pleasant; fitting, appropriate
+feral	(adj.) wild or untamed; savage, untamed
+fervent	(adj.) passionate or intense; ardent, zealous
+fetid	(adj.) foul-smelling; stinky, putrid
+fetter	(v.) to restrain or chain; shackle, bind
+fickle	(adj.) changing frequently; inconsistent, capricious
+fidelity	(n.) loyalty or faithfulness; devotion, allegiance
+figurative	(adj.) symbolic, not literal; metaphorical, poetic
+flabbergasted	(adj.) extremely surprised; shocked, astonished
+flaccid	(adj.) soft or limp; weak, loose
+flagrant	(adj.) obviously offensive; blatant, outrageous
+fleeting	(adj.) lasting a short time; brief, momentary
+florid	(adj.) excessively fancy or flowery; ornate, embellished
+flout	(v.) to openly disregard; defy, mock
+foil	(v.) to prevent or stop; thwart, hinder
+forage	(v.) to search for food or supplies; scavenge, hunt
+forbearance	(n.) patient self-control; restraint, tolerance
+forestall	(v.) to prevent by acting early; avert, preempt
+foretells	(v.) predicts or announces beforehand; forecasts, prophesies
+forfeiture of	(n.) loss of something as a penalty; surrender, deprivation
+forlorn	(adj.) sad and abandoned; hopeless, desolate
+forsake	(v.) to abandon or give up; desert, renounce
+fortitude	(n.) courage in adversity; bravery, resilience
+fortuitous	(adj.) happening by chance; lucky, accidental
+forum	(n.) a place for discussion; assembly, meeting
+foster	(v.) to promote or encourage; nurture, support
+fractious	(adj.) irritable and quarrelsome; unruly, grumpy
+fraught	(adj.) full of something (usually bad); filled, laden
+frenetic	(adj.) wildly energetic or frantic; hectic, chaotic
+frivolous	(adj.) not serious or important; trivial, silly
+frugal	(adj.) economical or thrifty; sparing, prudent
+fruitless	(adj.) unproductive or unsuccessful; futile, pointless
+furtive	(adj.) secretive or stealthy; sneaky, sly
+garish	(adj.) overly bright or showy; flashy, gaudy
+garrulous	(adj.) excessively talkative; chatty, loquacious
+genial	(adj.) friendly and cheerful; warm, pleasant
+gluttony	(n.) overindulgence in food or drink; greed, overeating
+goad	(v.) to provoke or urge; prod, incite
+gourmand	(n.) a person who enjoys eating; foodie, epicure
+grandiloquence	(n.) pompous or lofty speech; rhetoric, bombast
+grandiose	(adj.) impressive but overblown; extravagant, pretentious
+grapple with	(v.) to struggle or deal with; wrestle, confront
+gratuitous	(adj.) uncalled for or excessive; unnecessary, unwarranted
+gregarious	(adj.) sociable or outgoing; friendly, extroverted
+grievous	(adj.) serious or severe; tragic, grave
+guile	(n.) sly or cunning intelligence; deceit, trickery
+hackneyed	(adj.) overused and unoriginal; clichéd, stale
+hallowed	(adj.) greatly respected or sacred; revered, holy
+haphazard	(adj.) lacking order or purpose; random, chaotic
+hapless	(adj.) unlucky or unfortunate; jinxed, ill-fated
+harangue	(n.) a loud, aggressive speech; rant, tirade
+hardy	(adj.) strong and able to endure; tough, robust
+harrowing	(adj.) extremely distressing or painful; traumatic, disturbing
+hastily	(adv.) done quickly and carelessly; rashly, hurriedly
+haughty	(adj.) arrogantly superior; proud, snobbish
+hedonist	(n.) one who pursues pleasure; pleasure-seeker, sensualist
+hegemony	(n.) dominance or leadership; control, supremacy
+heinous	(adj.) shockingly wicked; evil, atrocious
+hence	(adv.) for this reason; therefore, thus
+heterogeneous	(adj.) diverse in content; mixed, varied
+hiatus	(n.) a pause or break; interruption, gap
+hibernation	(n.) a period of inactivity; dormancy, rest
+hierarchy	(n.) a system of ranks or levels; order, chain of command
+hinder	(v.) to slow down or obstruct; impede, delay
+homogeneous	(adj.) uniform or of the same kind; consistent, alike
+hypocrisy	(n.) claiming moral standards without practice; insincerity, duplicity
+hypothetical	(adj.) based on assumption; supposed, theoretical
+iconoclast	(n.) one who attacks traditions; rebel, nonconformist
+idiosyncratic	(adj.) peculiar or individualistic; quirky, unique
+idolatrous	(adj.) worshipping blindly or excessively; adoring, devoted
+ignominious	(adj.) deserving shame or disgrace; humiliating, dishonorable
+illicit	(adj.) illegal or forbidden; unlawful, prohibited
+immerse	(v.) to involve deeply or submerge; absorb, engage
+imminent	(adj.) about to happen; approaching, impending
+immutable	(adj.) unchangeable; fixed, permanent
+impartial	(adj.) unbiased or fair; neutral, objective
+impassive	(adj.) not showing emotion; expressionless, indifferent
+impeccable	(adj.) flawless or perfect; spotless, pristine
+impecunious	(adj.) having little or no money; poor, penniless
+impede	(v.) to block or hinder; obstruct, delay
+impenetrable	(adj.) impossible to pass through or understand; dense, incomprehensible
+imperative	(adj.) absolutely necessary; essential, urgent
+imperceptible	(adj.) barely noticeable; subtle, faint
+imperious	(adj.) arrogantly commanding; overbearing, domineering
+impertinent	(adj.) rude or disrespectful; impolite, insolent
+impervious	(adj.) not affected by; resistant, immune
+impetuous	(adj.) acting without thought; rash, impulsive
+impinge	(v.) to intrude or encroach; affect, infringe
+implacable	(adj.) unable to be calmed or satisfied; unyielding, relentless
+implement	(v.) to put into effect; execute, apply
+implicate	(v.) to involve in a crime or fault; associate, connect
+implicit	(adj.) understood without being stated; implied, unspoken
+impostor	(n.) a person who pretends to be someone else; fraud, fake
+impractical	(adj.) not realistic or useful; unworkable, unrealistic
+impregnable	(adj.) unable to be defeated or penetrated; secure, invincible
+improvise	(v.) to create without preparation; ad-lib, invent
+impudent	(adj.) disrespectful or rude; impertinent, cheeky
+impute	(v.) to attribute or blame; assign, credit
+inane	(adj.) silly or stupid; pointless, foolish
+inarticulate	(adj.) unable to express clearly; tongue-tied, incoherent
+incarnate	(adj.) embodied in human form; personified, embodied
+incendiary	(adj.) designed to cause fires or conflict; inflammatory, provocative
+incessant	(adj.) never stopping; constant, relentless
+inchoate	(adj.) just begun; undeveloped, rudimentary
+incisive	(adj.) sharp or clear in thought or expression; keen, insightful
+inclination	(n.) a tendency or preference; leaning, propensity
+incontrovertible	(adj.) not open to question; undeniable, indisputable
+incorrigible	(adj.) unable to be corrected; hopeless, unreformable
+increment	(n.) an increase or addition; rise, gain
+indecipherable	(adj.) impossible to read or understand; unreadable, unintelligible
+indefatigable	(adj.) never tired; tireless, relentless
+indigenous	(adj.) native to a region; local, original
+indigent	(adj.) poor or needy; impoverished, destitute
+indignation	(n.) anger at unfairness; outrage, resentment
+indolent	(adj.) lazy or avoiding effort; idle, sluggish
+indomitable	(adj.) impossible to defeat; invincible, unconquerable
+induce	(v.) to cause or persuade; prompt, bring about
+indulge	(v.) to give in to a desire; pamper, satisfy
+ineffable	(adj.) too great to be expressed; indescribable, overwhelming
+inept	(adj.) lacking skill; clumsy, incompetent
+inexorable	(adj.) impossible to stop or persuade; relentless, unyielding
+inexplicable	(adj.) hard to explain; puzzling, mysterious
+inextricable	(adj.) impossible to separate or untangle; inseparable, intertwined
+infallible	(adj.) incapable of error; flawless, unerring
+infamy	(n.) evil fame or reputation; notoriety, disgrace
+infusion	(n.) the act of adding something; injection, addition
+ingenious	(adj.) clever or original; inventive, brilliant
+ingenuous	(adj.) innocent or naive; sincere, straightforward
+inhibit	(v.) to restrain or prevent; hinder, block
+inimical	(adj.) harmful or hostile; unfriendly, antagonistic
+iniquity	(n.) immoral or unfair behavior; wickedness, sin
+injunction	(n.) a legal order; directive, ruling
+innate	(adj.) natural or inborn; inherent, instinctive
+innocuous	(adj.) harmless or inoffensive; safe, mild
+innovative	(adj.) new and creative; original, groundbreaking
+innuendo	(n.) an indirect remark or hint; implication, suggestion
+inoculate	(v.) to vaccinate or introduce something; immunize, inject
+inquisitor	(n.) one who aggressively questions; interrogator, examiner
+insatiable	(adj.) impossible to satisfy; greedy, ravenous
+insidious	(adj.) harmful in a subtle way; sneaky, stealthy
+insinuate	(v.) to suggest indirectly; imply, hint
+insipid	(adj.) lacking flavor or interest; bland, dull
+insolent	(adj.) boldly rude; disrespectful, impudent
+instigate	(v.) to provoke or start something; incite, initiate
+insular	(adj.) isolated or narrow-minded; closed, inward-looking
+insurgent	(n.) one who rises in revolt; rebel, revolutionary
+integral	(adj.) essential or necessary; fundamental, key
+interject	(v.) to insert abruptly; interrupt, interpose
+interlocutor	(n.) a person in a conversation; speaker, respondent
+interminable	(adj.) endless or seeming so; never-ending, eternal
+intimation	(n.) a hint or suggestion; indication, clue
+intractable	(adj.) hard to control or deal with; stubborn, unmanageable
+intransigent	(adj.) unwilling to compromise; inflexible, unyielding
+intrepid	(adj.) fearless and adventurous; brave, bold
+intricate	(adj.) very detailed or complex; elaborate, complicated
+intriguing	(adj.) arousing curiosity or interest; fascinating, captivating
+inundate	(v.) to overwhelm or flood; swamp, overload
+inure	(v.) to accustom to something unpleasant; harden, habituate
+invalidate	(v.) to make invalid; nullify, disprove
+invective	(n.) harsh or abusive language; insult, condemnation
+inveterate	(adj.) firmly established by habit; habitual, chronic
+inviolable	(adj.) secure from violation; sacred, untouchable
+irascible	(adj.) easily angered; irritable, hot-tempered
+iridescent	(adj.) showing shifting colors; shimmering, lustrous
+irreverence	(n.) lack of respect; disrespect, mockery
+irrevocable	(adj.) cannot be changed; irreversible, final
+jubilant	(adj.) extremely joyful; elated, ecstatic
+judicious	(adj.) having good judgment; wise, prudent
+juxtaposition	(n.) side-by-side placement; contrast, comparison
+knell	(n.) sound of a bell (esp. for death); toll, omen
+kudos	(n.) praise or recognition; acclaim, honor
+laceration	(n.) deep cut or tear; wound, gash
+laconic	(adj.) using few words; terse, concise
+languid	(adj.) lacking energy; sluggish, weak
+larceny	(n.) theft of personal property; robbery, stealing
+largess	(n.) generosity in giving; charity, philanthropy
+latent	(adj.) hidden but present; dormant, concealed
+laudatory	(adj.) expressing praise; approving, admiring
+lavish	(adj.) extravagant or generous; luxurious, excessive
+legerdemain	(n.) skillful use of hands; sleight of hand, trickery
+lenient	(adj.) not strict; permissive, forgiving
+lethargic	(adj.) sluggish or tired; drowsy, inactive
+liability	(n.) a disadvantage or responsibility; burden, obligation
+libertarian	(n.) advocate of minimal government; individualist, free-marketeer
+licentious	(adj.) lacking moral restraint; immoral, debauched
+limpid	(adj.) clear or transparent; lucid, pure
+linchpin	(n.) a key part of a system; anchor, foundation
+lithe	(adj.) flexible and graceful; supple, agile
+litigant	(n.) a person involved in a lawsuit; party, plaintiff/defendant
+lucid	(adj.) clear and easy to understand; coherent, intelligible
+lucrative	(adj.) producing profit; profitable, rewarding
+luminous	(adj.) giving off light; radiant, glowing
+lurid	(adj.) sensational or shocking; vivid, gruesome
+maelstrom	(n.) a violent whirlpool or situation; chaos, turmoil
+magnanimous	(adj.) generous and forgiving; noble, big-hearted
+malediction	(n.) a curse or slander; damnation, hex
+malevolent	(adj.) having ill will; evil, malicious
+malleable	(adj.) easily shaped or influenced; flexible, adaptable
+mandate	(n.) an official order or command; directive, instruction
+mandatory	(adj.) required by rule or law; obligatory, compulsory
+manifold	(adj.) many and varied; multiple, diverse
+maudlin	(adj.) overly sentimental; sappy, tearful
+maverick	(n.) an independent thinker; nonconformist, rebel
+mawkish	(adj.) overly emotional; sentimental, mushy
+maxim	(n.) a general truth or rule of conduct; proverb, saying
+meager	(adj.) lacking in quantity; scanty, insufficient
+medley	(n.) a mixture or assortment; blend, mix
+mendacious	(adj.) dishonest or false; lying, deceitful
+mercurial	(adj.) unpredictable or changeable; fickle, volatile
+meritorious	(adj.) deserving praise; commendable, admirable
+metamorphosis	(n.) a change in form or nature; transformation, evolution
+meticulous	(adj.) very careful and precise; exact, thorough
+mimic	(v.) to imitate closely; copy, impersonate
+mitigate	(v.) to lessen the severity; ease, alleviate
+moderate	(adj.) average in amount; mild, balanced
+moderation	(n.) avoiding extremes; restraint, temperance
+modicum	(n.) a small amount; bit, shred
+modulate	(v.) to adjust or regulate; alter, adapt
+mollify	(v.) to calm or soothe; appease, pacify
+morass	(n.) a complicated or confused situation; mess, quagmire
+mores	(n.) customs or values of a group; traditions, norms
+morose	(adj.) gloomy or sullen; moody, glum
+multifaceted	(adj.) having many aspects; complex, varied
+multifarious	(adj.) diverse or varied; assorted, numerous
+mundane	(adj.) ordinary or dull; routine, boring
+munificence	(n.) great generosity; largess, bounty
+mutable	(adj.) changeable or variable; shifting, inconsistent
+myriad	(adj.) countless or extremely great in number; endless, infinite
+mystifying	(adj.) puzzling or confusing; baffling, perplexing
+nadir	(n.) the lowest point; bottom, rock-bottom
+nascent	(adj.) beginning to exist; emerging, developing
+nebulous	(adj.) vague or unclear; hazy, indistinct
+nefarious	(adj.) wicked or evil; villainous, sinful
+negating	(v.) to cancel out; invalidate, nullify
+neglects	(v.) to fail to care for; ignore, disregard
+negligent	(adj.) careless or inattentive; lax, remiss
+negligible	(adj.) so small as to be unimportant; trivial, minor
+neophyte	(n.) a beginner; novice, rookie
+neutrality	(n.) the state of not supporting either side; impartiality, detachment
+nocturnal	(adj.) active at night; nighttime, after-dark
+noisome	(adj.) offensive or disgusting; foul, putrid
+nomadic	(adj.) moving from place to place; wandering, roving
+nominal	(adj.) in name only; minimal, symbolic
+nonchalant	(adj.) casually unconcerned; indifferent, relaxed
+nondescript	(adj.) lacking distinctive features; unremarkable, plain
+notorious	(adj.) well-known for something bad; infamous, disreputable
+novel	(adj.) new and original; innovative, fresh
+novice	(n.) a beginner; trainee, learner
+noxious	(adj.) harmful or poisonous; toxic, dangerous
+nuance	(n.) a subtle difference; distinction, shade
+nurture	(v.) to care for and support; foster, cultivate
+obdurate	(adj.) stubborn and unyielding; inflexible, adamant
+obfuscate	(v.) to confuse or make unclear; blur, obscure
+oblique	(adj.) not direct or straightforward; indirect, evasive
+oblivious	(adj.) unaware or unconscious; inattentive, ignorant
+obscure	(adj.) not well known; hidden, unclear
+obsequious	(adj.) overly flattering or submissive; fawning, servile
+obsolete	(adj.) outdated or no longer used; archaic, antiquated
+obstinate	(adj.) stubbornly refusing to change; headstrong, unyielding
+obstreperous	(adj.) noisy and difficult to control; unruly, boisterous
+obtained from	(v.) acquired or gathered; derived, sourced
+obtuse	(adj.) slow to understand; dull, dense
+odious	(adj.) extremely unpleasant; hateful, repugnant
+offered	(v.) presented or provided; gave, proposed
+officious	(adj.) overly eager to help or meddle; intrusive, meddlesome
+ominous	(adj.) threatening or foreboding; menacing, sinister
+onerous	(adj.) burdensome or difficult; oppressive, taxing
+operative	(adj.) functioning or effective; working, active
+opulent	(adj.) rich and luxurious; lavish, extravagant
+oration	(n.) formal speech; address, lecture
+ornamental	(adj.) decorative or pretty; fancy, embellished
+ornate	(adj.) highly decorated; elaborate, intricate
+orthodox	(adj.) traditional or established; conventional, standard
+oscillate	(v.) to move back and forth; swing, fluctuate
+ostensible	(adj.) appearing to be true, but not necessarily so; apparent, supposed
+ostentatious	(adj.) showy or flashy; pretentious, flamboyant
+ostracism	(n.) exclusion from a group; shunning, banishment
+pacific	(adj.) peaceful or calm; tranquil, nonviolent
+palatable	(adj.) pleasant to taste or accept; tasty, agreeable
+palette	(n.) range of colors; selection, spectrum
+palliate	(v.) to relieve without curing; soothe, alleviate
+pallid	(adj.) pale or lacking color; wan, ashen
+panacea	(n.) a universal cure; remedy, solution
+paradigm	(n.) a model or example; pattern, standard
+paradox	(n.) a self-contradictory statement; irony, inconsistency
+paragon	(n.) a perfect example; model, ideal
+paramount	(adj.) more important than anything else; supreme, primary
+pariah	(n.) a social outcast; exile, outsider
+parody	(n.) a humorous imitation; spoof, satire
+parsimony	(n.) extreme stinginess; frugality, miserliness
+partisan	(adj.) strongly supporting one side; biased, one-sided
+patent	(adj.) obvious or evident; clear, unmistakable
+pathology	(n.) the study of disease; diagnosis, medicine
+pathos	(n.) emotion or pity; poignancy, sadness
+paucity	(n.) scarcity or lack; shortage, deficiency
+pejorative	(adj.) expressing disapproval; derogatory, insulting
+pellucid	(adj.) transparently clear; lucid, understandable
+penchant	(n.) a strong liking; preference, fondness
+penitent	(adj.) feeling regretful; remorseful, sorry
+penultimate	(adj.) second to last; next-to-last, almost final
+penurious	(adj.) extremely poor; destitute, impoverished
+perceive	(v.) to become aware of; notice, observe
+perfidious	(adj.) disloyal or treacherous; deceitful, unfaithful
+perfunctory	(adj.) done without care; mechanical, indifferent
+peripheral	(adj.) on the edge or outer part; marginal, bordering
+permeate	(v.) to spread throughout; fill, infiltrate
+pernicious	(adj.) harmful in a subtle way; destructive, dangerous
+perplex	(v.) to confuse or puzzle; baffle, bewilder
+persistent	(adj.) continuing despite difficulty; determined, tenacious
+perspicacity	(n.) insight or sharpness; discernment, perception
+pert	(adj.) bold and lively; cheeky, saucy
+pertinacious	(adj.) holding firmly to an idea; stubborn, determined
+perusal	(n.) a close reading or examination; inspection, review
+pervasive	(adj.) spreading widely; widespread, all-encompassing
+petulance	(n.) rudeness or irritability; sulkiness, peevishness
+philanthropic	(adj.) generous to others; charitable, benevolent
+phlegmatic	(adj.) unemotional and calm; indifferent, composed
+pillage	(v.) to rob using violence; plunder, loot
+pinnacle	(n.) the highest point; peak, summit
+pithy	(adj.) brief but meaningful; concise, terse
+pittance	(n.) a very small amount; trifle, scrap
+placate	(v.) to calm or appease; soothe, pacify
+placid	(adj.) calm and peaceful; serene, tranquil
+platitude	(n.) a dull or overused remark; cliché, truism
+plaudits	(n.) praise or applause; acclaim, cheers
+plausible	(adj.) seeming reasonable; believable, likely
+plenitude	(n.) abundance or fullness; plenty, profusion
+plethora	(n.) an excess or overabundance; surplus, flood
+pliable	(adj.) easily bent or influenced; flexible, adaptable
+poignant	(adj.) emotionally touching; moving, stirring
+polemic	(n.) a strong verbal attack; tirade, rant
+portent	(n.) a sign of something to come; omen, warning
+potable	(adj.) safe to drink; drinkable, clean
+potentate	(n.) a ruler or monarch; sovereign, leader
+pragmatic	(adj.) practical and realistic; sensible, rational
+precarious	(adj.) dangerously unstable; uncertain, risky
+precipice	(n.) a steep cliff; brink, edge
+preclude	(v.) to make impossible; prevent, block
+precocious	(adj.) advanced for one's age; gifted, talented
+precursors of	(n.) forerunners or indicators; predecessors, harbingers
+predatory	(adj.) seeking to exploit or harm; aggressive, ravenous
+predilection	(n.) a preference or liking; fondness, bias
+prefiguring	(v.) foreshadowing or predicting; anticipating, signaling
+premeditated	(adj.) planned beforehand; deliberate, intentional
+preponderance	(n.) majority or dominance; prevalence, bulk
+prepossessing	(adj.) attractive or appealing; charming, engaging
+presage	(v.) to predict or foreshadow; foretell, herald
+prescient	(adj.) having foresight; prophetic, insightful
+prescribe	(v.) to recommend or authorize; order, advise
+prestige	(n.) respect or admiration; status, esteem
+presume	(v.) to suppose without proof; assume, speculate
+presumptuous	(adj.) overly bold or forward; arrogant, impudent
+pretense	(n.) a false show or claim; act, sham
+pretentious	(adj.) acting more important than warranted; showy, pompous
+prevail	(v.) to win or dominate; triumph, succeed
+primeval	(adj.) ancient or primitive; prehistoric, primordial
+privation	(n.) lack of basic needs; hardship, deprivation
+probity	(n.) honesty and integrity; uprightness, virtue
+proclaims	(v.) announces or declares; states, broadcasts
+proclivity	(n.) a natural tendency; inclination, bias
+procure	(v.) to obtain or acquire; secure, get
+profane	(adj.) disrespectful toward sacred things; irreverent, blasphemous
+proficient	(adj.) skilled and competent; capable, adept
+profligate	(adj.) wasteful or reckless; extravagant, spendthrift
+profound	(adj.) deep or intense; meaningful, thoughtful
+profuse	(adj.) abundant or excessive; plentiful, lavish
+prolific	(adj.) highly productive; fruitful, creative
+promulgate	(v.) to make known officially; declare, proclaim
+propagate	(v.) to spread or promote; transmit, disseminate
+propensity	(n.) a natural inclination; tendency, leaning
+propitious	(adj.) favorable or promising; auspicious, advantageous
+proponent of	(n.) one who supports a cause; advocate, supporter
+propriety	(n.) proper behavior; decorum, etiquette
+prosaic	(adj.) dull or unimaginative; boring, mundane
+proscribe	(v.) to forbid or ban; prohibit, outlaw
+protean	(adj.) versatile or changeable; adaptable, variable
+prowess	(n.) great skill or ability; expertise, mastery
+prudence	(n.) caution or wisdom; good judgment, foresight
+prurient	(adj.) having lustful thoughts; lewd, salacious
+puerile	(adj.) childish or silly; immature, juvenile
+pugnacious	(adj.) eager to fight; combative, aggressive
+pulchritude	(n.) physical beauty; loveliness, attractiveness
+punctilious	(adj.) extremely attentive to detail; meticulous, precise
+pungent	(adj.) having a strong smell or taste; sharp, acrid
+punitive	(adj.) inflicting punishment; disciplinary, penal
+putrid	(adj.) rotten and foul-smelling; decaying, rancid
+quagmire	(n.) a difficult or messy situation; dilemma, predicament
+quaint	(adj.) charmingly old-fashioned; picturesque, antique
+quandary	(n.) a state of uncertainty; dilemma, confusion
+quell	(v.) to suppress or put an end to; subdue, crush
+querulous	(adj.) complaining or whining; grumbling, petulant
+quixotic	(adj.) unrealistic and idealistic; impractical, dreamy
+quotidian	(adj.) occurring daily; routine, everyday
+rail	(v.) to criticize harshly; rant, berate
+rancid	(adj.) having a rotten smell or taste; spoiled, foul
+rancor	(n.) bitterness or resentment; hatred, animosity
+rapport	(n.) a positive relationship; bond, connection
+rash	(adj.) reckless or hasty; impulsive, careless
+raucous	(adj.) loud and disorderly; boisterous, rowdy
+raze	(v.) to completely destroy; demolish, flatten
+rebuke	(v.) to criticize sharply; reprimand, scold
+rebuts	(v.) to refute or disprove; contradict, oppose
+recalcitrant	(adj.) stubbornly disobedient; defiant, uncooperative
+recants	(v.) to withdraw a statement; retract, take back
+recapitulate	(v.) to summarize; restate, review
+reciprocate	(v.) to return a favor or feeling; repay, respond
+reclusive	(adj.) avoiding the company of others; solitary, withdrawn
+reconcile	(v.) to restore harmony; settle, reunite
+rectitude	(n.) moral uprightness; integrity, righteousness
+redoubtable	(adj.) worthy of fear or respect; formidable, intimidating
+redundant	(adj.) unnecessary or repetitive; superfluous, excessive
+refract	(v.) to bend light or sound; deflect, distort
+refurbish	(v.) to renovate or restore; update, renew
+refute	(v.) to prove wrong; disprove, rebut
+regret	(v.) to feel remorse; lament, rue
+regulate	(v.) to control or govern; manage, oversee
+regurgitate	(v.) to repeat without understanding; echo, spit back
+relegate	(v.) to assign to a lower position; demote, downgrade
+relish	(v.) to enjoy greatly; savor, delight in
+remedial	(adj.) intended to improve skills; corrective, therapeutic
+remiss	(adj.) negligent or careless; inattentive, lax
+renounce	(v.) to give up or reject; abandon, disown
+renovate	(v.) to restore or improve; refurbish, renew
+renown	(n.) fame or recognition; glory, distinction
+renunciation	(n.) rejection or disowning; repudiation, denial
+repentant	(adj.) feeling remorseful; sorry, contrite
+replete	(adj.) filled or well-supplied; full, abundant
+repose	(n.) a state of rest or sleep; relaxation, tranquility
+reprehensible	(adj.) deserving blame; shameful, disgraceful
+repressed by	(adj.) subdued or held back; restrained, suppressed
+reprieve	(n.) a temporary relief; pardon, delay
+reproach	(v.) to express disapproval; scold, criticize
+reprobate	(n.) a morally unprincipled person; scoundrel, rogue
+reprove	(v.) to criticize gently; correct, admonish
+repudiate	(v.) to reject or deny; renounce, disclaim
+repulse	(v.) to drive back or disgust; repel, reject
+reputable	(adj.) well thought of; respected, trustworthy
+requisition	(n.) a formal request or demand; order, claim
+rescind	(v.) to cancel or revoke; withdraw, annul
+reservoir	(n.) a large supply or storage; store, reserve
+resilient	(adj.) able to recover quickly; tough, flexible
+resolute	(adj.) determined or unwavering; steadfast, firm
+resolve	(v.) to decide or settle; determine, solve
+respite	(n.) a short rest or break; relief, pause
+resplendent	(adj.) shining brilliantly; radiant, dazzling
+restitution	(n.) compensation for loss; repayment, reparation
+restive	(adj.) restless or impatient; agitated, uneasy
+restrained	(adj.) controlled or reserved; moderate, subdued
+retaliates	(v.) strikes back in revenge; responds, avenges
+retract	(v.) to take back; withdraw, recant
+revel	(v.) to enjoy intensely; celebrate, indulge
+revere	(v.) to honor or respect deeply; admire, venerate
+revoke	(v.) to cancel or withdraw; rescind, annul
+rhapsodize	(v.) to speak or write with enthusiasm; gush, rave
+ribald	(adj.) vulgar or indecent; coarse, bawdy
+rife	(adj.) widespread or common; prevalent, abundant
+rigid	(adj.) stiff or inflexible; strict, unyielding
+rousing	(adj.) exciting or stirring; inspiring, energetic
+rudimentary	(adj.) basic or undeveloped; elementary, primitive
+ruminate	(v.) to think deeply; ponder, reflect
+ruse	(n.) a trick or deception; ploy, stratagem
+saccharine	(adj.) overly sweet or sentimental; syrupy, sappy
+sacrosanct	(adj.) extremely sacred or inviolable; holy, untouchable
+sagacity	(n.) wisdom or sound judgment; insight, intelligence
+salient	(adj.) most noticeable or important; prominent, key
+salutation	(n.) a greeting or acknowledgment; welcome, address
+salve	(n.) a soothing balm or comfort; ointment, relief
+sanctimonious	(adj.) hypocritically pious; self-righteous, preachy
+sanguine	(adj.) optimistic or positive; hopeful, confident
+satiate	(v.) to satisfy fully; fill, quench
+saturated with	(adj.) completely soaked or filled; drenched, permeated
+scathing	(adj.) severely critical; harsh, biting
+scintillating	(adj.) brilliantly lively or clever; sparkling, witty
+scrupulous	(adj.) very careful or precise; meticulous, honest
+scurrilous	(adj.) vulgar or abusive; defamatory, insulting
+sedentary	(adj.) involving much sitting or inactivity; inactive, stationary
+semaphore	(n.) a visual signal system; beacon, flag
+seminal	(adj.) highly original and influential; groundbreaking, formative
+sensual	(adj.) relating to the senses or physical pleasure; erotic, tactile
+sensuous	(adj.) appealing to the senses; luxurious, pleasing
+serendipity	(n.) fortunate discovery by chance; luck, fluke
+serene	(adj.) calm and peaceful; tranquil, composed
+servile	(adj.) overly submissive; fawning, slavish
+signaling	(v.) communicating a message; indicating, showing
+simulate	(v.) to imitate or replicate; mimic, reproduce
+sinuous	(adj.) winding or curving; twisting, serpentine
+sobriety	(n.) seriousness or self-restraint; abstinence, solemnity
+solicitous	(adj.) showing concern or care; attentive, considerate
+solipsistic	(adj.) self-centered or egoistic; narcissistic, egotistic
+soluble	(adj.) able to dissolve; dissolvable, mixable
+solvent	(adj.) financially stable or able to dissolve; stable, dissolving
+somnolent	(adj.) sleepy or drowsy; sluggish, dozy
+sophomoric	(adj.) immature or juvenile; naive, superficial
+sovereign	(adj.) possessing supreme power; autonomous, independent
+spans	(v.) extends across or covers; bridges, stretches
+specious	(adj.) deceptively attractive; misleading, false
+speculative	(adj.) based on guesses; hypothetical, risky
+spurious	(adj.) false or fake; bogus, counterfeit
+staged	(adj.) planned or rehearsed; arranged, orchestrated
+stagnate	(v.) to stop developing or flowing; stall, languish
+staid	(adj.) serious and unadventurous
+still	(adj.) calm or motionless
+stingy	(adj.) unwilling to give or spend; miserly
+stoic	(adj.) enduring pain without showing emotion
+stolid	(adj.) unemotional or dull
+strenuous	(adj.) requiring great effort; exhausting
+strident	(adj.) harsh and loud
+stupefy	(v.) to shock or stun; daze
+sturdily	(adv.) in a strong and solid way
+subjugate	(v.) to bring under control; conquer
+sublime	(adj.) of great beauty or excellence
+submissive	(adj.) obedient or passive
+subsumed in	(v.) included or absorbed within
+subversive	(adj.) seeking to undermine authority
+succinct	(adj.) brief and clear; concise
+succumb	(v.) to give in or yield
+superfluous	(adj.) unnecessary or excessive
+supplementary	(adj.) added to complete or enhance
+surfeit	(n.) an excessive amount
+surmise	(v.) to guess without certain evidence
+surpassed by	(v.) exceeded in performance or value
+surreptitious	(adj.) secretive or stealthy
+surrogate	(n.) substitute or replacement
+susceptible to	(adj.) easily influenced or affected by
+swarthy	(adj.) dark-complexioned
+sycophant	(n.) a flatterer for gain; toady
+synchronization	(n.) coordinated timing or movement
+tacit	(adj.) unspoken but understood
+taciturn	(adj.) quiet and reserved
+tangential	(adj.) only slightly relevant; off-topic
+tantamount	(adj.) equal in value or meaning
+tedious	(adj.) boring and repetitive
+temerity	(n.) boldness or recklessness
+temperance	(n.) moderation or self-restraint
+tenable	(adj.) able to be defended or maintained
+tenuous	(adj.) weak or uncertain
+terrestrial	(adj.) related to the Earth
+timorous	(adj.) fearful or shy
+tirade	(n.) a long angry speech
+toady	(n.) a person who flatters for favor; sycophant
+tome	(n.) a large scholarly book
+torpid	(adj.) sluggish or inactive
+torrid	(adj.) very hot or passionate
+tortuous	(adj.) full of twists and turns; complex
+tractable	(adj.) easily managed or controlled
+tranquil	(adj.) peaceful and calm
+transcending	(v.) rising above or going beyond
+transgress	(v.) to violate a rule or law
+transient	(adj.) lasting only a short time; temporary
+transmute	(v.) to change form or nature; transform
+travesty	(n.) a distorted or absurd imitation
+tremulous	(adj.) shaking or timid; trembling
+trenchant	(adj.) sharp or forceful; incisive
+trepidation	(n.) fear or anxiety
+trite	(adj.) overused and unoriginal
+truculent	(adj.) aggressively defiant; hostile
+truncate	(v.) to shorten by cutting off; abbreviate
+turgid	(adj.) swollen or pompous; inflated
+turpitude	(n.) moral corruption; depravity
+ubiquitous	(adj.) present everywhere; pervasive
+umbrage	(n.) offense or annoyance
+unanimous	(adj.) in full agreement
+uncanny	(adj.) strangely familiar or eerie
+unctuous	(adj.) excessively flattering or oily
+undermine	(v.) to weaken or sabotage
+underscore	(v.) to emphasize
+undifferentiated	(adj.) lacking distinct features
+undulate	(v.) to move in waves; ripple
+uniform	(adj.) consistent or unchanging
+unobtrusive	(adj.) not attracting attention; discreet
+unpretentious	(adj.) modest and simple
+upbraid	(v.) to scold or criticize
+usurp	(v.) to seize power unlawfully
+utilitarian	(adj.) practical and functional
+utopia	(n.) an ideal or perfect society
+vacillate	(v.) to waver between choices; hesitate
+vacuous	(adj.) lacking ideas or intelligence
+validate	(v.) to confirm or prove; verify
+vapid	(adj.) dull or lacking life
+variegated	(adj.) multicolored or diverse
+vehemently	(adv.) with strong emotion; passionately
+veneer	(n.) a thin surface covering; façade
+venerable	(adj.) worthy of respect due to age or dignity
+venerate	(v.) to regard with deep respect; revere
+veracity	(n.) truthfulness; honesty
+verbose	(adj.) wordy; long-winded
+verdant	(adj.) green with vegetation; lush
+verisimilitude in	(n.) appearance of truth or realism
+vestige	(n.) a trace or remnant
+vex	(v.) to annoy or bother
+vicarious	(adj.) experienced through another
+vicissitude	(n.) change or variation; fluctuation
+vigilant	(adj.) watchful or alert
+vilify	(v.) to slander or defame
+vindicate	(v.) to clear from blame; justify
+vindictive	(adj.) seeking revenge; spiteful
+virtuoso	(n.) a highly skilled artist or performer
+viscous	(adj.) thick and sticky
+vitriolic	(adj.) bitter and harsh
+vituperate	(v.) to criticize harshly; berate
+vivacious	(adj.) lively and animated
+vivid	(adj.) clear and detailed; bright
+vocation	(n.) a career or calling
+vociferous	(adj.) loud and forceful; noisy
+wallow	(v.) to indulge in or roll around
+wane	(v.) to decrease or fade
+wanton	(adj.) reckless or malicious
+whimsical	(adj.) playfully unusual; fanciful
+wily	(adj.) cunning or clever; sly
+winsome	(adj.) charming or pleasing
+wistful	(adj.) longing or sadly reflective
+wizened	(adj.) shriveled or wrinkled
+wrath	(n.) intense anger; rage
+yoke	(v.) to join or bind together
+zealous	(adj.) enthusiastic or passionate
+zenith	(n.) the highest point; peak
+zephyr	(n.) a gentle breeze`;
+
+        let words = [];
+        let currentQuestion = null;
+        let selectedAnswer = null;
+        let questionCount = 0;
+        let correctCount = 0;
+
+        function parseWordList() {
+            const lines = wordListText.trim().split('\n');
+            words = lines.map(line => {
+                const [term, definition] = line.split('\t');
+                return { term: term.trim(), definition: definition.trim() };
+            });
+        }
+
+        function shuffle(array) {
+            const arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        function generateQuestion() {
+            const correctWord = words[Math.floor(Math.random() * words.length)];
+            
+            const wrongWords = [];
+            while (wrongWords.length < 3) {
+                const word = words[Math.floor(Math.random() * words.length)];
+                if (word.term !== correctWord.term && !wrongWords.find(w => w.term === word.term)) {
+                    wrongWords.push(word);
+                }
+            }
+            
+            const allChoices = shuffle([correctWord, ...wrongWords]);
+            const correctIndex = allChoices.findIndex(w => w.term === correctWord.term);
+            
+            return {
+                definition: correctWord.definition,
+                choices: allChoices.map(w => w.term),
+                correctAnswer: correctIndex
+            };
+        }
+
+        function displayQuestion() {
+            currentQuestion = generateQuestion();
+            selectedAnswer = null;
+            
+            document.getElementById('question').textContent = currentQuestion.definition;
+            
+            const choicesDiv = document.getElementById('choices');
+            choicesDiv.innerHTML = '';
+            
+            const letters = ['A', 'B', 'C', 'D'];
+            currentQuestion.choices.forEach((choice, index) => {
+                const choiceDiv = document.createElement('div');
+                choiceDiv.className = 'choice';
+                choiceDiv.textContent = `${letters[index]}. ${choice}`;
+                choiceDiv.onclick = () => selectAnswer(index);
+                choicesDiv.appendChild(choiceDiv);
+            });
+            
+            document.getElementById('feedback').innerHTML = '';
+            document.getElementById('nextBtn').textContent = 'Check Answer';
+        }
+
+        function selectAnswer(index) {
+            if (selectedAnswer !== null && document.getElementById('nextBtn').textContent === 'Next Question') {
+                return;
+            }
+            
+            selectedAnswer = index;
+            
+            const choices = document.querySelectorAll('.choice');
+            choices.forEach((choice, i) => {
+                choice.classList.remove('selected');
+                if (i === index) {
+                    choice.classList.add('selected');
+                }
+            });
+        }
+
+        function nextQuestion() {
+            const btn = document.getElementById('nextBtn');
+            
+            if (btn.textContent === 'Check Answer') {
+                if (selectedAnswer === null) {
+                    alert('Please select an answer!');
+                    return;
+                }
+                
+                checkAnswer();
+            } else {
+                questionCount++;
+                document.getElementById('questionNum').textContent = questionCount;
+                displayQuestion();
+            }
+        }
+
+        function checkAnswer() {
+            const choices = document.querySelectorAll('.choice');
+            const isCorrect = selectedAnswer === currentQuestion.correctAnswer;
+            
+            if (isCorrect) {
+                correctCount++;
+                document.getElementById('correctCount').textContent = correctCount;
+            }
+            
+            const accuracy = Math.round((correctCount / questionCount) * 100);
+            document.getElementById('accuracy').textContent = accuracy + '%';
+            
+            choices.forEach((choice, i) => {
+                choice.classList.add('disabled');
+                if (i === currentQuestion.correctAnswer) {
+                    choice.classList.add('correct');
+                } else if (i === selectedAnswer && !isCorrect) {
+                    choice.classList.add('incorrect');
+                }
+            });
+            
+            const feedbackDiv = document.getElementById('feedback');
+            feedbackDiv.className = 'feedback ' + (isCorrect ? 'correct' : 'incorrect');
+            feedbackDiv.textContent = isCorrect ? '✓ Correct! Nice vibe matching!' : '✗ Incorrect. The correct answer was ' + currentQuestion.choices[currentQuestion.correctAnswer];
+            
+            document.getElementById('nextBtn').textContent = 'Next Question';
+        }
+
+        parseWordList();
+        questionCount = 1;
+        displayQuestion();
+    </script>
+</body>
+</html>
