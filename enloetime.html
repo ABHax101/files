@@ -1,0 +1,58 @@
+<html>
+    <head>
+        <style>
+            :root {
+                --text-color: #c09b85;
+                --background-color: #8e1a00;
+                --accent-color: #ff8a45;
+            }
+
+            p { margin: 0; font-family: monospace; font-weight: bold; position: absolute; left: 0; width: 100vw; text-align: center; }
+        </style>
+    </head>
+    <body style="font-size: 30px; color: var(--text-color); background-color: var(--background-color);">
+        <div id="main" style="padding: 10px 0 0 0; margin:0;">
+            <p id="time" style="top: 25vh; font-size: 8vmax;">Loading...</p>
+            <p id="suffix" style="top: 42.5vh; font-size: 4vmax;"></p>
+            <p id="quote" style="top: 60vh; left: 15vw; font-size: 2vmax; width: 70vw; color: var(--accent-color);"></p>
+        </div>
+
+        <script>
+            let quotes = [
+                "Daily spanish quote #1",
+                "Daily quote 2",
+                "Some other quote #3",
+                "Spanish quote #4",
+                "This is a super long quote and i hope it'll wrap over the max width of the text box that it's in. I want to see what happens."
+            ]; window.onload = () => { document.getElementById("quote").innerText = `"${quotes[Math.floor(Math.random() * quotes.length)]}"`; }
+
+            setInterval(() => {
+                let now = new Date();
+                let year = now.getFullYear();
+                let month = now.getMonth();
+                let day = now.getDate();
+
+                let blocks = [ // assuming first lunch
+                    {date: new Date(year, month, day, 07, 25), suffix: "before school"},
+                    {date: new Date(year, month, day, 08, 52), suffix: "of 1st Period"},
+                    {date: new Date(year, month, day, 10, 35), suffix: "of 2nd Period"},
+                    {date: new Date(year, month, day, 11, 16), suffix: "of Lunch"},
+                    {date: new Date(year, month, day, 12, 47), suffix: "of 3rd Period"},
+                    {date: new Date(year, month, day, 14, 20), suffix: "of 4th Period"},
+                    {date: new Date(year, month, day + 1, 07, 25), suffix: "before school"}
+                ];
+
+                let next = blocks.find(x => x.date > now) || date[6];
+
+                let diff = next.date - now; diff = Math.floor(diff / 1000);
+                let secs = diff % 60; diff = Math.floor(diff / 60);
+                let mins = diff % 60; diff = Math.floor(diff / 60);
+                let hrs = diff;
+
+                let timestr = `${(hrs === 0 ? "" : hrs.toString().padStart(2, '0') + ":")}${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2, '0')}`;
+                document.getElementById("time").innerText = timestr;
+                document.getElementById("suffix").innerText = `left ${next.suffix}`;
+            }, 200);
+        </script>
+</body>
+</html>
