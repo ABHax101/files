@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <title>(Not Really) EnloeTime</title>
         <style>
             :root {
                 --text-color: #8e1a00;
@@ -99,10 +100,13 @@
 
                 document.getElementById("time").innerText = timestr;
                 document.getElementById("suffix").innerText = `left ${next.suffix}`;
+                
                 if (quotes !== null) {
                     let wrapped = Math.floor(Date.now() / 1000 / 86400) % quotes.length;
                     document.getElementById("quote").innerText = `"${quotes[wrapped]}"`;
                 } else document.getElementById("quote").innerText = "";
+
+                document.title = timestr;
             }, 200);
         </script>
     </body>
