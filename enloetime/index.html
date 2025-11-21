@@ -58,6 +58,13 @@
                 word-wrap: break-word;
             }
         </style>
+        <script>
+            const params = new URLSearchParams(window.location.search);
+            ["text", "background", "accent"].forEach(key => {
+                const value = params.get(key[0]);
+                if (value) document.documentElement.style.setProperty(`--${key}-color`, `#${value}`);
+            });
+        </script>
     </head>
     <body>
         <div id="main">
