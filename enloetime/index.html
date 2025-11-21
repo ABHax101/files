@@ -102,7 +102,7 @@
                 document.getElementById("suffix").innerText = `left ${next.suffix}`;
                 
                 if (quotes !== null) {
-                    let wrapped = Math.floor(Date.now() / 1000 / 86400) % quotes.length;
+                    let wrapped = Math.floor(new Date().setHours(0,0,0,0) / 1000 / 86400) % quotes.length;
                     document.getElementById("quote").innerText = `"${quotes[wrapped]}"`;
                 } else document.getElementById("quote").innerText = "";
 
