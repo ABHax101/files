@@ -1,44 +1,45 @@
 <!DOCTYPE HTML>
-<html>
+<html data-theme="light">
     <head>
         <title>Embed Helper - (Unofficial) EnloeTime</title>
-        <style>
-            .hidden { display: none; }
-        </style>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="color-scheme" content="light dark">
+        <link rel="stylesheet" href="pico.min.css">
+        <style> .hidden { display: none; } #preview { width: 50vw; height: 50vh; border-radius: 15px; } </style>
     </head>
     <body>
-        Use custom colors <input type="checkbox" id="custom"/><br><br>
-        <div id="inputs" class="hidden">
-            Main Timer Text Color <input type="color" id="t" value="#90ef90"/><br>
-            Background Color <input type="color" id="b" value="#000000"/><br>
-            Quote Text Color <input type="color" id="a" value="#FFFFFF"/>
-
-
-
-
-
-
-        <!-- REVIEW: MAKE THIS PAGE'S DEFAULT CUSTOM COLORS SET TO THE CURRENT DEFAULT PAGE COLORS AND MAKE THE DEFAULT PAGE COLORS SET TO SOMETHING ELSE LIKE REGULAR ENLOETIME COLORS -->
-
-
-
-
-
-
-            
-        </div><br><br><br>
-        Preview <br>
-        <iframe id="preview"></iframe>
-
+        <article style="margin: 2.25rem; border-radius: 15px;">
+            <main class="container">
+                Use custom colors <input type="checkbox" id="custom"/><br><br>
+                <div id="inputs" class="hidden">
+                    Main Timer Text Color <input type="color" id="t" value="#90ef90"/><br>
+                    Background Color <input type="color" id="b" value="#000000"/><br>
+                    Quote Text Color <input type="color" id="a" value="#FFFFFF"/>
+                </div>
+                <br><br>
+                <center>
+                    Embed Code:
+                    <textarea style="resize: none;" id="embed" readonly></textarea>
+                    Preview <br><br>
+                    <iframe id="preview"></iframe>
+                </center>
+            </main>
+        </article>
     <script>
         const tcolor = document.getElementById("t");
         const bcolor = document.getElementById("b");
         const acolor = document.getElementById("a");
+        const embed = document.getElementById("embed");
         const preview = document.getElementById("preview");
         const baseURL = "https://abhax101.github.io/files/enloetime/";
-        const update = () => { preview.src = baseURL + `?t=${tcolor.value.substring(1)}&b=${bcolor.value.substring(1)}&a=${acolor.value.substring(1)}`; }
+        const update = () => {
+            preview.src = baseURL + `?t=${tcolor.value.substring(1)}&b=${bcolor.value.substring(1)}&a=${acolor.value.substring(1)}`;
+            embed.value = `<iframe src="${preview.src}"></iframe>`;
+        }
         
         preview.src = baseURL;
+        embed.value = baseURL;
 
         document.getElementById("custom").onchange = () => {
             if (!document.getElementById("custom").checked) preview.src = baseURL;
