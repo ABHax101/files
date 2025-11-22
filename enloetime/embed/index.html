@@ -34,16 +34,17 @@
         const preview = document.getElementById("preview");
         const baseURL = "https://abhax101.github.io/files/enloetime/";
         const update = () => {
-            preview.src = baseURL + `?t=${tcolor.value.substring(1)}&b=${bcolor.value.substring(1)}&a=${acolor.value.substring(1)}`;
-            embed.value = `<iframe src="${preview.src}"></iframe>`;
+            if (!document.getElementById("custom").checked) { preview.src = baseURL; embed.value = `<iframe src="${baseURL}"></iframe>`; }
+            else {
+                preview.src = baseURL + `?t=${tcolor.value.substring(1)}&b=${bcolor.value.substring(1)}&a=${acolor.value.substring(1)}`;
+                embed.value = `<iframe src="${preview.src}"></iframe>`;
+            }
         }
         
         update();
 
         document.getElementById("custom").onchange = () => {
-            if (!document.getElementById("custom").checked) preview.src = baseURL;
-            else update();
-            
+            update();
             document.getElementById("inputs").classList.toggle("hidden");
         }
 
