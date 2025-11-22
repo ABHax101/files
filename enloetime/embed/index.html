@@ -5,7 +5,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="color-scheme" content="light dark">
-        <link rel="stylesheet" href="pico.min.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
         <style> .hidden { display: none; } #preview { width: 50vw; height: 50vh; border-radius: 15px; } </style>
     </head>
     <body>
@@ -38,8 +38,7 @@
             embed.value = `<iframe src="${preview.src}"></iframe>`;
         }
         
-        preview.src = baseURL;
-        embed.value = baseURL;
+        update();
 
         document.getElementById("custom").onchange = () => {
             if (!document.getElementById("custom").checked) preview.src = baseURL;
