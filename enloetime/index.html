@@ -57,6 +57,15 @@
                 line-height: 1.3;
                 word-wrap: break-word;
             }
+            #embed-link {
+                position: fixed;
+                bottom: 10px;
+                left: 10px;
+                font-size: clamp(12px, 2vmin, 20px);
+                color: var(--accent-color);
+                text-decoration: none;
+                z-index: 1000;
+            }
         </style>
         <script>
             const params = new URLSearchParams(window.location.search);
@@ -72,10 +81,12 @@
             <p id="suffix"></p>
             <p id="quote">Loading...</p>
         </div>
+        <a href="embed" style="color: var(--accent-color)" id="embed-link"><u>Embed This Page</u></a>
         <script>
             let quotes = null;
             window.onload = () => {
                 fetch("./quotes.json").then(r => r.json()).then(r => quotes = r).catch(e => console.error("Quotes failed to load."));
+                document.getElementById("embed-link").style.display = (()=>{try{return self!==top}catch(e){return true}})() ? "none" : "";
             };
 
             setInterval(() => {
