@@ -4,14 +4,22 @@
         <title>Embed Helper - (Unofficial) EnloeTime</title>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="color-scheme" content="light dark">
+        <meta name="color-scheme" content="light">
         <link rel="stylesheet" href="pico.min.css">
         <style> .hidden { display: none; } #preview { width: 50vw; height: 50vh; border-radius: 15px; } </style>
     </head>
     <body>
         <article style="margin: 2.25rem; border-radius: 15px;">
             <main class="container">
-                Use custom colors <input type="checkbox" id="custom"/><br><br>
+                <br><select id="lang" aria-label="Select a langauge for quotes...">
+                    <option selected disabled value="en">Select a language for quotes...</option>
+                    <option value="en">English</option>
+                    <option value="es">Español</option>
+                    <option value="fr">Français</option>
+                    <option value="de">Deutsch</option>
+                    <option value="ru">Русский</option>
+                </select><br><br>
+                Use custom colors <input type="checkbox" role="switch" id="custom"/><br><br>
                 <div id="inputs" class="hidden">
                     Main Timer Text Color <input type="color" id="t" value="#90ef90"/><br>
                     Background Color <input type="color" id="b" value="#000000"/><br>
@@ -30,13 +38,14 @@
         const tcolor = document.getElementById("t");
         const bcolor = document.getElementById("b");
         const acolor = document.getElementById("a");
+        const lang = document.getElementById("lang");
         const embed = document.getElementById("embed");
         const preview = document.getElementById("preview");
         const baseURL = "https://abhax101.github.io/files/enloetime/";
         const update = () => {
-            if (!document.getElementById("custom").checked) { preview.src = baseURL; embed.value = `<iframe src="${baseURL}"></iframe>`; }
+            if (!document.getElementById("custom").checked) { preview.src = `${baseURL}?lang=${lang.value}`; embed.value = `<iframe src="${baseURL}?lang=${lang.value}"></iframe>`; }
             else {
-                preview.src = baseURL + `?t=${tcolor.value.substring(1)}&b=${bcolor.value.substring(1)}&a=${acolor.value.substring(1)}`;
+                preview.src = baseURL + `?lang=${lang.value}&t=${tcolor.value.substring(1)}&b=${bcolor.value.substring(1)}&a=${acolor.value.substring(1)}`;
                 embed.value = `<iframe src="${preview.src}"></iframe>`;
             }
         }
@@ -51,6 +60,7 @@
         tcolor.addEventListener("change", update);
         bcolor.addEventListener("change", update);
         acolor.addEventListener("change", update);
+        lang.addEventListener("change", update);
     </script>
     </body>
 </html>
