@@ -29,6 +29,7 @@
                 <center>
                     Embed Code:
                     <textarea style="resize: none;" id="embed" readonly></textarea>
+                    <button id="expand">Open in New Tab</button><br><br>
                     Preview <br><br>
                     <iframe id="preview"></iframe>
                 </center>
@@ -39,6 +40,7 @@
         const bcolor = document.getElementById("b");
         const acolor = document.getElementById("a");
         const lang = document.getElementById("lang");
+        const expand = document.getElementById("expand");
         const embed = document.getElementById("embed");
         const preview = document.getElementById("preview");
         const baseURL = "https://abhax101.github.io/files/enloetime/";
@@ -61,6 +63,8 @@
         bcolor.addEventListener("change", update);
         acolor.addEventListener("change", update);
         lang.addEventListener("change", update);
+
+        expand.addEventListener("click", () => window.open(preview.src));
     </script>
     </body>
 </html>
