@@ -74,7 +74,7 @@
                 if (value) document.documentElement.style.setProperty(`--${key}-color`, `#${value}`);
             });
 
-            const lang = params.get("lang"); window.quotePath = (lang === null) ? "./quotes_es.json" : `./quotes_${lang}.json`;
+            const lang = params.get("lang").toLowerCase(); window.quotePath = (lang === null || lang === "") ? "./quotes_es.json" : `./quotes_${lang}.json`;
         </script>
     </head>
     <body>
