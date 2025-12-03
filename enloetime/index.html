@@ -73,6 +73,8 @@
                 const value = params.get(key[0]);
                 if (value) document.documentElement.style.setProperty(`--${key}-color`, `#${value}`);
             });
+
+            const lang = params.get("lang"); window.quotePath = (lang === null) ? "./quotes_es.json" : `./quotes_${lang}.json`;
         </script>
     </head>
     <body>
@@ -85,7 +87,7 @@
         <script>
             let quotes = null;
             window.onload = () => {
-                fetch("./quotes.json").then(r => r.json()).then(r => quotes = r).catch(e => console.error("Quotes failed to load."));
+                fetch(window.quotePath).then(r => r.json()).then(r => quotes = r).catch(e => console.error("Quotes failed to load."));
                 document.getElementById("embed-link").style.display = (()=>{try{return self!==top}catch(e){return true}})() ? "none" : "";
             };
 
