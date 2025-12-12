@@ -222,191 +222,126 @@
         <div class="card-display empty" id="cardDisplay">
             Select a deck type and draw a card to begin
         </div>
+
+        <div id="drawnCardsList" style="margin-top: 20px;"></div>
     </div>
 
     <script>
-        // Game data
+        // ========================================
+        // PASTE YOUR gameData OBJECT HERE
+        // ========================================
         const gameData = {
-            creatures: {
-                "Verdant Hollow": {
-                    tier1: [
-                        { name: "Thornback Beetle", corruption: 14, fluxType: "Vector", weakness: "Surge", abilities: ["**Chitinous Strike**: Deal 5 corruption", "**Defensive Shell**: Reduce next flux attempt by 3"] },
-                        { name: "Strangling Sprout", corruption: 12, fluxType: "Surge", weakness: "Ether", abilities: ["**Vine Lash**: Deal 6 corruption", "**Root Grasp**: Deal 4 corruption, target's next ability has +1 turn cooldown"] },
-                        { name: "Moss Shambler", corruption: 16, fluxType: "Ether", weakness: "Radiant", abilities: ["**Spore Cloud**: Deal 5 corruption to all resonators in encounter", "**Regenerative Growth**: Restore 4 corruption to self"] }
-                    ],
-                    tier2: [
-                        { name: "Barkskin Brute", corruption: 24, fluxType: "Surge", weakness: "Ether", abilities: ["**Crushing Blow**: Deal 9 corruption", "**Hardened Bark**: Gain 6 corruption shield (absorbs 6 flux before corruption is reduced)"] },
-                        { name: "Venomthorn Creeper", corruption: 22, fluxType: "Vector", weakness: "Surge", abilities: ["**Poison Strike**: Deal 7 corruption, then 2 corruption at start of next 2 resonator turns", "**Toxic Binding**: Deal 5 corruption, target's next ability deals -3 flux"] },
-                        { name: "Bloom Corruptor", corruption: 26, fluxType: "Ether", weakness: "Radiant", abilities: ["**Pollen Burst**: Deal 8 corruption", "**Parasitic Seeds**: Deal 6 corruption, restore 3 corruption to self"] }
-                    ],
-                    tier3: [
-                        { name: "Ancient Warden", corruption: 38, fluxType: "Surge", weakness: "Ether", abilities: ["**Nature's Wrath**: Deal 10 corruption to all resonators in encounter", "**Primal Renewal**: Restore 8 corruption to self (can only be used once per encounter)", "**Overgrowth Armor**: Flux attempts for the next 3 turns deal -4 flux"] }
-                    ]
-                },
-                "Frostbound Expanse": {
-                    tier1: [
-                        { name: "Frostbite Wisp", corruption: 13, fluxType: "Ether", weakness: "Radiant", abilities: ["**Chilling Touch**: Deal 5 corruption", "**Frozen Grasp**: Deal 6 corruption, target's next ability deals -2 flux"] },
-                        { name: "Ice Shard Elemental", corruption: 15, fluxType: "Radiant", weakness: "Vector", abilities: ["**Crystal Barrage**: Deal 6 corruption", "**Brittle Armor**: Deal 8 corruption, this creature takes +2 flux from next attack"] },
-                        { name: "Glacial Creeper", corruption: 14, fluxType: "Vector", weakness: "Surge", abilities: ["**Freezing Slash**: Deal 5 corruption", "**Numbing Cold**: Deal 4 corruption, increase cooldown of target's last used ability by 1 turn"] }
-                    ],
-                    tier2: [
-                        { name: "Blizzard Stalker", corruption: 23, fluxType: "Ether", weakness: "Radiant", abilities: ["**Whiteout Strike**: Deal 8 corruption", "**Freezing Mist**: Deal 5 corruption to all resonators in encounter"] },
-                        { name: "Permafrost Golem", corruption: 27, fluxType: "Radiant", weakness: "Vector", abilities: ["**Crushing Ice**: Deal 9 corruption", "**Glacial Shell**: Gain 7 corruption shield, reduce next 2 flux attempts by 2 each"] },
-                        { name: "Frostbitten Horror", corruption: 21, fluxType: "Vector", weakness: "Surge", abilities: ["**Rending Chill**: Deal 10 corruption", "**Essence Drain**: Deal 6 corruption, target cannot restore Resonance next turn"] }
-                    ],
-                    tier3: [
-                        { name: "Winter's Tyrant", corruption: 40, fluxType: "Radiant", weakness: "Vector", abilities: ["**Absolute Freeze**: Deal 11 corruption, target skips next turn", "**Eternal Winter**: Deal 7 corruption to all resonators in encounter, then 2 corruption at start of each resonator's next turn", "**Ice Fortress**: Reduce all flux attempts by 2 (passive ability - this happens by default)"] }
-                    ]
-                },
-                "Ashen Wastes": {
-                    tier1: [
-                        { name: "Ember Skitterer", corruption: 12, fluxType: "Surge", weakness: "Ether", abilities: ["**Scorching Bite**: Deal 7 corruption", "**Unstable Form**: Deal 5 corruption to target, restore 2 corruption to self"] },
-                        { name: "Ash Phantom", corruption: 15, fluxType: "Ether", weakness: "Radiant", abilities: ["**Choking Dust**: Deal 5 corruption", "**Disorienting Cloud**: Deal 4 corruption, target's next ability costs +1 turn cooldown"] },
-                        { name: "Cinder Prowler", corruption: 14, fluxType: "Vector", weakness: "Surge", abilities: ["**Searing Slash**: Deal 6 corruption", "**Burning Frenzy**: Deal 8 corruption, restore 3 corruption to self"] }
-                    ],
-                    tier2: [
-                        { name: "Flamewraith", corruption: 22, fluxType: "Surge", weakness: "Ether", abilities: ["**Infernal Blast**: Deal 10 corruption", "**Immolation**: Deal 7 corruption to all resonators, restore 4 corruption to self"] },
-                        { name: "Obsidian Behemoth", corruption: 26, fluxType: "Vector", weakness: "Surge", abilities: ["**Crushing Heat**: Deal 9 corruption", "**Molten Armor**: Gain 5 corruption shield, deal 3 corruption to attacker when shield breaks"] },
-                        { name: "Ashstorm Revenant", corruption: 24, fluxType: "Ether", weakness: "Radiant", abilities: ["**Reality Distortion**: Deal 8 corruption", "**Chaotic Surge**: Roll d10. Deal that much corruption, then restore half that amount to self (round down)."] }
-                    ],
-                    tier3: [
-                        { name: "Inferno Colossus", corruption: 36, fluxType: "Surge", weakness: "Ether", abilities: ["**Apocalyptic Flames**: Deal 12 corruption to all resonators in encounter", "**Reckless Eruption**: Deal 15 corruption to target, restore 5 corruption to self", "**Blazing Aura**: Deal 2 corruption to all resonators at the start of each of their turns (passive)"] }
-                    ]
-                },
-                "Ethereal Canopy": {
-                    tier1: [
-                        { name: "Mirage Sprite", corruption: 11, fluxType: "Ether", weakness: "Radiant", abilities: ["**Illusory Strike**: Deal 6 corruption", "**Phantom Dodge**: Negate next flux attempt against this creature"] },
-                        { name: "Dreamtwister", corruption: 14, fluxType: "Radiant", weakness: "Vector", abilities: ["**Psychic Pulse**: Deal 5 corruption", "**Confusion**: Deal 4 corruption, target must use a random ability next turn (you draw one of their ability cards at random for them to use)"] },
-                        { name: "Veilstalker", corruption: 13, fluxType: "Vector", weakness: "Surge", abilities: ["**Unseen Blade**: Deal 7 corruption", "**Fade**: Reduce next flux attempt by 4"] }
-                    ],
-                    tier2: [
-                        { name: "Nightmare Weaver", corruption: 21, fluxType: "Ether", weakness: "Radiant", abilities: ["**Terror Vision**: Deal 9 corruption", "**Mind Fracture**: Deal 6 corruption, target's next ability deals -3 flux"] },
-                        { name: "Starlight Deceiver", corruption: 25, fluxType: "Radiant", weakness: "Vector", abilities: ["**Blinding Radiance**: Deal 8 corruption", "**False Hope**: Restore 5 corruption to self, deal 5 corruption to target"] },
-                        { name: "Phantom Reaver", corruption: 23, fluxType: "Vector", weakness: "Surge", abilities: ["**Spectral Slash**: Deal 10 corruption", "**Between Worlds**: Deal 7 corruption, negate next flux attempt against this creature"] }
-                    ],
-                    tier3: [
-                        { name: "Lucid Nightmare", corruption: 37, fluxType: "Ether", weakness: "Radiant", abilities: ["**Reality Shatter**: Deal 11 corruption, target cannot use abilities with 3 turn cooldowns next turn", "**Mass Hallucination**: Deal 8 corruption to all resonators, one random resonator must skip their next turn", "**Dreamform**: Reduce all flux attempts by 3 (passive ability - this happens by default)"] }
-                    ]
-                },
-                "Crimson Mire": {
-                    tier1: [
-                        { name: "Rot Shambler", corruption: 16, fluxType: "Surge", weakness: "Ether", abilities: ["**Decaying Touch**: Deal 7 corruption", "**Lingering Rot**: Deal 5 corruption, then 2 corruption at start of target's next 2 turns"] },
-                        { name: "Mire Lurker", corruption: 15, fluxType: "Vector", weakness: "Surge", abilities: ["**Coiling Tendrils**: Deal 8 corruption", "**Toxic Spray**: Deal 5 corruption to all resonators in encounter"] },
-                        { name: "Corruption Spawn", corruption: 14, fluxType: "Ether", weakness: "Radiant", abilities: ["**Entropic Bolt**: Deal 7 corruption", "**Corrupting Aura**: Deal 4 corruption, target's next ability has +1 turn cooldown"] }
-                    ],
-                    tier2: [
-                        { name: "Putrescent Abomination", corruption: 28, fluxType: "Surge", weakness: "Ether", abilities: ["**Crushing Decay**: Deal 11 corruption", "**Plague Burst**: Deal 7 corruption to all resonators, restore 3 corruption to self"] },
-                        { name: "Crimson Devourer", corruption: 26, fluxType: "Vector", weakness: "Surge", abilities: ["**Festering Void**: Deal 12 corruption", "**Tainted Siphon**: Deal 8 corruption, restore 4 corruption to self"] },
-                        { name: "Voidtouched Horror", corruption: 24, fluxType: "Ether", weakness: "Radiant", abilities: ["**Reality Collapse**: Deal 10 corruption", "**Spreading Corruption**: Deal 6 corruption, then 3 corruption at start of target's next 3 turns"] }
-                    ],
-                    tier3: [
-                        { name: "Primordial Rot", corruption: 42, fluxType: "Surge", weakness: "Ether", abilities: ["**Overwhelming Decay**: Deal 13 corruption to all resonators in encounter", "**Consuming Darkness**: Deal 15 corruption, restore 6 corruption to self", "**Miasmic Presence**: All resonators take 2 corruption at the start of each of their turns (passive)", "**Regeneration**: Restore 4 corruption to self at the end of each creature turn (passive)"] }
-                    ]
-                }
-            },
-            abilities: {
-                "Grove Harmonizer": [
-                    { name: "Echo Wave", cooldown: 0, effect: "Deal 6 flux" },
-                    { name: "Pulse Strike", cooldown: 0, effect: "Deal 5 flux. Next corruption attempt against you deals -1 corruption" },
-                    { name: "Resonant Beat", cooldown: 1, effect: "Deal 4 flux, restore 2 Res. to self" },
-                    { name: "Sonic Boom", cooldown: 1, effect: "Deal 9 flux" },
-                    { name: "Protective Pulse", cooldown: 2, effect: "Grant 3 Resonance shield to all allies (absorbs next 3 corruption)" },
-                    { name: "Harmonizing Wave", cooldown: 2, effect: "Restore 4 Resonance to self or ally" },
-                    { name: "Nature's Vigor", cooldown: 2, effect: "Restore 3 Resonance to all allies" },
-                    { name: "Tremor Force", cooldown: 2, effect: "Deal 11 flux" },
-                    { name: "Synchronized Rhythm", cooldown: 2, effect: "All allies' next attacks deal +3 flux" },
-                    { name: "Crescendo", cooldown: 3, effect: "Deal 15 flux (can only be used if below 50% Resonance)" }
-                ],
-                "Astral Tuner": [
-                    { name: "Mystic Bolt", cooldown: 0, effect: "Deal 6 flux" },
-                    { name: "Arcane Shard", cooldown: 0, effect: "Deal 5 flux, restore 1 resonance to self" },
-                    { name: "Phase Shift", cooldown: 1, effect: "Avoid next corruption attempt against you" },
-                    { name: "Reality Tear", cooldown: 1, effect: "Deal 10 flux" },
-                    { name: "Astral Mirror", cooldown: 1, effect: "Deflect half of next corruption attempt back at creature" },
-                    { name: "Ethereal Chains", cooldown: 2, effect: "Deal 6 flux, creature's next attack deals -3 corruption" },
-                    { name: "Void Collapse", cooldown: 2, effect: "Deal 13 flux" },
-                    { name: "Mind Fracture", cooldown: 2, effect: "Deal 8 flux, creature's next attack is reduced by roll of d10 divided by 2 (round up)" },
-                    { name: "Dimensional Slip", cooldown: 3, effect: "Deal 12 flux, negate creature's next attack" },
-                    { name: "Cosmic Surge", cooldown: 3, effect: "Deal 16 flux (can only be used if above 75% Resonance)" }
-                ],
-                "Frost Calibrator": [
-                    { name: "Piercing Ray", cooldown: 0, effect: "Deal 6 flux" },
-                    { name: "Light Beam", cooldown: 0, effect: "Deal 5 flux, reduce cooldown of one of your abilities by 1 turn" },
-                    { name: "Frost Lance", cooldown: 1, effect: "Deal 8 flux" },
-                    { name: "Glacial Shard", cooldown: 1, effect: "Deal 7 flux, creature skips next turn" },
-                    { name: "Blinding Flash", cooldown: 1, effect: "Creature's next attack deals -4 corruption" },
-                    { name: "Permafrost", cooldown: 2, effect: "Deal 10 flux, reduce creature's next 2 attacks by 2 each" },
-                    { name: "Crystal Barrier", cooldown: 2, effect: "Grant ally a 5 Resonance shield" },
-                    { name: "Absolute Zero", cooldown: 3, effect: "Deal 6 flux, creature cannot act next turn" },
-                    { name: "Aurora Wave", cooldown: 3, effect: "Deal 8 flux to creature, restore 2 Resonance to all allies" },
-                    { name: "Diamond Storm", cooldown: 3, effect: "Deal 14 flux" }
-                ],
-                "Shadow Weaver": [
-                    { name: "Swift Cut", cooldown: 0, effect: "Deal 6 flux" },
-                    { name: "Shadow Slash", cooldown: 0, effect: "Deal 5 flux. Your next ability deals +1 flux" },
-                    { name: "Precision Strike", cooldown: 1, effect: "Deal 9 flux" },
-                    { name: "Weakpoint Mark", cooldown: 1, effect: "Next ally's attack deals +4 flux" },
-                    { name: "Veil Strike", cooldown: 2, effect: "Deal 8 flux, become untargetable until your next turn" },
-                    { name: "Shadow Step", cooldown: 1, effect: "Deal 7 flux, +3 flux to your next ability" },
-                    { name: "Corrupted Edge", cooldown: 2, effect: "Deal 5 flux, your next 2 abilities deal +3 flux each" },
-                    { name: "Disconnect", cooldown: 3, effect: "Deal 10 flux (15 if creature below 30% corruption remaining)" },
-                    { name: "Nightfall", cooldown: 3, effect: "All allies deal +2 flux for 2 turns" },
-                    { name: "Perfect Precision", cooldown: 3, effect: "Deal 17 flux (can only be used if above 75% Resonance)" }
-                ]
-            },
-            catalysts: [
-                { name: "Overwhelming Surge", count: 3, effect: "Deal 12 flux to a creature. If this reduces the creature to 0 corruption, restore 3 Resonance to self." },
-                { name: "Synchronized Resonance", count: 3, effect: "All resonators in the current encounter deal +6 flux on their next ability (including yourself)." },
-                { name: "Purification Nova", count: 3, effect: "Deal 8 flux to a creature, then restore 4 Resonance to all resonators in the encounter." },
-                { name: "Nullification Field", count: 3, effect: "Negate the next corruption attempt against all resonators in the current encounter. Can be used on any resonator's turn during combat." },
-                { name: "Desperate Gambit", count: 2, effect: "Deal 18 flux to a creature, but lose 5 Resonance. Cannot reduce your Resonance below 1." },
-                { name: "Corrupt Influence", count: 1, effect: "SECRET CARD - You are under the Entropist's control. Keep this card hidden. When any resonator enters Crimson Mire and triggers the final encounter, you reveal this card and from then on you cannot move or use abilities. On your turn, roll d10; roll 8+ and you break free and can act normally for the rest of the encounter." }
-            ],
-            augments: [
-                { name: "Minor Stabilizer", count: 2, effect: "Restore 3 Resonance to self" },
-                { name: "Stabilizer", count: 2, effect: "Restore 5 Resonance to self or ally" },
-                { name: "Greater Stabilizer", count: 2, effect: "Restore 7 Resonance to self or ally" },
-                { name: "Barrier Field", count: 2, effect: "Grant 5 Resonance shield to self (absorbs next 5 corruption)" },
-                { name: "Reinforced Barrier", count: 2, effect: "Grant 7 Resonance shield to self or ally" },
-                { name: "Group Barrier", count: 2, effect: "Grant 4 Resonance shield to all resonators" },
-                { name: "Predictive Analysis", count: 2, effect: "If you rolled <5 for biome effect roll, add 5 to that number" },
-                { name: "Evasive Maneuver", count: 2, effect: "Move back 1 space (avoiding current token), skip next biome effect roll" },
-                { name: "Recalibration Protocol", count: 1, effect: "Restore corrupted ally to 8 Resonance (can only be used on resonators at 0 Resonance). Restored ally draws 2 new abilities. Takes effect immediately, even during an encounter" },
-                { name: "Emergency Recalibration", count: 1, effect: "Restore corrupted ally to 10 Resonance (can only be used on resonators at 0 Resonance). Restored ally draws 2 new abilities. Takes effect immediately, even during an encounter" },
-                { name: "Flux Amplifier", count: 2, effect: "Your next ability deals +5 flux" },
-                { name: "Temporal Reset", count: 2, effect: "Reduce cooldown of one of your abilities by 1 turn" },
-                { name: "Shared Burden", count: 2, effect: "Transfer up to 5 of your Resonance to an ally" },
-                { name: "Second Wind", count: 2, effect: "Restore 4 Resonance to self, your next ability has no cooldown" },
-                { name: "Resonant Harmony", count: 2, effect: "All resonators restore 2 Resonance" },
-                { name: "Catalyst Draw", count: 2, effect: "Draw 1 Catalyst card if available" }
-            ]
+            // Your creatures, abilities, catalysts, and augments data goes here
         };
 
-
-        // Deck state management
+        // Deck state management - stores state for each unique deck configuration
+        let deckStates = {};
         let currentDeck = [];
         let drawnCards = [];
+        let currentDeckKey = '';
 
         const deckTypeSelect = document.getElementById('deckType');
         const optionsContainer = document.getElementById('optionsContainer');
         const drawButton = document.getElementById('drawButton');
         const reshuffleButton = document.getElementById('reshuffleButton');
         const cardDisplay = document.getElementById('cardDisplay');
+        const drawnCardsList = document.getElementById('drawnCardsList');
 
         deckTypeSelect.addEventListener('change', handleDeckTypeChange);
         drawButton.addEventListener('click', drawCard);
         reshuffleButton.addEventListener('click', reshuffleDeck);
 
+        function getDeckKey() {
+            const deckType = deckTypeSelect.value;
+            if (!deckType) return '';
+            
+            if (deckType === 'creature') {
+                const biome = document.getElementById('biomeSelect')?.value || '';
+                const tier = document.getElementById('tierSelect')?.value || '';
+                return `creature-${biome}-${tier}`;
+            } else if (deckType === 'ability') {
+                const resonator = document.getElementById('resonatorSelect')?.value || '';
+                return `ability-${resonator}`;
+            } else {
+                return deckType;
+            }
+        }
+
+        function saveDeckState() {
+            if (currentDeckKey) {
+                deckStates[currentDeckKey] = {
+                    deck: [...currentDeck],
+                    drawn: [...drawnCards]
+                };
+            }
+        }
+
+        function loadDeckState() {
+            currentDeckKey = getDeckKey();
+            if (deckStates[currentDeckKey]) {
+                currentDeck = [...deckStates[currentDeckKey].deck];
+                drawnCards = [...deckStates[currentDeckKey].drawn];
+            } else {
+                currentDeck = [];
+                drawnCards = [];
+            }
+        }
+
+        function updateDrawnCardsList() {
+            if (drawnCards.length === 0) {
+                drawnCardsList.innerHTML = '';
+                return;
+            }
+
+            const deckType = deckTypeSelect.value;
+            let listHTML = `
+                <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 10px; backdrop-filter: blur(10px);">
+                    <h3 style="color: #f39c12; margin-bottom: 15px;">📜 Previously Drawn Cards</h3>
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+            `;
+
+            // Show most recent first (reverse order)
+            for (let i = drawnCards.length - 1; i >= 0; i--) {
+                const card = drawnCards[i];
+                let cardSummary = '';
+
+                if (deckType === 'creature') {
+                    cardSummary = `<strong>${card.name}</strong> <span style="color: #aaa;">(${card.biome}, Tier ${card.tier}, ${card.corruption} Corruption)</span>`;
+                } else if (deckType === 'ability') {
+                    cardSummary = `<strong>${card.name}</strong> <span style="color: #aaa;">(${card.cooldown} turn cooldown)</span>`;
+                } else {
+                    cardSummary = `<strong>${card.name}</strong>`;
+                }
+
+                listHTML += `
+                    <div style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 5px; border-left: 3px solid #3498db;">
+                        ${cardSummary}
+                    </div>
+                `;
+            }
+
+            listHTML += `
+                    </div>
+                </div>
+            `;
+
+            drawnCardsList.innerHTML = listHTML;
+        }
+
         function handleDeckTypeChange() {
+            saveDeckState(); // Save current state before switching
+            
             const deckType = deckTypeSelect.value;
             optionsContainer.innerHTML = '';
-            currentDeck = [];
-            drawnCards = [];
             cardDisplay.className = 'card-display empty';
             cardDisplay.innerHTML = 'Select options and draw a card';
 
             if (!deckType) {
                 drawButton.disabled = true;
+                currentDeckKey = '';
+                currentDeck = [];
+                drawnCards = [];
+                updateDrawnCardsList();
                 return;
             }
 
@@ -433,8 +368,14 @@
                         </div>
                     </div>
                 `;
-                document.getElementById('biomeSelect').addEventListener('change', buildCreatureDeck);
-                document.getElementById('tierSelect').addEventListener('change', buildCreatureDeck);
+                document.getElementById('biomeSelect').addEventListener('change', () => {
+                    saveDeckState();
+                    buildCreatureDeck();
+                });
+                document.getElementById('tierSelect').addEventListener('change', () => {
+                    saveDeckState();
+                    buildCreatureDeck();
+                });
                 buildCreatureDeck();
             } else if (deckType === 'ability') {
                 optionsContainer.innerHTML = `
@@ -451,7 +392,10 @@
                         Draw 4 ability cards at setup. Choose 3 to keep, shuffle the rest back.
                     </div>
                 `;
-                document.getElementById('resonatorSelect').addEventListener('change', buildAbilityDeck);
+                document.getElementById('resonatorSelect').addEventListener('change', () => {
+                    saveDeckState();
+                    buildAbilityDeck();
+                });
                 buildAbilityDeck();
             } else if (deckType === 'catalyst') {
                 buildCatalystDeck();
@@ -465,69 +409,92 @@
         function buildCreatureDeck() {
             const biome = document.getElementById('biomeSelect').value;
             const tier = document.getElementById('tierSelect').value;
-            currentDeck = [];
-            drawnCards = [];
+            
+            loadDeckState();
+            
+            // Only rebuild if this is a new deck configuration
+            if (currentDeck.length === 0 && drawnCards.length === 0) {
+                const biomes = biome === 'all' ? Object.keys(gameData.creatures) : [biome];
 
-            const biomes = biome === 'all' ? Object.keys(gameData.creatures) : [biome];
+                biomes.forEach(biomeName => {
+                    const biomeData = gameData.creatures[biomeName];
+                    
+                    if (tier === 'normal') {
+                        // Tier 1: 5 copies each
+                        biomeData.tier1.forEach(creature => {
+                            for (let i = 0; i < 5; i++) {
+                                currentDeck.push({ ...creature, biome: biomeName, tier: 1 });
+                            }
+                        });
+                    } else {
+                        // Tier 2: 4 copies each
+                        biomeData.tier2.forEach(creature => {
+                            for (let i = 0; i < 4; i++) {
+                                currentDeck.push({ ...creature, biome: biomeName, tier: 2 });
+                            }
+                        });
+                        // Tier 3: 2 copies each
+                        biomeData.tier3.forEach(creature => {
+                            for (let i = 0; i < 2; i++) {
+                                currentDeck.push({ ...creature, biome: biomeName, tier: 3 });
+                            }
+                        });
+                    }
+                });
 
-            biomes.forEach(biomeName => {
-                const biomeData = gameData.creatures[biomeName];
-                
-                if (tier === 'normal') {
-                    // Tier 1: 5 copies each
-                    biomeData.tier1.forEach(creature => {
-                        for (let i = 0; i < 5; i++) {
-                            currentDeck.push({ ...creature, biome: biomeName, tier: 1 });
-                        }
-                    });
-                } else {
-                    // Tier 2: 4 copies each
-                    biomeData.tier2.forEach(creature => {
-                        for (let i = 0; i < 4; i++) {
-                            currentDeck.push({ ...creature, biome: biomeName, tier: 2 });
-                        }
-                    });
-                    // Tier 3: 2 copies each
-                    biomeData.tier3.forEach(creature => {
-                        for (let i = 0; i < 2; i++) {
-                            currentDeck.push({ ...creature, biome: biomeName, tier: 3 });
-                        }
-                    });
-                }
-            });
-
-            shuffleDeck(currentDeck);
+                shuffleDeck(currentDeck);
+            }
+            
+            saveDeckState();
             drawButton.disabled = false;
+            updateDrawnCardsList();
         }
 
         function buildAbilityDeck() {
             const resonator = document.getElementById('resonatorSelect').value;
-            currentDeck = gameData.abilities[resonator].map(a => ({ ...a, resonator }));
-            drawnCards = [];
-            shuffleDeck(currentDeck);
+            
+            loadDeckState();
+            
+            if (currentDeck.length === 0 && drawnCards.length === 0) {
+                currentDeck = gameData.abilities[resonator].map(a => ({ ...a, resonator }));
+                shuffleDeck(currentDeck);
+            }
+            
+            saveDeckState();
             drawButton.disabled = false;
+            updateDrawnCardsList();
         }
 
         function buildCatalystDeck() {
-            currentDeck = [];
-            drawnCards = [];
-            gameData.catalysts.forEach(catalyst => {
-                for (let i = 0; i < catalyst.count; i++) {
-                    currentDeck.push({ ...catalyst });
-                }
-            });
-            shuffleDeck(currentDeck);
+            loadDeckState();
+            
+            if (currentDeck.length === 0 && drawnCards.length === 0) {
+                gameData.catalysts.forEach(catalyst => {
+                    for (let i = 0; i < catalyst.count; i++) {
+                        currentDeck.push({ ...catalyst });
+                    }
+                });
+                shuffleDeck(currentDeck);
+            }
+            
+            saveDeckState();
+            updateDrawnCardsList();
         }
 
         function buildAugmentDeck() {
-            currentDeck = [];
-            drawnCards = [];
-            gameData.augments.forEach(augment => {
-                for (let i = 0; i < augment.count; i++) {
-                    currentDeck.push({ ...augment });
-                }
-            });
-            shuffleDeck(currentDeck);
+            loadDeckState();
+            
+            if (currentDeck.length === 0 && drawnCards.length === 0) {
+                gameData.augments.forEach(augment => {
+                    for (let i = 0; i < augment.count; i++) {
+                        currentDeck.push({ ...augment });
+                    }
+                });
+                shuffleDeck(currentDeck);
+            }
+            
+            saveDeckState();
+            updateDrawnCardsList();
         }
 
         function shuffleDeck(deck) {
@@ -538,6 +505,12 @@
         }
 
         function reshuffleDeck() {
+            // Clear the state for this deck configuration
+            currentDeckKey = getDeckKey();
+            if (currentDeckKey) {
+                delete deckStates[currentDeckKey];
+            }
+            
             drawnCards = [];
             const deckType = deckTypeSelect.value;
             
@@ -553,6 +526,7 @@
             
             cardDisplay.className = 'card-display empty';
             cardDisplay.innerHTML = 'Deck reshuffled! Draw a card to continue.';
+            updateDrawnCardsList();
         }
 
         function drawCard() {
@@ -567,7 +541,9 @@
             const card = currentDeck.splice(randomIndex, 1)[0];
             drawnCards.push(card);
 
+            saveDeckState();
             displayCard(card);
+            updateDrawnCardsList();
         }
 
         function displayCard(card) {
