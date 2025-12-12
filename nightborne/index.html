@@ -459,9 +459,9 @@
                 if (deckType === 'creature') {
                     cardSummary = `<strong>${card.name}</strong> <span style="color: #aaa;">(${card.biome}, Tier ${card.tier}, ${card.corruption} Corruption)</span>`;
                 } else if (deckType === 'ability') {
-                    cardSummary = `<strong>${card.name}</strong> <span style="color: #aaa;">(${card.cooldown} turn cooldown)</span>`;
+                    cardSummary = `<strong>${card.name}</strong> <span style="color: #aaa;">(${card.cooldown} turn cooldown)</span> <span>${card.effect}</span>`;
                 } else {
-                    cardSummary = `<strong>${card.name}</strong>`;
+                    cardSummary = `<strong>${card.name}</strong>: <span>${card.effect}</span>`;
                 }
 
                 listHTML += `
