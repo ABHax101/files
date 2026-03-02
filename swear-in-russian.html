@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Russian Mat — Reference Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;900&family=IBM+Plex+Mono:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0d0f;
+    --surface: #141418;
+    --border: #2a2a35;
+    --accent-red: #ff3b3b;
+    --accent-gold: #f5c842;
+    --accent-blue: #4da6ff;
+    --accent-green: #3ddc84;
+    --accent-purple: #b87fff;
+    --text: #e8e8f0;
+    --muted: #6b6b80;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'IBM Plex Mono', monospace;
+    min-height: 100vh;
+    padding: 40px 20px;
+  }
+
+  .noise {
+    position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    opacity: 0.4;
+  }
+
+  .container { max-width: 1100px; margin: 0 auto; position: relative; z-index: 1; }
+
+  header { margin-bottom: 48px; }
+
+  .eyebrow {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    color: var(--accent-red);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  h1 {
+    font-family: 'Unbounded', sans-serif;
+    font-size: clamp(28px, 5vw, 56px);
+    font-weight: 900;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+  }
+
+  h1 .cyrillic {
+    color: var(--accent-red);
+    display: block;
+  }
+
+  .subtitle {
+    margin-top: 16px;
+    color: var(--muted);
+    font-size: 13px;
+    max-width: 500px;
+    line-height: 1.7;
+  }
+
+  /* FILTERS */
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 32px;
+    align-items: center;
+  }
+
+  .filter-label {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-right: 4px;
+  }
+
+  .filter-btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    padding: 6px 14px;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.15s;
+    letter-spacing: 0.05em;
+  }
+
+  .filter-btn:hover { border-color: var(--accent-gold); color: var(--accent-gold); }
+  .filter-btn.active { background: var(--accent-red); border-color: var(--accent-red); color: white; }
+  .filter-btn[data-root="хуй"].active { background: var(--accent-blue); border-color: var(--accent-blue); }
+  .filter-btn[data-root="пизд"].active { background: var(--accent-purple); border-color: var(--accent-purple); }
+  .filter-btn[data-root="блядь"].active { background: var(--accent-gold); border-color: var(--accent-gold); color: #000; }
+  .filter-btn[data-vibe="positive"].active { background: var(--accent-green); border-color: var(--accent-green); color: #000; }
+  .filter-btn[data-vibe="negative"].active { background: var(--accent-red); border-color: var(--accent-red); }
+  .filter-btn[data-vibe="neutral"].active { background: var(--muted); border-color: var(--muted); color: #000; }
+
+  /* MAIN TABLE */
+  .table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  thead {
+    background: var(--surface);
+    border-bottom: 2px solid var(--border);
+  }
+
+  th {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 14px 18px;
+    text-align: left;
+    white-space: nowrap;
+  }
+
+  tr {
+    border-bottom: 1px solid var(--border);
+    transition: background 0.12s;
+  }
+
+  tr:last-child { border-bottom: none; }
+  tr:hover td { background: #1a1a22; }
+
+  td {
+    padding: 14px 18px;
+    vertical-align: top;
+    line-height: 1.5;
+  }
+
+  td.word {
+    font-size: 18px;
+    font-weight: 500;
+    white-space: nowrap;
+    letter-spacing: 0.02em;
+  }
+
+  .root-tag {
+    display: inline-block;
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 2px;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+  }
+
+  .root-еб { background: rgba(255,59,59,0.15); color: var(--accent-red); border: 1px solid rgba(255,59,59,0.3); }
+  .root-хуй { background: rgba(77,166,255,0.12); color: var(--accent-blue); border: 1px solid rgba(77,166,255,0.3); }
+  .root-пизд { background: rgba(184,127,255,0.12); color: var(--accent-purple); border: 1px solid rgba(184,127,255,0.3); }
+  .root-блядь { background: rgba(245,200,66,0.12); color: var(--accent-gold); border: 1px solid rgba(245,200,66,0.3); }
+
+  .prefix-tag {
+    font-size: 11px;
+    color: var(--muted);
+    font-style: italic;
+  }
+
+  .prefix-tag span {
+    color: var(--accent-gold);
+    font-style: normal;
+    font-weight: 500;
+  }
+
+  .vibe {
+    display: inline-block;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    margin-right: 6px;
+    flex-shrink: 0;
+  }
+
+  .vibe-positive { background: var(--accent-green); box-shadow: 0 0 6px var(--accent-green); }
+  .vibe-negative { background: var(--accent-red); box-shadow: 0 0 6px var(--accent-red); }
+  .vibe-neutral { background: var(--muted); }
+
+  .vibe-cell {
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .meaning { color: var(--text); }
+  .usage { color: var(--muted); font-size: 12px; font-style: italic; }
+
+  .highlight { color: var(--accent-gold); }
+
+  /* LEGEND */
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    margin-top: 32px;
+    padding: 20px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--surface);
+  }
+
+  .legend-title {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 9px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--muted);
+    width: 100%;
+    margin-bottom: 4px;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  /* PREFIX SECTION */
+  .prefix-section {
+    margin-top: 48px;
+  }
+
+  .section-title {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .prefix-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+  }
+
+  .prefix-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 16px;
+    transition: border-color 0.15s;
+  }
+
+  .prefix-card:hover { border-color: var(--accent-gold); }
+
+  .prefix-name {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--accent-gold);
+    margin-bottom: 6px;
+  }
+
+  .prefix-meaning {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .count { margin-top: 0; font-size: 100%; }
+
+  /* FOSSIL SECTION */
+  .fossil-section { margin-top: 48px; }
+
+  .fossil-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 12px;
+  }
+
+  .fossil-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 20px;
+    transition: border-color 0.15s;
+  }
+
+  .fossil-card:hover { border-color: rgba(255,59,59,0.4); }
+
+  .fossil-top {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+  }
+
+  .fossil-word {
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--text);
+  }
+
+  .fossil-origin {
+    font-size: 11px;
+    color: var(--muted);
+    font-style: italic;
+  }
+
+  .fossil-origin span { color: var(--accent-red); font-style: normal; }
+
+  .fossil-meaning {
+    font-size: 13px;
+    color: var(--accent-gold);
+    margin-bottom: 6px;
+    font-weight: 500;
+  }
+
+  .fossil-notes {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .fossil-example {
+    margin-top: 10px;
+    padding: 8px 12px;
+    background: rgba(255,255,255,0.03);
+    border-left: 2px solid var(--accent-red);
+    font-size: 12px;
+    line-height: 1.6;
+  }
+
+  .fossil-example .ru { color: var(--text); }
+  .fossil-example .en { color: var(--muted); font-style: italic; }
+
+  /* SUBSTITUTE SECTION */
+  .sub-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 12px;
+    margin-top: 20px;
+  }
+
+  .sub-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .sub-arrow {
+    font-size: 11px;
+    color: var(--muted);
+    text-align: center;
+    flex-shrink: 0;
+  }
+
+  .sub-real { font-size: 16px; color: var(--accent-red); font-weight: 500; }
+  .sub-safe { font-size: 16px; color: var(--accent-green); font-weight: 500; }
+  .sub-gloss { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .hidden { display: none; }
+
+  .search-wrap {
+    margin-bottom: 16px;
+  }
+
+  input[type="text"] {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    padding: 10px 16px;
+    width: 100%;
+    max-width: 340px;
+    border-radius: 2px;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  input[type="text"]:focus { border-color: var(--accent-red); }
+  input[type="text"]::placeholder { color: var(--muted); }
+
+  .row-count {
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 12px;
+    letter-spacing: 0.1em;
+  }
+</style>
+</head>
+<body>
+<div class="noise"></div>
+<div class="container">
+
+  <header>
+    <p class="eyebrow">Linguistic Reference</p>
+    <h1>Russian Mat<br><span class="cyrillic">Русский мат</span></h1>
+    <p class="subtitle">Roots, prefixes, and how they combine. Every form organized. Filter by root or vibe to navigate.</p>
+  </header>
+
+  <div class="search-wrap">
+    <input type="text" id="search" placeholder="search words, meanings..." oninput="applyFilters()">
+  </div>
+
+  <div class="filters">
+    <span class="filter-label">Root:</span>
+    <button class="filter-btn active" data-root="all" onclick="setRootFilter('all', this)">All</button>
+    <button class="filter-btn" data-root="еб" onclick="setRootFilter('еб', this)">еб-</button>
+    <button class="filter-btn" data-root="хуй" onclick="setRootFilter('хуй', this)">хуй/ху-</button>
+    <button class="filter-btn" data-root="пизд" onclick="setRootFilter('пизд', this)">пизд-</button>
+    <button class="filter-btn" data-root="блядь" onclick="setRootFilter('блядь', this)">блядь-</button>
+    <span class="filter-label" style="margin-left:12px">Vibe:</span>
+    <button class="filter-btn" data-vibe="positive" onclick="setVibeFilter('positive', this)">● Positive</button>
+    <button class="filter-btn" data-vibe="negative" onclick="setVibeFilter('negative', this)">● Negative</button>
+    <button class="filter-btn" data-vibe="neutral" onclick="setVibeFilter('neutral', this)">● Neutral</button>
+  </div>
+
+  <div class="row-count" id="rowCount"></div>
+
+  <div class="table-wrap">
+    <table id="mainTable">
+      <thead>
+        <tr>
+          <th>Word</th>
+          <th>Root</th>
+          <th>Prefix / Form</th>
+          <th>Vibe</th>
+          <th>Meaning</th>
+          <th>Usage / Notes</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody">
+      </tbody>
+    </table>
+  </div>
+
+  <div class="legend">
+    <div class="legend-title">Legend</div>
+    <div class="legend-item"><span class="vibe vibe-positive"></span> Positive — compliment, amazement, approval</div>
+    <div class="legend-item"><span class="vibe vibe-negative"></span> Negative — insult, doom, bad state</div>
+    <div class="legend-item"><span class="vibe vibe-neutral"></span> Neutral — action verb, indifference, or context-dependent</div>
+  </div>
+
+  <div class="prefix-section">
+    <p class="section-title">Prefix Cheat Sheet — what they do to any root</p>
+    <div class="prefix-grid" id="prefixGrid"></div>
+  </div>
+
+  <div class="fossil-section">
+    <p class="section-title">Fossilized &amp; Bleached Phrases — original meaning has left the building</p>
+    <div class="fossil-grid" id="fossilGrid"></div>
+  </div>
+
+  <div class="fossil-section">
+    <p class="section-title">Safe Substitutes — grandma-approved versions</p>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:4px">Same sounds, plausibly deniable. Everyone knows what you mean.</p>
+    <div class="sub-grid" id="subGrid"></div>
+  </div>
+
+</div>
+
+<script>
+const data = [
+  // ЕБ- root
+  { word: "ебать", root: "еб", prefix: "—", vibe: "neutral", meaning: "to fuck", usage: "base verb, rarely used literally in speech anymore" },
+  { word: "заебать", root: "еб", prefix: "за-", vibe: "negative", meaning: "to annoy the hell out of someone", usage: "заебал! = you're driving me insane" },
+  { word: "заебался", root: "еб", prefix: "за-", vibe: "negative", meaning: "I'm exhausted / totally fed up", usage: "extremely common, almost casual in male speech" },
+  { word: "заебись", root: "еб", prefix: "за-", vibe: "positive", meaning: "fucking awesome", usage: "confusing for learners — positive! за- here = maxed out good" },
+  { word: "выебать", root: "еб", prefix: "вы-", vibe: "negative", meaning: "to reprimand harshly / to nail someone", usage: "boss выебал employees = chewed them out" },
+  { word: "наебать", root: "еб", prefix: "на-", vibe: "negative", meaning: "to deceive, to con, to trick", usage: "меня наебали = I got scammed" },
+  { word: "наебался", root: "еб", prefix: "на-", vibe: "negative", meaning: "got tricked / fell hard / crashed", usage: "context matters: fell down OR got conned" },
+  { word: "проебать", root: "еб", prefix: "про-", vibe: "negative", meaning: "to lose/waste something through carelessness", usage: "проебал ключи = lost the keys like an idiot" },
+  { word: "отъебись", root: "еб", prefix: "от-", vibe: "negative", meaning: "leave me alone / fuck off (from me)", usage: "literally 'unfuck yourself from me' — very common" },
+  { word: "въебать", root: "еб", prefix: "в-", vibe: "neutral", meaning: "to hit hard / crash into / work intensely", usage: "въебать по столу = slam the table; въебать работать = grind hard" },
+  { word: "съебать", root: "еб", prefix: "с-", vibe: "neutral", meaning: "to bail, to run away, to disappear", usage: "съебал с вечеринки = bailed from the party" },
+  { word: "переебать", root: "еб", prefix: "пере-", vibe: "neutral", meaning: "to beat everyone / to outdo / to go too far", usage: "он всех переебал = he topped everyone" },
+  { word: "разъебать", root: "еб", prefix: "раз-", vibe: "negative", meaning: "to destroy completely, smash apart", usage: "машину разъебали = the car got totaled" },
+  { word: "ёбнуть", root: "еб", prefix: "—", vibe: "neutral", meaning: "to hit, bang, do something suddenly (perfective)", usage: "ёбнул кулаком = slammed with a fist" },
+  { word: "ёбаный", root: "еб", prefix: "—", vibe: "negative", meaning: "fucking (adj, universal intensifier)", usage: "ёбаный рот = fucking hell (set phrase)" },
+  { word: "ёбнутый", root: "еб", prefix: "—", vibe: "negative", meaning: "fucked in the head, crazy", usage: "ты ёбнутый? = are you nuts?" },
+  { word: "долбоёб", root: "еб", prefix: "compound", vibe: "negative", meaning: "persistent, drilling idiot", usage: "долб- (to drill) + ёб = someone annoyingly stupid" },
+  { word: "охуеть/охуенно", root: "хуй", prefix: "о-", vibe: "positive", meaning: "to be blown away / incredibly amazing", usage: "о- = overwhelmed; flips negative root positive" },
+
+  // ХУЙ root
+  { word: "хуй", root: "хуй", prefix: "—", vibe: "neutral", meaning: "dick (base noun)", usage: "rarely literal; functions as intensifier root" },
+  { word: "хуёво", root: "хуй", prefix: "—", vibe: "negative", meaning: "things are bad/shitty (state adverb)", usage: "мне хуёво = I feel like shit" },
+  { word: "хуйня", root: "хуй", prefix: "—", vibe: "negative", meaning: "bullshit, garbage, nonsense", usage: "это хуйня = that's crap; extremely common dismissal" },
+  { word: "похуй", root: "хуй", prefix: "по-", vibe: "neutral", meaning: "I don't give a shit / total indifference", usage: "мне похуй = I couldn't care less" },
+  { word: "похуист", root: "хуй", prefix: "по-", vibe: "neutral", meaning: "person with zero fucks to give", usage: "almost an admiring term sometimes" },
+  { word: "нихуя", root: "хуй", prefix: "ни-", vibe: "negative", meaning: "absolutely nothing / not a damn thing", usage: "нихуя не понял = understood absolutely nothing" },
+  { word: "нихуя себе", root: "хуй", prefix: "ни-", vibe: "positive", meaning: "holy shit! / no way! (amazement)", usage: "confusing: same root, but exclamation = wow" },
+  { word: "хуле", root: "хуй", prefix: "—", vibe: "neutral", meaning: "so what? / what do you expect?", usage: "хуле делать = what the fuck else can you do" },
+  { word: "захуярить", root: "хуй", prefix: "за-", vibe: "neutral", meaning: "to throw, hit, or do something hard", usage: "regional/slang variant; хуяр- = action intensifier" },
+  { word: "расхуяриться", root: "хуй", prefix: "рас-", vibe: "neutral", meaning: "to go wild, to let loose", usage: "extreme action form" },
+
+  // ПИЗД- root
+  { word: "пиздец", root: "пизд", prefix: "—", vibe: "negative", meaning: "it's over / total disaster / doom", usage: "standalone noun of catastrophe. нам пиздец = we're finished" },
+  { word: "пиздато", root: "пизд", prefix: "—", vibe: "positive", meaning: "awesome, sick, great", usage: "-ато suffix flips it positive. very slangy/youth" },
+  { word: "пиздёж", root: "пизд", prefix: "—", vibe: "negative", meaning: "lies, bullshit, nonsense talk", usage: "это пиздёж = that's all lies" },
+  { word: "пиздить", root: "пизд", prefix: "—", vibe: "neutral", meaning: "to steal OR to hit/beat", usage: "two meanings: кто пиздит вещи? = who's stealing stuff?" },
+  { word: "пиздануть", root: "пизд", prefix: "—", vibe: "neutral", meaning: "to hit hard (once) / to say something dumb", usage: "perfective one-time action" },
+  { word: "запиздеть", root: "пизд", prefix: "за-", vibe: "negative", meaning: "to start talking endless bullshit", usage: "он запиздел = he went off rambling nonsense" },
+  { word: "отпиздить", root: "пизд", prefix: "от-", vibe: "negative", meaning: "to beat someone up thoroughly", usage: "его отпиздили = he got beaten up" },
+  { word: "пиздатый", root: "пизд", prefix: "—", vibe: "positive", meaning: "excellent, fantastic (adjective)", usage: "пиздатый день = an amazing day" },
+  { word: "распиздяй", root: "пизд", prefix: "рас-", vibe: "negative", meaning: "a slacker, irresponsible mess of a person", usage: "он полный распиздяй = total deadbeat" },
+
+  // БЛЯДЬ root
+  { word: "блядь", root: "блядь", prefix: "—", vibe: "neutral", meaning: "whore / fuck! (interjection)", usage: "as interjection = like saying 'fuck' when you stub your toe" },
+  { word: "блин", root: "блядь", prefix: "—", vibe: "neutral", meaning: "fudge / shoot (polite substitute)", usage: "блин = pancake, used as polite блядь replacement" },
+  { word: "блядский", root: "блядь", prefix: "—", vibe: "negative", meaning: "fucking (adjective intensifier)", usage: "блядский вопрос = fucking question" },
+  { word: "облажаться", root: "блядь", prefix: "о-", vibe: "negative", meaning: "to fuck up, to mess something up", usage: "bleached form, usable in semi-polite contexts" },
+  { word: "разблядоваться", root: "блядь", prefix: "раз-", vibe: "negative", meaning: "to go completely off the rails morally", usage: "very strong, rarely used" },
+];
+
+const prefixes = [
+  { prefix: "за-", meaning: "to annoy to a limit / maxed out / start doing", example: "заебать, заебись, захуярить" },
+  { prefix: "о-/об-", meaning: "overwhelmed by / blown away — often flips POSITIVE", example: "охуенно, облажаться" },
+  { prefix: "на-", meaning: "onto / accumulation → to deceive or fill up", example: "наебать, наебался" },
+  { prefix: "от-", meaning: "away from / off → leave alone or beat thoroughly", example: "отъебись, отпиздить" },
+  { prefix: "вы-", meaning: "out of → extract, reprimand, finish off", example: "выебать" },
+  { prefix: "про-", meaning: "through / past → lose through negligence", example: "проебать" },
+  { prefix: "с-", meaning: "off/together → disappear, bail", example: "съебать" },
+  { prefix: "в-", meaning: "into → crash into, do intensely", example: "въебать" },
+  { prefix: "раз-", meaning: "apart → destroy completely, go wild", example: "разъебать, расхуяриться" },
+  { prefix: "пере-", meaning: "over/across → surpass, outdo, go too far", example: "переебать" },
+  { prefix: "по-", meaning: "a bit / attitude → indifference", example: "похуй" },
+  { prefix: "ни-", meaning: "not at all / intensified nothing", example: "нихуя" },
+];
+
+let rootFilter = 'all';
+let vibeFilter = 'all';
+
+function setRootFilter(val, btn) {
+  rootFilter = val;
+  document.querySelectorAll('[data-root]').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  applyFilters();
+}
+
+function setVibeFilter(val, btn) {
+  if (vibeFilter === val) {
+    vibeFilter = 'all';
+    btn.classList.remove('active');
+  } else {
+    vibeFilter = val;
+    document.querySelectorAll('[data-vibe]').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+  applyFilters();
+}
+
+function applyFilters() {
+  const search = document.getElementById('search').value.toLowerCase();
+  const rows = document.querySelectorAll('#tableBody tr');
+  let visible = 0;
+  rows.forEach(row => {
+    const r = row.dataset.root;
+    const v = row.dataset.vibe;
+    const text = row.textContent.toLowerCase();
+    const rootOk = rootFilter === 'all' || r === rootFilter;
+    const vibeOk = vibeFilter === 'all' || v === vibeFilter;
+    const searchOk = !search || text.includes(search);
+    if (rootOk && vibeOk && searchOk) {
+      row.classList.remove('hidden');
+      visible++;
+    } else {
+      row.classList.add('hidden');
+    }
+  });
+  document.getElementById('rowCount').textContent = `${visible} form${visible !== 1 ? 's' : ''} shown`;
+}
+
+function buildTable() {
+  const tbody = document.getElementById('tableBody');
+  data.forEach(item => {
+    const tr = document.createElement('tr');
+    tr.dataset.root = item.root;
+    tr.dataset.vibe = item.vibe;
+
+    const vibeLabel = item.vibe.charAt(0).toUpperCase() + item.vibe.slice(1);
+    const rootClass = `root-${item.root}`;
+
+    tr.innerHTML = `
+      <td class="word">${item.word}</td>
+      <td><span class="root-tag ${rootClass}">${item.root}-</span></td>
+      <td class="prefix-tag"><span>${item.prefix}</span></td>
+      <td><div class="vibe-cell"><span class="vibe vibe-${item.vibe}"></span>${vibeLabel}</div></td>
+      <td class="meaning">${item.meaning}</td>
+      <td class="usage">${item.usage}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+  applyFilters();
+}
+
+function buildPrefixes() {
+  const grid = document.getElementById('prefixGrid');
+  prefixes.forEach(p => {
+    const card = document.createElement('div');
+    card.className = 'prefix-card';
+    card.innerHTML = `
+      <div class="prefix-name">${p.prefix}</div>
+      <div class="prefix-meaning">${p.meaning}<br><span style="color:#f5c842;font-size:11px;margin-top:4px;display:block">e.g. ${p.example}</span></div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+buildTable();
+buildPrefixes();
+
+const fossils = [
+  {
+    word: "ёпть / ёпта",
+    origin: "← ёб твою мать",
+    meaning: "yooo / bruh / daaaang / holy shit",
+    notes: "Pure reaction word. Tone does all the work — surprise, frustration, amazement, or just a filler. The 'п' is a softening buffer. Origin is completely vestigial.",
+    example: { ru: "ёпть, он реально сделал это", en: "dude, he actually did it" }
+  },
+  {
+    word: "твою мать",
+    origin: "← ёб твою мать",
+    meaning: "holy shit! / DAMN! / jesus!",
+    notes: "Front half of the phrase got dropped, back half became a standalone exclamation. Pure emotional volume knob — nobody is thinking about anyone's mother.",
+    example: { ru: "ПОЛУЧИЛОСЬ ТВОЮ МАТЬ", en: "IT ACTUALLY WORKED, HOLY SHIT" }
+  },
+  {
+    word: "ёб твою мать",
+    origin: "original phrase",
+    meaning: "fuck! (maximum intensity exclamation)",
+    notes: "The full nuclear version. Rarely needed — the clipped forms have taken over. When someone uses the full phrase, they mean business.",
+    example: { ru: "ёб твою мать, где мои ключи", en: "FOR FUCK'S SAKE, where are my keys" }
+  },
+  {
+    word: "мать твою",
+    origin: "← ёб твою мать (reordered)",
+    meaning: "damn it / for crying out loud",
+    notes: "Same phrase, scrambled word order. Russian is flexible with syntax so the same components get rearranged — same emotional content.",
+    example: { ru: "мать твою, опять опоздал", en: "damn it, late again" }
+  },
+  {
+    word: "блин",
+    origin: "← блядь (substitute)",
+    meaning: "shoot / fudge / dang",
+    notes: "Literally means 'pancake.' Universally understood as a polite stand-in for блядь. Safe for all audiences — plausible deniability intact.",
+    example: { ru: "блин, я забыл!", en: "shoot, I forgot!" }
+  },
+  {
+    word: "нихуя себе",
+    origin: "← нихуя (nothing) + себе (oneself)",
+    meaning: "no way! / holy cow! / whoa!",
+    notes: "Confusing because нихуя alone = 'absolutely nothing' (negative). But нихуя себе flips to amazement/disbelief. The себе changes everything.",
+    example: { ru: "нихуя себе, какая машина!", en: "no way, what a car!" }
+  },
+];
+
+const substitutes = [
+  { real: "блядь", safe: "блин", gloss: "pancake 🥞" },
+  { real: "пиздец", safe: "песец", gloss: "arctic fox 🦊" },
+  { real: "хуй", safe: "хрен", gloss: "horseradish 🌿" },
+  { real: "ёбаный", safe: "ёлки", gloss: "fir trees 🌲" },
+  { real: "ёб твою мать", safe: "ёпть / ёпта", gloss: "softened clip" },
+  { real: "чёрт", safe: "чёрт", gloss: "(already mild — devil)" },
+];
+
+function buildFossils() {
+  const grid = document.getElementById('fossilGrid');
+  fossils.forEach(f => {
+    const card = document.createElement('div');
+    card.className = 'fossil-card';
+    card.innerHTML = `
+      <div class="fossil-top">
+        <span class="fossil-word">${f.word}</span>
+        <span class="fossil-origin">from <span>${f.origin}</span></span>
+      </div>
+      <div class="fossil-meaning">${f.meaning}</div>
+      <div class="fossil-notes">${f.notes}</div>
+      <div class="fossil-example">
+        <div class="ru">${f.example.ru}</div>
+        <div class="en">${f.example.en}</div>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+function buildSubs() {
+  const grid = document.getElementById('subGrid');
+  substitutes.forEach(s => {
+    const card = document.createElement('div');
+    card.className = 'sub-card';
+    card.innerHTML = `
+      <div>
+        <div class="sub-real">${s.real}</div>
+      </div>
+      <div class="sub-arrow">→</div>
+      <div>
+        <div class="sub-safe">${s.safe}</div>
+        <div class="sub-gloss">${s.gloss}</div>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+buildFossils();
+buildSubs();
+</script>
+</body>
+</html>
