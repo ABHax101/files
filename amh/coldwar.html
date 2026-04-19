@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cold War Crash Course</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0c10;
+    --card: #13161d;
+    --accent: #4fc3f7;
+    --accent2: #ef5350;
+    --accent3: #66bb6a;
+    --text: #e8ecf0;
+    --muted: #6b7280;
+    --border: #1e2330;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; min-height: 100vh; overflow-x: hidden; }
+
+  .topbar {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 16px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .topbar h1 { font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; letter-spacing: 2px; color: var(--accent); }
+  .topbar span { font-size: 0.75rem; color: var(--muted); }
+
+  .tabs {
+    display: flex; overflow-x: auto; scrollbar-width: none;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg);
+    position: sticky; top: 53px; z-index: 99;
+    padding: 0 8px; gap: 2px;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab {
+    flex-shrink: 0; padding: 10px 13px;
+    font-size: 0.76rem; font-weight: 600;
+    color: var(--muted); cursor: pointer;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap; transition: all 0.2s;
+    letter-spacing: 0.4px;
+  }
+  .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .tab:hover { color: var(--text); }
+
+  .section { display: none; padding: 16px; padding-bottom: 60px; }
+  .section.active { display: block; animation: fadeIn 0.2s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: none; } }
+
+  .sec-title { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; letter-spacing: 2px; margin-bottom: 3px; line-height: 1; }
+  .sec-subtitle { color: var(--muted); font-size: 0.78rem; margin-bottom: 18px; font-weight: 500; letter-spacing: 0.5px; text-transform: uppercase; }
+
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 15px; margin-bottom: 12px; }
+  .card-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.05rem; letter-spacing: 1.5px; color: var(--accent); margin-bottom: 8px; }
+  .card p { font-size: 0.87rem; line-height: 1.65; color: #c8cdd5; }
+  .card ul { padding-left: 16px; }
+  .card li { font-size: 0.87rem; line-height: 1.75; color: #c8cdd5; }
+  .card li strong { color: var(--text); }
+
+  .hl { background: rgba(79,195,247,0.07); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; padding: 10px 13px; margin: 10px 0; font-size: 0.84rem; line-height: 1.65; color: var(--text); }
+  .hl.red { background: rgba(239,83,80,0.08); border-left-color: var(--accent2); }
+  .hl.green { background: rgba(102,187,106,0.08); border-left-color: var(--accent3); }
+
+  table { width: 100%; border-collapse: collapse; font-size: 0.82rem; margin: 8px 0; }
+  th { background: rgba(79,195,247,0.1); color: var(--accent); font-weight: 600; padding: 8px 10px; text-align: left; font-family: 'Bebas Neue', sans-serif; letter-spacing: 1px; }
+  td { padding: 7px 10px; border-bottom: 1px solid var(--border); color: #c8cdd5; vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+
+  .timeline { position: relative; padding-left: 20px; }
+  .timeline::before { content: ''; position: absolute; left: 6px; top: 0; bottom: 0; width: 2px; background: var(--border); }
+  .tl-item { position: relative; margin-bottom: 14px; }
+  .tl-dot { position: absolute; left: -17px; top: 5px; width: 10px; height: 10px; border-radius: 50%; background: var(--accent); border: 2px solid var(--bg); }
+  .tl-dot.red { background: var(--accent2); }
+  .tl-dot.green { background: var(--accent3); }
+  .tl-date { font-family: 'Bebas Neue', sans-serif; font-size: 0.85rem; color: var(--accent); letter-spacing: 1px; }
+  .tl-text { font-size: 0.85rem; color: #c8cdd5; line-height: 1.55; }
+
+  .vs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 10px 0; }
+  .vs-box { border-radius: 8px; padding: 12px; }
+  .vs-box.usa { background: rgba(79,195,247,0.08); border: 1px solid rgba(79,195,247,0.2); }
+  .vs-box.ussr { background: rgba(239,83,80,0.08); border: 1px solid rgba(239,83,80,0.2); }
+  .vs-label { font-family: 'Bebas Neue', sans-serif; font-size: 0.95rem; letter-spacing: 1px; margin-bottom: 6px; }
+  .vs-box.usa .vs-label { color: var(--accent); }
+  .vs-box.ussr .vs-label { color: var(--accent2); }
+  .vs-box ul { padding-left: 14px; }
+  .vs-box li { font-size: 0.8rem; color: #c8cdd5; line-height: 1.7; }
+
+  .person-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .person-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 12px; }
+  .person-name { font-family: 'Bebas Neue', sans-serif; font-size: 1rem; letter-spacing: 1px; color: var(--accent); margin-bottom: 3px; }
+  .person-role { font-size: 0.7rem; color: var(--accent2); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+  .person-card p { font-size: 0.79rem; color: #9ba3ae; line-height: 1.55; }
+
+  .quiz-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px; margin-bottom: 14px; cursor: pointer; }
+  .quiz-tag { display: inline-block; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; background: rgba(79,195,247,0.1); color: var(--accent); border-radius: 4px; padding: 2px 7px; margin-bottom: 9px; }
+  .quiz-tag.red { background: rgba(239,83,80,0.1); color: var(--accent2); }
+  .quiz-tag.green { background: rgba(102,187,106,0.1); color: var(--accent3); }
+  .quiz-q { font-size: 0.9rem; font-weight: 600; color: var(--text); line-height: 1.5; }
+  .quiz-a { margin-top: 13px; padding-top: 13px; border-top: 1px solid var(--border); font-size: 0.85rem; color: #a5d6a7; line-height: 1.65; display: none; }
+  .quiz-card.revealed .quiz-a { display: block; }
+  .tap-hint { font-size: 0.7rem; color: var(--muted); margin-top: 8px; }
+
+  .term-pill { display: inline-block; background: rgba(79,195,247,0.1); color: var(--accent); border-radius: 4px; padding: 1px 7px; font-size: 0.78rem; font-weight: 600; margin: 2px 2px; }
+  .term-pill.red { background: rgba(239,83,80,0.1); color: var(--accent2); }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <h1>❄️ COLD WAR CRAM</h1>
+  <span>tap to study · good luck lmao</span>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="show('origins')">Origins</div>
+  <div class="tab" onclick="show('europe')">Europe</div>
+  <div class="tab" onclick="show('asia')">Korea/Asia</div>
+  <div class="tab" onclick="show('global')">Goes Global</div>
+  <div class="tab" onclick="show('cuba')">Cuba</div>
+  <div class="tab" onclick="show('home')">Home Front</div>
+  <div class="tab" onclick="show('civil')">Civil Rights</div>
+  <div class="tab" onclick="show('people')">People</div>
+  <div class="tab" onclick="show('quiz')">🎯 Quiz</div>
+</div>
+
+<!-- ORIGINS -->
+<div class="section active" id="origins">
+  <div class="sec-title">Cold War Origins</div>
+  <div class="sec-subtitle">1945–1947 · From allies to enemies</div>
+
+  <div class="card">
+    <div class="card-title">Why They Became Enemies</div>
+    <div class="vs-grid">
+      <div class="vs-box usa">
+        <div class="vs-label">🇺🇸 USA</div>
+        <ul>
+          <li>Capitalism — private ownership</li>
+          <li>Democracy — free elections</li>
+          <li>Angry USSR hid atomic bomb research</li>
+          <li>Angry USSR signed Nazi pact</li>
+          <li>Economy boomed from war</li>
+          <li>Had the atomic bomb</li>
+        </ul>
+      </div>
+      <div class="vs-box ussr">
+        <div class="vs-label">🇷🇺 USSR</div>
+        <ul>
+          <li>Communism — state owns all</li>
+          <li>Totalitarian — one party</li>
+          <li>Angry US kept atom bomb secret</li>
+          <li>20 million dead, devastated</li>
+          <li>Needed friendly neighbors</li>
+          <li>Had world's biggest army</li>
+        </ul>
+      </div>
+    </div>
+    <div class="hl">The <strong>Cold War</strong> = state of hostility <em>short of direct military confrontation</em> between the two superpowers. No direct fighting — everything else was fair game.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Yalta Conference (Feb 1945)</div>
+    <p>FDR, Churchill, and Stalin met at a Soviet Black Sea resort. They agreed to:</p>
+    <ul style="margin-top:8px;">
+      <li>Divide Germany into <strong>4 occupation zones</strong> (US, UK, USSR, France)</li>
+      <li>Also divide <strong>Berlin</strong> the same way, even though it sat inside Soviet territory</li>
+      <li>Allow free elections in liberated countries</li>
+      <li>Create the <strong>United Nations</strong></li>
+    </ul>
+    <div class="hl red">Stalin <strong>broke his promises</strong> immediately. Every country the Red Army occupied became a communist <strong>satellite state</strong> — Poland, Czechoslovakia, Hungary, Romania, Bulgaria, East Germany.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">The Iron Curtain</div>
+    <p>The border between Soviet satellite states and free Western Europe. Stalin seized factories from satellite states to rebuild the USSR. Winston Churchill coined the phrase: <em>"An iron curtain has descended across the continent."</em></p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">US Response: Containment</div>
+    <p>Truman's policy: don't try to roll back communism where it already exists — just <strong>stop it from spreading</strong>. Block it with alliances and aid to weaker countries.</p>
+    <p style="margin-top:8px;"><strong>Truman Doctrine</strong>: US will provide economic AND military aid to any free country resisting communist takeover. First applied to Greece and Turkey (1947).</p>
+    <div class="hl">Truman's logic: he'd seen what happened when leaders appeased Hitler. He refused to repeat it with Stalin.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Who Actually Invented "Containment"?</div>
+    <p>The policy came from <strong>George F. Kennan</strong>, a Soviet expert in the State Department. He sent a famous <strong>"Long Telegram"</strong> (5,540 words) from Moscow explaining Soviet behavior, then published it anonymously as "Mr. X" in the journal <em>Foreign Affairs</em>.</p>
+    <p style="margin-top:8px;">His argument: Russia has an ancient compulsion to expand westward AND a pathological fear of the West. You can't negotiate a quick settlement with Stalin. So draw clear lines — contain the USSR to where it already is — and wait. Eventually, feeling more secure, they'll become negotiable. Cold War is preferable to a hot one that could destroy the world.</p>
+    <div class="hl">Kennan also predicted the Soviets would <em>test</em> American resolve, but carefully — they didn't want war any more than the US did. They just wanted as much control as they could get <em>without</em> war.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">The 1948 Election — Truman Shocks Everyone</div>
+    <p>Truman was considered a dead man politically. The Democrat party split <strong>three ways</strong>:</p>
+    <ul style="margin-top:8px;">
+      <li><strong>Henry Wallace</strong> — left-wing progressives who wanted to preserve the wartime friendship with the USSR</li>
+      <li><strong>Strom Thurmond</strong> — Southern "Dixiecrats" furious about Truman's civil rights moves, formed the States' Rights Party</li>
+      <li><strong>Truman</strong> — the mainstream, with the odds stacked against him</li>
+    </ul>
+    <p style="margin-top:8px;">Republican Thomas Dewey ran a deliberately cautious, say-nothing campaign to avoid blowing his lead. Truman attacked the "do-nothing" Republican Congress relentlessly — "Give 'em Hell, Harry!"</p>
+    <div class="hl green">The Chicago Tribune printed "DEWEY DEFEATS TRUMAN" based on early returns. Truman won <strong>303–189 electoral votes</strong> in one of the greatest upsets in US political history.</div>
+  </div>
+
+    <p>FDR's idea — a postwar international peacekeeping organization. 39 countries met in 1944 to plan it. Over the following decades it aided decolonization, helped create Israel, mediated conflicts, and provided humanitarian aid. But it quickly became an arena where the US and USSR competed for influence.</p>
+  </div>
+</div>
+
+<!-- EUROPE -->
+<div class="section" id="europe">
+  <div class="sec-title">Cold War in Europe</div>
+  <div class="sec-subtitle">1947–1949 · Marshall Plan, Berlin, NATO</div>
+
+  <div class="card">
+    <div class="card-title">Marshall Plan (1948)</div>
+    <p>Western Europe was devastated — food shortages, freezing winters, economic collapse. Perfect breeding ground for communism.</p>
+    <p style="margin-top:8px;">Congress approved <strong>~$13 billion</strong> in grants and loans to rebuild Western Europe. Provided food, fuel, and money to restart economies.</p>
+    <div class="hl green">It worked brilliantly. Rebuilt Western Europe AND created strong trading partners for the US. Aid was offered to Soviet satellites too — Stalin refused to let them take it.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Berlin Crisis & Airlift (1948–49)</div>
+    <p>Berlin was divided into 4 zones but sat deep inside <strong>Soviet East Germany</strong>. The western zones (US + UK + France) were combined into <strong>West Germany</strong>.</p>
+    <p style="margin-top:8px;">Stalin wanted West Berlin. In <strong>June 1948</strong>, he blocked all road, rail, and waterway access — a total blockade. Without supplies, West Berlin would have to surrender.</p>
+    <div class="hl">Stalin couldn't blockade the <em>sky</em>. For <strong>almost a year</strong>, US and British planes flew round-the-clock deliveries — food, fuel, medicine, clothing, even toys. At peak: a plane landed every 90 seconds.</div>
+    <p style="margin-top:8px;">Stalin lifted the blockade in May 1949. The airlift proved the US would go to extreme lengths to contain communism — and that Stalin could be faced down.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">NATO vs. Warsaw Pact</div>
+    <table>
+      <tr><th>NATO (1949)</th><th>Warsaw Pact (1955)</th></tr>
+      <tr><td>US + 11 western countries</td><td>USSR + satellite states</td></tr>
+      <tr><td>Defensive military alliance</td><td>Soviet response to NATO</td></tr>
+      <tr><td colspan="2" style="color:var(--accent); font-weight:600;">Both: attack on one member = attack on all (<strong>collective security</strong>)</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- KOREA / ASIA -->
+<div class="section" id="asia">
+  <div class="sec-title">Korea & Asia</div>
+  <div class="sec-subtitle">1949–1953 · Containment goes hot</div>
+
+  <div class="card">
+    <div class="card-title">China Falls (1949)</div>
+    <p>After Japan left China at the end of WWII, <strong>Mao Zedong's</strong> Communist forces (backed by USSR) fought Chiang Kai-shek's nationalist government (backed by $2 billion in US aid). The US aid wasn't enough. China went communist in 1949.</p>
+    <div class="hl red">Americans were shocked. Containment had <strong>failed</strong> for the first time. Fear of communist expansion spiked hard.</div>
+    <p style="margin-top:8px;">Then in <strong>September 1949</strong>, the USSR tested its first atomic bomb. The US nuclear monopoly was over. Panic.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Korean War (1950–1953)</div>
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-date">Post-WWII Setup</div><div class="tl-text">Korea divided at the <strong>38th parallel</strong>. North = communist (Soviet-backed). South = noncommunist (US-backed).</div></div>
+      <div class="tl-item"><div class="tl-dot red"></div><div class="tl-date">June 25, 1950</div><div class="tl-text">North Korea invades South Korea. Truman sees it as a test of containment — sends troops under <strong>MacArthur</strong> plus UN forces.</div></div>
+      <div class="tl-item"><div class="tl-dot red"></div><div class="tl-date">Early fighting</div><div class="tl-text">US/South Korean forces driven back to the tip of the peninsula (Pusan Perimeter).</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-date">MacArthur's Gamble</div><div class="tl-text">Amphibious invasion at <strong>Inchon</strong> behind enemy lines. North Koreans collapse. US forces push back past the 38th parallel toward China.</div></div>
+      <div class="tl-item"><div class="tl-dot red"></div><div class="tl-date">Nov 1950</div><div class="tl-text"><strong>300,000 Chinese troops</strong> pour across the Yalu River. Drive US forces back below the 38th parallel.</div></div>
+      <div class="tl-item"><div class="tl-dot red"></div><div class="tl-date">MacArthur fired</div><div class="tl-text">MacArthur demands atomic weapons against China. Truman refuses — he wants a <strong>limited war</strong>, not WWIII. MacArthur goes public with his complaints. Truman fires him for insubordination.</div></div>
+      <div class="tl-item"><div class="tl-dot green"></div><div class="tl-date">July 27, 1953</div><div class="tl-text">Ceasefire signed. No victory. 50,000+ Americans dead. Border stays at 38th parallel. US troops still there today.</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Red Scare & McCarthyism</div>
+    <p>With China communist and USSR with nukes, fear of communists inside the US exploded.</p>
+    <ul style="margin-top:8px;">
+      <li><strong>HUAC</strong> (House Un-American Activities Committee) — investigated communist influence in America, especially Hollywood</li>
+      <li><strong>Rosenbergs</strong> (Julius & Ethel) — executed for allegedly passing atomic secrets to the Soviets</li>
+      <li><strong>Alger Hiss</strong> — State Department official convicted of perjury (accused of being a Soviet spy)</li>
+      <li><strong>Senator Joseph McCarthy</strong> — made endless unsupported claims of communists in the US government. <strong>McCarthyism</strong> = making accusations without evidence</li>
+    </ul>
+    <div class="hl red">McCarthy finally went too far when he accused the US <strong>Army</strong> of harboring communists. The Army-McCarthy hearings were televised. The country saw him as a bully. He was censured by the Senate in 1954.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Alger Hiss</div>
+    <p>A State Department official and FDR aide at Yalta. In 1948 a former communist named <strong>Whitaker Chambers</strong> accused Hiss of funneling classified documents to the USSR. Most Republicans were ready to drop it — until <strong>Richard Nixon</strong> pursued the case obsessively.</p>
+    <p style="margin-top:8px;">Nixon produced microfilms suggesting Hiss had retyped classified documents, and poked holes in Hiss's story under questioning. Hiss was convicted of <strong>perjury</strong>. Nixon's career was launched. Americans wondered: how many other "bright New Dealers" were spies?</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">The Rosenbergs & Project Venona</div>
+    <p><strong>Julius and Ethel Rosenberg</strong> — a New York Jewish couple and Communist Party members — were arrested in 1950, charged with heading a Soviet spy ring that passed atomic bomb secrets to the USSR. They denied everything. Many believed they were victims of anti-communist hysteria.</p>
+    <p style="margin-top:8px;">They were executed in June 1953. The controversy raged for decades — were they really guilty?</p>
+    <div class="hl green"><strong>Project Venona</strong>: Since 1946, American cryptographers had secretly cracked Soviet spy codes and were reading ~3,000 messages between Moscow and the US. The messages confirmed the Rosenbergs' guilt — but the government couldn't reveal this without tipping off the Soviets that their codes were broken. The government declassified Project Venona in <strong>1995</strong>, finally providing solid public evidence.</div>
+  </div>
+
+
+    <ul>
+      <li><strong>1949</strong>: USSR tests atomic bomb. US monopoly ends.</li>
+      <li><strong>1952</strong>: US tests hydrogen bomb — <strong>67x more powerful</strong> than Hiroshima bomb (10.4 million tons of TNT)</li>
+      <li><strong>1953</strong>: USSR tests hydrogen bomb</li>
+      <li>Both sides built <strong>ICBMs</strong> (intercontinental ballistic missiles) — nukes deliverable anywhere on Earth</li>
+      <li><strong>Mutually Assured Destruction (MAD)</strong>: if either side launches, both sides are destroyed. So neither side launches.</li>
+      <li><strong>Eisenhower's strategy</strong>: <strong>massive retaliation</strong> — any communist aggression met with overwhelming nuclear force. Also called <strong>brinkmanship</strong> — go to the brink of war to make them back down.</li>
+    </ul>
+  </div>
+</div>
+
+<!-- GOES GLOBAL -->
+<div class="section" id="global">
+  <div class="sec-title">Cold War Goes Global</div>
+  <div class="sec-subtitle">1953–1961 · CIA, Space Race, Kennedy</div>
+
+  <div class="card">
+    <div class="card-title">Eisenhower's CIA Strategy</div>
+    <p>Brinkmanship could stop a Soviet invasion but couldn't stop communist revolutions <em>within</em> countries. Eisenhower's solution: <strong>covert CIA operations</strong> to secretly overthrow anti-American leaders.</p>
+    <ul style="margin-top:8px;">
+      <li><strong>Iran (1953)</strong>: CIA helped overthrow PM Mossadegh (who nationalized oil) and reinstated the Shah (pro-US). Backfired long-term — anti-US sentiment fueled the 1979 Iranian Revolution.</li>
+      <li><strong>Guatemala (1954)</strong>: CIA overthrew elected President Árbenz (who nationalized land from United Fruit Company). Replaced with military dictator.</li>
+    </ul>
+    <div class="hl red">Many developing countries blamed US capitalism for their problems and looked to the USSR as a model for industrialization. The CIA operations made this worse.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Khrushchev Takes Over</div>
+    <p>Stalin died in 1953. <strong>Nikita Khrushchev</strong> emerged as Soviet leader. He accused the US of a "feverish arms race" but also said <em>"we will bury capitalism… your grandchildren will live under communism."</em></p>
+    <p style="margin-top:8px;">Eisenhower tried to set up a summit meeting to ease tensions. Just before it happened, the USSR shot down a US <strong>U-2 spy plane</strong> over Soviet airspace. Summit canceled. Relations cratered.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Space Race</div>
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-dot red"></div><div class="tl-date">Oct 4, 1957</div><div class="tl-text">USSR launches <strong>Sputnik</strong> — world's first satellite. Americans freak out. If they can put a satellite in orbit, they can put a nuke anywhere.</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-date">1958</div><div class="tl-text">Congress creates <strong>NASA</strong> to coordinate US space/rocket research.</div></div>
+      <div class="tl-item"><div class="tl-dot red"></div><div class="tl-date">1961</div><div class="tl-text">USSR sends first human to space: Yuri Gagarin.</div></div>
+      <div class="tl-item"><div class="tl-dot green"></div><div class="tl-date">July 1969</div><div class="tl-text"><strong>Neil Armstrong</strong> walks on the moon. Kennedy's goal achieved (during Nixon's presidency).</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Hungary Uprising (1956)</div>
+    <p>Khrushchev gave a secret speech to Soviet leaders attacking Stalin's policies and saying there were "many roads to communism." The CIA got a copy and broadcast it across Eastern Europe. It sparked riots.</p>
+    <p style="margin-top:8px;">Anti-Soviet Hungarians rebelled and took control of Budapest. The Soviets hesitated — watching to see what the US would do. Dulles had been loudly promising to "roll back" communism and help Eastern Europeans who rebelled.</p>
+    <div class="hl red">Eisenhower and Dulles did <strong>nothing</strong>. Soviet tanks rolled into Budapest and crushed the revolution. The episode shattered confidence in Dulles's bold rhetoric worldwide. Hungary remained a satellite state.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Suez Crisis (1956)</div>
+    <p>Eisenhower wanted Arab nations to align with the US, not the USSR. The US offered to help Egypt build the <strong>Aswan Dam</strong> on the Nile. When Egypt bought weapons from communist Czechoslovakia, Congress forced Dulles to withdraw the offer.</p>
+    <p style="margin-top:8px;">Egypt responded by seizing the <strong>Suez Canal</strong> from the Anglo-French company that controlled it, planning to use its revenues to fund the dam. Britain and France invaded Egypt in 1956.</p>
+    <div class="hl red">Eisenhower was furious — his allies had acted without telling him. The USSR threatened rocket attacks on Britain and France. Eisenhower put US nuclear forces on alert and forced Britain and France to back down. But the damage was done: the USSR won a major diplomatic victory and Arab nations began accepting Soviet aid.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Eisenhower's Farewell Address</div>
+    <p>In 1961 Eisenhower warned Americans about the growing influence of the <strong>military-industrial complex</strong> — the dangerous alliance between the military establishment and the defense industry. He worried that in a democracy, this combination could distort national priorities and foreign policy.</p>
+    <div class="hl"><em>"I wish I could say that a lasting peace is in sight."</em></div>
+  </div>
+
+
+    <p>Kennedy replaced Eisenhower's all-or-nothing nuclear approach with <strong>flexible response</strong> — a range of options:</p>
+    <ul style="margin-top:8px;">
+      <li>Larger conventional (non-nuclear) army</li>
+      <li>Increased foreign economic aid</li>
+      <li><strong>Peace Corps</strong> — young Americans doing humanitarian work in developing countries (also great soft power vs. communism)</li>
+    </ul>
+  </div>
+</div>
+
+<!-- CUBA -->
+<div class="section" id="cuba">
+  <div class="sec-title">Cuba & Berlin</div>
+  <div class="sec-subtitle">1961–1963 · The hottest moments</div>
+
+  <div class="card">
+    <div class="card-title">Castro Takes Cuba (1959)</div>
+    <p><strong>Fidel Castro</strong> overthrew the US-backed Batista government and established a Communist regime with Soviet ties. Cuba is <strong>90 miles from Florida</strong>. Americans were furious and terrified.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Bay of Pigs (April 1961)</div>
+    <p>CIA plan inherited from Eisenhower: train ~1,400 Cuban exiles in Florida, land them at the <strong>Bay of Pigs</strong>, trigger a popular uprising to overthrow Castro.</p>
+    <div class="hl red">Total disaster. Castro's forces killed or captured almost all of the invaders. Kennedy had approved the operation but refused to provide US air cover at the last minute — best of both bad options. Humiliated the US and Kennedy personally. Made Castro more popular.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Berlin Wall (1961)</div>
+    <p>Thousands of East Germans were escaping to the West through Berlin every month. Khrushchev demanded the US/UK/France leave West Berlin. Kennedy refused.</p>
+    <p style="margin-top:8px;">Khrushchev's response: on <strong>August 13, 1961</strong>, East Germany began building the <strong>Berlin Wall</strong> — literally overnight, barbed wire then concrete. Guards shot anyone trying to escape.</p>
+    <div class="hl">The Berlin Wall stood for <strong>28 years</strong> as the most visible symbol of the Cold War. It fell November 9, 1989.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Cuban Missile Crisis (Oct 1962)</div>
+    <p>The closest the world came to nuclear war since WWII.</p>
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-dot red"></div><div class="tl-date">Oct 16, 1962</div><div class="tl-text">US spy planes photograph Soviet nuclear missile sites being built in Cuba. Long-range missiles — could hit most of the US.</div></div>
+      <div class="tl-item"><div class="tl-dot red"></div><div class="tl-date">Oct 22</div><div class="tl-text">Kennedy goes on national TV to announce the missiles and demand their removal. Orders a <strong>naval blockade</strong> of Cuba to stop more deliveries.</div></div>
+      <div class="tl-item"><div class="tl-dot red"></div><div class="tl-date">6 tense days</div><div class="tl-text">Soviet ships headed toward Cuba. Nuclear war seemed imminent. Behind the scenes, frantic negotiations.</div></div>
+      <div class="tl-item"><div class="tl-dot green"></div><div class="tl-date">Resolution</div><div class="tl-text">Deal: USSR removes Cuban missiles. US promises not to invade Cuba. (Secret deal: US also removed missiles from Turkey.) Crisis over.</div></div>
+    </div>
+    <div class="hl green">Aftermath: both sides scared themselves into installing a direct <strong>"hotline"</strong> between Washington and Moscow. The crisis led to the first arms control talks.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Kennedy Assassinated (Nov 22, 1963)</div>
+    <p>Kennedy was shot in his motorcade in Dallas by <strong>Lee Harvey Oswald</strong>. The nation was devastated. Lyndon B. Johnson was sworn in aboard Air Force One.</p>
+  </div>
+</div>
+
+<!-- HOME FRONT -->
+<div class="section" id="home">
+  <div class="sec-title">The Home Front</div>
+  <div class="sec-subtitle">1950s · Boom, suburbs, and fear</div>
+
+  <div class="card">
+    <div class="card-title">Postwar Economic Boom</div>
+    <p>WWII ended the Depression and supercharged the economy. Veterans came home with money from service pay and war bonds — <strong>$135 billion in savings</strong>. They bought everything.</p>
+    <ul style="margin-top:8px;">
+      <li>Highest standard of living in the world by end of the 1950s</li>
+      <li>Cold War defense spending kept the economy humming</li>
+      <li>Marshall Plan created overseas markets for US exports</li>
+      <li>First credit card created <strong>1950</strong></li>
+      <li>TV, cars, appliances — consumerism exploded</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Baby Boom & Suburbs</div>
+    <ul>
+      <li>Returning soldiers married and had babies — <strong>1 baby born every 7 seconds</strong> in 1957</li>
+      <li><strong>GI Bill</strong>: cheap home loans and college tuition for veterans → millions moved to suburbs</li>
+      <li><strong>Levittown, NY</strong>: prototype suburb — cookie-cutter affordable houses for white families</li>
+      <li><strong>Interstate Highway Act (1956)</strong>: Congress built 41,000 miles of expressways — enabled suburban commuting</li>
+      <li>First enclosed, air-conditioned mall: <strong>Southdale Shopping Center</strong>, Minnesota</li>
+    </ul>
+    <div class="hl red"><strong>"White flight"</strong>: suburbs were mostly white. Black families left behind in cities as white families fled. Deepened racial segregation.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Car Culture & TV</div>
+    <ul>
+      <li>Cars boomed — suburbs required them. Big, flashy, powerful cars.</li>
+      <li>Drive-in movies, drive-thru restaurants</li>
+      <li>TV ownership: <strong>9% in 1950 → 90% by 1960</strong> (45 million TVs)</li>
+      <li>Rock 'n' roll emerged from Black artists — <strong>Elvis Presley</strong> made it mainstream. Parents were horrified ("it's immoral!")</li>
+      <li>Teenagers became a <strong>consumer market</strong> for the first time — music, movies, clothes targeted at teens</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Conformity & Its Cracks</div>
+    <p>TV/movies pushed a conformist ideal: man as breadwinner, woman as housewife, suburban family, white picket fence. "Keeping up with the Joneses."</p>
+    <ul style="margin-top:8px;">
+      <li>Reality: ~40% of mothers had jobs</li>
+      <li><strong>Alfred Kinsey</strong>: sexologist revealed premarital sex and affairs were common — shocked Americans</li>
+      <li><strong>Beat Movement</strong> ("Beatniks"): artists/writers (Jack Kerouac) rejecting conformity, suburbs, and consumerism. Inspired the 1960s counterculture/hippies.</li>
+      <li>Early civil rights challenges: <strong>Jackie Robinson</strong> (1947), <strong>Brown v. Board of Education</strong> (1954), <strong>MLK</strong> emerges (1955)</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Nuclear Fear at Home</div>
+    <p>When USSR tested the H-bomb in 1953, everyday Americans prepared for nuclear attack:</p>
+    <ul style="margin-top:8px;">
+      <li>School <strong>"duck-and-cover"</strong> drills — students hid under desks (wouldn't actually help, but…)</li>
+      <li>Families built <strong>backyard fallout shelters</strong> stocked with canned food</li>
+      <li>Civil defense sirens installed in cities</li>
+    </ul>
+    <div class="hl red">The fear was real. Both sides had enough nukes to destroy each other <em>many times over</em>. MAD was the only thing keeping the peace.</div>
+  </div>
+</div>
+
+<!-- CIVIL RIGHTS -->
+<div class="section" id="civil">
+  <div class="sec-title">Civil Rights</div>
+  <div class="sec-subtitle">1950s · The movement begins</div>
+
+  <div class="card">
+    <div class="card-title">The Legal Foundation: Plessy → Brown</div>
+    <p>Since 1896 (<strong>Plessy v. Ferguson</strong>), "separate but equal" was constitutional law. In practice it meant segregated everything — schools, buses, water fountains, waiting rooms, even Bibles in courtrooms. Former slave states plus Oklahoma had full segregation laws on the books.</p>
+    <p style="margin-top:8px;"><strong>Thurgood Marshall</strong>, the NAACP's lead attorney, argued before the Supreme Court that separate facilities were <em>inherently</em> unequal — segregation itself told Black children they were inferior, damaging them psychologically in ways that could never be undone.</p>
+    <div class="hl green"><strong>Brown v. Board of Education (1954)</strong>: The Supreme Court unanimously agreed. Chief Justice Earl Warren wrote that segregating children "solely because of their race generates a feeling of inferiority… that may affect their hearts and minds in a way unlikely ever to be undone." Overturned Plessy v. Ferguson.</div>
+    <p style="margin-top:8px; font-size:0.84rem; color:#9ba3ae;">The case started with 8-year-old Linda Brown, who was denied access to an elementary school 5 blocks from her home in Topeka, Kansas — her Black school was 21 blocks away.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Little Rock (1957)</div>
+    <p>When the first Black students tried to enroll at Central High School in Little Rock, Arkansas, an angry white mob met them with rocks and curses. Governor <strong>Orval Faubus</strong> called out the National Guard to <em>prevent</em> their enrollment — claiming he was "keeping the peace."</p>
+    <p style="margin-top:8px;">Eisenhower personally disliked the Brown decision and thought it was a mistake. But Faubus was defying federal law.</p>
+    <div class="hl red">Eisenhower <strong>federalized the Arkansas National Guard</strong> — overnight the troops' mission reversed from blocking the students to protecting them. He later said appointing Earl Warren as Chief Justice was "the biggest damned-fool mistake I ever made."</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Rosa Parks & the Montgomery Bus Boycott (1955)</div>
+    <p>In December 1955, <strong>Rosa Parks</strong>, a Black secretary, refused to give up her seat on a Montgomery, Alabama bus to a white man as city law required. She was arrested.</p>
+    <p style="margin-top:8px;"><strong>Martin Luther King Jr.</strong>, a young preacher, became the spokesman for a Black <strong>boycott of the Montgomery bus system</strong>. King's house was bombed. From the wreckage of his front porch, he explained his strategy: <strong>nonviolent civil disobedience</strong>.</p>
+    <div class="hl">The logic: refuse to obey unjust laws, but without violence. When police brutalized peaceful protesters, decent people watching on TV and in the news would demand change. King was right — the strategy worked.</div>
+    <p style="margin-top:8px;">King founded the <strong>Southern Christian Leadership Conference (SCLC)</strong> to lead the movement. In 1960, the SCLC's youth arm, the <strong>SNCC</strong> (Student Nonviolent Coordinating Committee), organized sit-ins at segregated lunch counters.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Jackie Robinson & Truman's Role</div>
+    <ul>
+      <li><strong>1947</strong>: Jackie Robinson integrated professional baseball — broke the color barrier in America's most popular sport</li>
+      <li><strong>1948</strong>: Truman signed an Executive Order banning racial discrimination in the military and civil service — desegregated the armed forces</li>
+      <li>Truman's civil rights moves enraged Southern Democrats (the "Dixiecrats") and contributed to the 3-way party split in 1948</li>
+    </ul>
+  </div>
+</div>
+
+<!-- PEOPLE -->
+<div class="section" id="people">
+  <div class="sec-title">Key People</div>
+  <div class="sec-subtitle">Know every single one of these</div>
+
+  <div class="person-grid">
+    <div class="person-card">
+      <div class="person-name">Truman</div>
+      <div class="person-role">US President 1945–53</div>
+      <p>Truman Doctrine, containment, Marshall Plan, Korean War, fired MacArthur. Dropped the atomic bombs. "The Buck Stops Here."</p>
+    </div>
+    <div class="person-card">
+      <div class="person-name">Eisenhower</div>
+      <div class="person-role">US President 1953–61</div>
+      <p>Brinkmanship, massive retaliation. CIA covert ops (Iran, Guatemala). Interstate highways. Warned of "military-industrial complex" in farewell speech.</p>
+    </div>
+    <div class="person-card">
+      <div class="person-name">JFK (Kennedy)</div>
+      <div class="person-role">US President 1961–63</div>
+      <p>Flexible response, Peace Corps. Bay of Pigs disaster. Berlin Wall. Cuban Missile Crisis. Assassinated Nov 22, 1963 by Oswald.</p>
+    </div>
+    <div class="person-card">
+      <div class="person-name">Stalin</div>
+      <div class="person-role">Soviet Premier</div>
+      <p>Broke Yalta promises, created satellite states. Berlin blockade. Died 1953. Responsible for ~13 million Soviet deaths total.</p>
+    </div>
+    <div class="person-card">
+      <div class="person-name">Khrushchev</div>
+      <div class="person-role">Soviet Premier 1953–64</div>
+      <p>Took over after Stalin. Shot down U-2 spy plane. Built Berlin Wall. Sent missiles to Cuba. "We will bury capitalism."</p>
+    </div>
+    <div class="person-card">
+      <div class="person-name">MacArthur</div>
+      <div class="person-role">US General</div>
+      <p>Commanded Korea. Pushed past 38th parallel, triggered Chinese intervention. Demanded atomic weapons. Fired by Truman for insubordination.</p>
+    </div>
+    <div class="person-card">
+      <div class="person-name">Mao Zedong</div>
+      <div class="person-role">Chinese Communist Leader</div>
+      <p>Led communist takeover of China 1949. Backed by USSR. Sent 300,000 troops into Korea when US approached Chinese border.</div>
+    </div>
+    <div class="person-card">
+      <div class="person-name">Joe McCarthy</div>
+      <div class="person-role">US Senator (WI)</div>
+      <p>Made unsupported claims of communists everywhere. "McCarthyism" = accusation without evidence. Censured by Senate 1954 after Army-McCarthy hearings.</p>
+    </div>
+    <div class="person-card">
+      <div class="person-name">Fidel Castro</div>
+      <div class="person-role">Cuban Dictator</div>
+      <p>Took over Cuba 1959, established communist regime with Soviet ties. Survived Bay of Pigs invasion. Allowed Soviet missiles on island (Cuban Missile Crisis).</p>
+    </div>
+    <div class="person-card">
+      <div class="person-name">Rosenbergs</div>
+      <div class="person-role">Accused Spies</div>
+      <p>Julius and Ethel Rosenberg — American citizens executed for allegedly passing atomic bomb secrets to the Soviets.</p>
+    </div>
+    <div class="person-card">
+      <div class="person-name">Neil Armstrong</div>
+      <div class="person-role">NASA Astronaut</div>
+      <p>First human to walk on the moon, July 1969. Won the Space Race. "One small step for man..."</p>
+    </div>
+    <div class="person-card">
+      <div class="person-name">George Marshall</div>
+      <div class="person-role">Secretary of State</div>
+      <p>Proposed the Marshall Plan — $13 billion to rebuild Western Europe and block communist expansion.</p>
+    </div>
+    <div class="person-card">
+      <div class="person-name">George Kennan</div>
+      <div class="person-role">State Dept. Soviet Expert</div>
+      <p>Wrote the "Long Telegram" and "Mr. X" article defining containment. Argued the USSR would test US resolve but didn't want war — just maximum control without conflict.</p>
+    </div>
+    <div class="person-card">
+      <div class="person-name">Thurgood Marshall</div>
+      <div class="person-role">NAACP Lawyer</div>
+      <p>Argued Brown v. Board of Education before the Supreme Court. Won unanimous ruling ending school segregation. Later became first Black Supreme Court Justice.</p>
+    </div>
+    <div class="person-card">
+      <div class="person-name">MLK Jr.</div>
+      <div class="person-role">Civil Rights Leader</div>
+      <p>Led Montgomery Bus Boycott (1955). Strategy: nonviolent civil disobedience. Founded SCLC. Forced America to confront its racism through peaceful protest.</p>
+    </div>
+    <div class="person-card">
+      <div class="person-name">Rosa Parks</div>
+      <div class="person-role">Civil Rights Activist</div>
+      <p>Refused to give up her bus seat in Montgomery, Alabama (Dec 1955). Her arrest triggered the bus boycott that launched the modern civil rights movement.</p>
+    </div>
+    <div class="person-card">
+      <div class="person-name">Richard Nixon</div>
+      <div class="person-role">Congressman / VP</div>
+      <p>Built his career pursuing the Alger Hiss case when others dropped it. Later Eisenhower's VP. Eventually 37th President.</p>
+    </div>
+    <div class="person-card">
+      <div class="person-name">John Foster Dulles</div>
+      <div class="person-role">Sec. of State (Ike)</div>
+      <p>Dominant foreign policy figure of the 1950s. Championed brinkmanship. Talked loudly about "rolling back" communism — but didn't back it up in Hungary.</p>
+    </div>
+
+<div class="section" id="quiz">
+  <div class="sec-title">Practice Quiz</div>
+  <div class="sec-subtitle">tap each card to reveal the answer</div>
+
+  <div class="quiz-card" onclick="this.classList.toggle('revealed')">
+    <div class="quiz-tag">Origins</div>
+    <div class="quiz-q">What was the "Cold War" and why didn't it turn into a hot war?</div>
+    <div class="quiz-a">The Cold War was the state of hostility between the US and USSR that stopped just short of direct military confrontation. It didn't go hot mainly because of Mutually Assured Destruction (MAD) — both sides had enough nukes to destroy each other many times over, so neither side wanted to fire first.</div>
+    <div class="tap-hint">tap to reveal</div>
+  </div>
+
+  <div class="quiz-card" onclick="this.classList.toggle('revealed')">
+    <div class="quiz-tag">Origins</div>
+    <div class="quiz-q">What were satellite states and what was the Iron Curtain?</div>
+    <div class="quiz-a">Satellite states were Eastern European countries (Poland, Czechoslovakia, Hungary, Romania, Bulgaria, East Germany) that Stalin forced into communist governments controlled by the USSR. The Iron Curtain was the term for the border separating these states from free Western Europe — coined by Winston Churchill.</div>
+    <div class="tap-hint">tap to reveal</div>
+  </div>
+
+  <div class="quiz-card" onclick="this.classList.toggle('revealed')">
+    <div class="quiz-tag">Europe</div>
+    <div class="quiz-q">What was the Marshall Plan and why did it work so well for the US?</div>
+    <div class="quiz-a">$13 billion in US grants/loans to rebuild Western Europe after WWII — providing food, fuel, and money. It worked for the US because it blocked communism (desperate, starving people turn to radical ideas) AND rebuilt Western Europe as a strong trading partner for US exports. Stalin refused to let his satellite states accept it.</div>
+    <div class="tap-hint">tap to reveal</div>
+  </div>
+
+  <div class="quiz-card" onclick="this.classList.toggle('revealed')">
+    <div class="quiz-tag">Europe</div>
+    <div class="quiz-q">How did the Berlin Airlift work and why did it matter?</div>
+    <div class="quiz-a">Stalin blockaded all road/rail/water access to West Berlin in June 1948. The US and Britain responded by flying round-the-clock supply deliveries for almost a year — everything the city needed. Stalin couldn't blockade the sky. He lifted the blockade in May 1949. It proved the US would go to extreme lengths to defend noncommunist zones.</div>
+    <div class="tap-hint">tap to reveal</div>
+  </div>
+
+  <div class="quiz-card" onclick="this.classList.toggle('revealed')">
+    <div class="quiz-tag red">Korea</div>
+    <div class="quiz-q">Why did Truman fire MacArthur during the Korean War?</div>
+    <div class="quiz-a">After Chinese forces drove US troops back below the 38th parallel, MacArthur demanded permission to use atomic weapons against China. Truman refused — he wanted a limited war to contain communism in North Korea, not an all-out war with China that could become WWIII. MacArthur then publicly criticized Truman's strategy, so Truman fired him for insubordination. The Constitution gives civilian leadership control over the military.</div>
+    <div class="tap-hint">tap to reveal</div>
+  </div>
+
+  <div class="quiz-card" onclick="this.classList.toggle('revealed')">
+    <div class="quiz-tag red">Red Scare</div>
+    <div class="quiz-q">What was McCarthyism and how did it end?</div>
+    <div class="quiz-a">McCarthyism was Senator Joseph McCarthy's practice of making unsupported accusations of communist ties — against government officials, military leaders, Hollywood figures, anyone. He created widespread fear. It ended when he accused the US Army of harboring communists. The Army-McCarthy hearings were televised, and the public saw him as a reckless bully. The Senate censured him in 1954.</div>
+    <div class="tap-hint">tap to reveal</div>
+  </div>
+
+  <div class="quiz-card" onclick="this.classList.toggle('revealed')">
+    <div class="quiz-tag red">Korea</div>
+    <div class="quiz-q">What were the results of the Korean War?</div>
+    <div class="quiz-a">A stalemate — ceasefire signed July 27, 1953, with the border back at the 38th parallel where it started. 50,000+ Americans dead, no victory. But it changed US foreign policy: before Korea, the US used mainly economic/political tools; after Korea, it committed to major military buildups and became far more militarily involved in Asia. US troops have stayed in South Korea ever since.</div>
+    <div class="tap-hint">tap to reveal</div>
+  </div>
+
+  <div class="quiz-card" onclick="this.classList.toggle('revealed')">
+    <div class="quiz-tag">Global</div>
+    <div class="quiz-q">What was brinkmanship and what were its limits?</div>
+    <div class="quiz-a">Brinkmanship was Eisenhower's policy of going to the "brink" of nuclear war to make the Soviets back down — threatening massive retaliation against any communist aggression. Its limit: it could deter a Soviet military invasion, but it couldn't stop communist revolutions within countries. That's why Eisenhower used CIA covert operations (Iran, Guatemala) for those situations.</div>
+    <div class="tap-hint">tap to reveal</div>
+  </div>
+
+  <div class="quiz-card" onclick="this.classList.toggle('revealed')">
+    <div class="quiz-tag">Global</div>
+    <div class="quiz-q">What was Sputnik and why did Americans freak out?</div>
+    <div class="quiz-a">Sputnik was the world's first artificial satellite, launched by the USSR on October 4, 1957. Americans freaked out because: (1) it meant the Soviets had rockets powerful enough to reach the US with nuclear warheads, and (2) it suggested the USSR was beating the US technologically. Congress created NASA in response and massively increased science education funding.</div>
+    <div class="tap-hint">tap to reveal</div>
+  </div>
+
+  <div class="quiz-card" onclick="this.classList.toggle('revealed')">
+    <div class="quiz-tag red">Cuba</div>
+    <div class="quiz-q">Why did the Bay of Pigs invasion fail and what were the consequences?</div>
+    <div class="quiz-a">1,400 CIA-trained Cuban exiles landed at the Bay of Pigs to trigger an uprising against Castro. It failed because: (1) the invasion was not a secret — Castro knew it was coming, (2) Kennedy canceled promised US air cover at the last minute, and (3) no popular uprising occurred. Castro's forces killed or captured almost all the invaders. It humiliated Kennedy and the US, made Castro more popular, and pushed Cuba closer to the USSR — leading directly to the Cuban Missile Crisis.</div>
+    <div class="tap-hint">tap to reveal</div>
+  </div>
+
+  <div class="quiz-card" onclick="this.classList.toggle('revealed')">
+    <div class="quiz-tag red">Cuba</div>
+    <div class="quiz-q">How was the Cuban Missile Crisis resolved?</div>
+    <div class="quiz-a">Kennedy ordered a naval blockade of Cuba and demanded the USSR remove the missiles. After 6 days of negotiations where nuclear war seemed possible, the deal was: USSR removes missiles from Cuba, US publicly promises not to invade Cuba, and (secretly) US removes its missiles from Turkey. Kennedy appeared to "win" but both sides compromised. The crisis led to a direct hotline between Washington and Moscow and the first arms control talks.</div>
+    <div class="tap-hint">tap to reveal</div>
+  </div>
+
+  <div class="quiz-card" onclick="this.classList.toggle('revealed')">
+    <div class="quiz-tag green">Home Front</div>
+    <div class="quiz-q">What caused the baby boom and what were its effects?</div>
+    <div class="quiz-a">Returning WWII soldiers married quickly and had children — a baby was born every 7 seconds in 1957. Effects: massive demand for housing (suburbia), schools, baby products; the GI Bill put veterans into suburbs with cheap loans; Interstate Highway Act (1956) built 41,000 miles of roads for suburban commuters; the baby boom generation became the largest in US history and drove cultural change in the 1960s.</div>
+    <div class="tap-hint">tap to reveal</div>
+  </div>
+
+  <div class="quiz-card" onclick="this.classList.toggle('revealed')">
+    <div class="quiz-tag green">Home Front</div>
+    <div class="quiz-q">What was "White flight" and why did it matter?</div>
+    <div class="quiz-a">White flight was the migration of white families from cities to the suburbs. It mattered because it left African Americans concentrated in urban areas with declining tax bases, deteriorating schools, and fewer jobs — deepening racial and economic inequality. The suburbs were largely segregated by design (FHA loans were often denied to Black families, and Levittown explicitly barred non-white residents).</div>
+    <div class="tap-hint">tap to reveal</div>
+  </div>
+
+  <div class="quiz-card" onclick="this.classList.toggle('revealed')">
+    <div class="quiz-tag">Vocab Check</div>
+    <div class="quiz-q">Define: containment, Truman Doctrine, MAD, McCarthyism, brinkmanship, collective security</div>
+    <div class="quiz-a">
+      <strong>Containment:</strong> US policy to stop communism from spreading beyond where it already existed.<br><br>
+      <strong>Truman Doctrine:</strong> US will provide economic and military aid to free countries resisting communist takeover.<br><br>
+      <strong>MAD (Mutually Assured Destruction):</strong> Both sides have enough nukes to destroy each other — so neither launches first.<br><br>
+      <strong>McCarthyism:</strong> Making accusations of disloyalty/communist ties without evidence.<br><br>
+      <strong>Brinkmanship:</strong> Going to the brink of nuclear war to make adversaries back down.<br><br>
+      <strong>Collective security:</strong> An attack on one NATO/Warsaw Pact member is an attack on all.
+    </div>
+    <div class="tap-hint">tap to reveal</div>
+  </div>
+  <div class="quiz-card" onclick="this.classList.toggle('revealed')">
+    <div class="quiz-tag green">Civil Rights</div>
+    <div class="quiz-q">What did Brown v. Board of Education decide, and what case did it overturn?</div>
+    <div class="quiz-a">The Supreme Court unanimously ruled in 1954 that racially segregated schools were unconstitutional — separate facilities were inherently unequal because segregation itself damaged Black children psychologically. It overturned Plessy v. Ferguson (1896), which had established "separate but equal" as the law of the land for 58 years. Thurgood Marshall argued the case for the NAACP.</div>
+    <div class="tap-hint">tap to reveal</div>
+  </div>
+
+  <div class="quiz-card" onclick="this.classList.toggle('revealed')">
+    <div class="quiz-tag green">Civil Rights</div>
+    <div class="quiz-q">What was MLK's strategy of nonviolent civil disobedience and why did it work?</div>
+    <div class="quiz-a">Refuse to obey unjust laws (like segregation ordinances), but never respond with violence. When arrested, don't resist. The strategic logic: when Americans saw police brutalizing peaceful Black protesters on TV, public outrage would force politicians to act. It worked — the Montgomery Bus Boycott succeeded, and the strategy became the foundation of the entire civil rights movement.</div>
+    <div class="tap-hint">tap to reveal</div>
+  </div>
+
+  <div class="quiz-card" onclick="this.classList.toggle('revealed')">
+    <div class="quiz-tag">Origins</div>
+    <div class="quiz-q">Who was George Kennan and what did he argue?</div>
+    <div class="quiz-a">A Soviet expert in the State Department who wrote the "Long Telegram" (5,540 words) and an anonymous "Mr. X" article in Foreign Affairs. He argued that because of Russia's ancient drive to expand westward and its deep fear of the West, you couldn't negotiate quickly with Stalin. US policy must contain Soviet expansion by drawing clear lines — hold what's free, wait, and eventually the Soviets would become negotiable. He also predicted they'd test American resolve but carefully, since they didn't want war either.</div>
+    <div class="tap-hint">tap to reveal</div>
+  </div>
+
+  <div class="quiz-card" onclick="this.classList.toggle('revealed')">
+    <div class="quiz-tag red">Red Scare</div>
+    <div class="quiz-q">What was Project Venona and why does it matter for the Rosenberg case?</div>
+    <div class="quiz-a">Since 1946, US cryptographers secretly cracked Soviet spy codes and decoded ~3,000 messages between Moscow and US agents. The decoded messages confirmed the Rosenbergs' guilt — but the government couldn't use this evidence publicly without revealing that the Soviet codes were broken. The Rosenbergs were executed in 1953 amid public controversy over whether they were actually guilty. The government declassified Project Venona in 1995, finally providing solid public evidence that they were.</div>
+    <div class="tap-hint">tap to reveal</div>
+  </div>
+
+  <div class="quiz-card" onclick="this.classList.toggle('revealed')">
+    <div class="quiz-tag">Global</div>
+    <div class="quiz-q">What happened in Hungary in 1956 and why did it embarrass the US?</div>
+    <div class="quiz-a">After Khrushchev's secret speech criticizing Stalin was broadcast by the CIA across Eastern Europe, Hungarians rebelled and took control of Budapest. The Soviets hesitated, watching to see if the US would help — Dulles had been loudly promising to "roll back" the Iron Curtain. Eisenhower and Dulles did nothing. Soviet tanks crushed the revolution. It exposed Dulles's rhetoric as empty and destroyed confidence in US promises throughout the world.</div>
+    <div class="tap-hint">tap to reveal</div>
+  </div>
+
+  <div class="quiz-card" onclick="this.classList.toggle('revealed')">
+    <div class="quiz-tag">Global</div>
+    <div class="quiz-q">What was the Suez Crisis and why was it a Soviet diplomatic win?</div>
+    <div class="quiz-a">Egypt seized the Suez Canal after the US withdrew its offer to fund the Aswan Dam (because Egypt bought weapons from communist Czechoslovakia). Britain and France invaded Egypt in 1956 without telling the US. Eisenhower was furious and forced them to back down, while the USSR threatened Britain and France with rocket attacks. Result: the US had humiliated its own allies, the USSR appeared as Egypt's defender, and Arab nations began accepting Soviet aid — a major Cold War loss for the West.</div>
+    <div class="tap-hint">tap to reveal</div>
+  </div>
+
+</div>
+function show(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  const map = ['origins','europe','asia','global','cuba','home','civil','people','quiz'];
+  document.querySelectorAll('.tab')[map.indexOf(id)].classList.add('active');
+  window.scrollTo(0, 0);
+}
+</script>
+</body>
+</html>
