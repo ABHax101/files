@@ -753,14 +753,15 @@
   </div>
 
 </div>
-function show(id) {
-  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  const map = ['origins','europe','asia','global','cuba','home','civil','people','quiz'];
-  document.querySelectorAll('.tab')[map.indexOf(id)].classList.add('active');
-  window.scrollTo(0, 0);
-}
+<script>
+  function show(id) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    const map = ['origins','europe','asia','global','cuba','home','civil','people','quiz'];
+    document.querySelectorAll('.tab')[map.indexOf(id)].classList.add('active');
+    window.scrollTo(0, 0);
+  }
 </script>
 </body>
 </html>
