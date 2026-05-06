@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unit 9 Cram</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0e10;
+    --card: #18181c;
+    --border: #2c2c32;
+    --accent: #5eead4;
+    --accent2: #fb923c;
+    --accent3: #a78bfa;
+    --text: #f1ede8;
+    --muted: #6b7280;
+    --green: #86efac;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Lato', sans-serif; min-height: 100vh; }
+
+  .topbar {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(14,14,16,0.95);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border);
+    padding: 11px 16px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .topbar h1 { font-family: 'Syne', sans-serif; font-size: 1.2rem; color: var(--accent); letter-spacing: 1px; }
+  .topbar span { font-size: 0.72rem; color: var(--muted); }
+
+  .tabs {
+    display: flex; overflow-x: auto; scrollbar-width: none;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg);
+    position: sticky; top: 50px; z-index: 99;
+    padding: 0 6px; gap: 2px;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab {
+    flex-shrink: 0; padding: 9px 13px;
+    font-size: 0.76rem; font-weight: 700;
+    color: var(--muted); cursor: pointer;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap; transition: all 0.15s;
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  .section { display: none; padding: 14px; padding-bottom: 60px; }
+  .section.active { display: block; animation: fadeUp 0.2s ease; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+  .sec-title { font-family: 'Syne', sans-serif; font-size: 1.8rem; line-height: 1; margin-bottom: 3px; }
+  .sec-sub { color: var(--muted); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 18px; }
+
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 15px; margin-bottom: 11px; }
+  .card-title { font-family: 'Syne', sans-serif; font-size: 1rem; color: var(--accent); margin-bottom: 9px; letter-spacing: 0.5px; }
+  .card p, .card li { font-size: 0.875rem; line-height: 1.65; color: #c8c4bc; }
+  .card ul { padding-left: 16px; }
+  .card li { margin-bottom: 3px; }
+  .card li strong { color: var(--text); }
+
+  .hl { border-left: 3px solid var(--accent); background: rgba(94,234,212,0.07); border-radius: 0 8px 8px 0; padding: 9px 13px; margin: 9px 0; font-size: 0.85rem; line-height: 1.6; }
+  .hl.orange { border-left-color: var(--accent2); background: rgba(251,146,60,0.07); }
+  .hl.purple { border-left-color: var(--accent3); background: rgba(167,139,250,0.07); }
+
+  table { width: 100%; border-collapse: collapse; font-size: 0.82rem; margin: 8px 0; }
+  th { background: rgba(94,234,212,0.1); color: var(--accent); font-weight: 700; padding: 7px 10px; text-align: left; font-family: 'Syne', sans-serif; font-size: 0.8rem; }
+  td { padding: 7px 10px; border-bottom: 1px solid var(--border); color: #c8c4bc; vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+
+  .timeline { padding-left: 18px; position: relative; }
+  .timeline::before { content: ''; position: absolute; left: 5px; top: 4px; bottom: 4px; width: 2px; background: var(--border); }
+  .tl-item { position: relative; margin-bottom: 13px; }
+  .tl-dot { position: absolute; left: -16px; top: 5px; width: 9px; height: 9px; border-radius: 50%; background: var(--accent); border: 2px solid var(--bg); }
+  .tl-dot.o { background: var(--accent2); }
+  .tl-dot.p { background: var(--accent3); }
+  .tl-date { font-family: 'Syne', sans-serif; font-size: 0.82rem; color: var(--accent); }
+  .tl-text { font-size: 0.85rem; color: #c8c4bc; line-height: 1.55; }
+
+  /* QUIZ */
+  .quiz-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 10px; padding: 16px; margin-bottom: 11px;
+    cursor: pointer; user-select: none;
+    transition: border-color 0.15s;
+  }
+  .quiz-card:hover { border-color: var(--accent); }
+  .quiz-tag {
+    display: inline-block; font-size: 0.68rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.5px;
+    background: rgba(94,234,212,0.12); color: var(--accent);
+    border-radius: 4px; padding: 2px 7px; margin-bottom: 9px;
+  }
+  .quiz-tag.o { background: rgba(251,146,60,0.12); color: var(--accent2); }
+  .quiz-tag.p { background: rgba(167,139,250,0.12); color: var(--accent3); }
+  .quiz-q { font-size: 0.9rem; font-weight: 700; color: var(--text); line-height: 1.5; }
+  .quiz-a { display: none; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); font-size: 0.86rem; color: var(--green); line-height: 1.6; }
+  .quiz-card.open .quiz-a { display: block; }
+  .tap-hint { font-size: 0.7rem; color: var(--muted); margin-top: 8px; }
+
+  .sg-q { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 13px 15px; margin-bottom: 9px; }
+  .sg-num { font-family: 'Syne', sans-serif; font-size: 0.78rem; color: var(--accent2); margin-bottom: 4px; }
+  .sg-question { font-size: 0.88rem; font-weight: 700; color: var(--text); margin-bottom: 6px; line-height: 1.4; }
+  .sg-answer { font-size: 0.84rem; color: var(--green); line-height: 1.55; display: none; padding-top: 8px; border-top: 1px solid var(--border); margin-top: 6px; }
+  .sg-q.open .sg-answer { display: block; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <h1>UNIT 9 — CIVIL RIGHTS ERA</h1>
+  <span>tap sections to explore</span>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="show('civilrights')">Civil Rights</div>
+  <div class="tab" onclick="show('challenges')">Challenges</div>
+  <div class="tab" onclick="show('blackpower')">Black Power</div>
+  <div class="tab" onclick="show('kennedy')">JFK</div>
+  <div class="tab" onclick="show('lbj')">LBJ</div>
+  <div class="tab" onclick="show('vietnam')">Vietnam</div>
+  <div class="tab" onclick="show('nixon')">Nixon</div>
+  <div class="tab" onclick="show('other')">Other Movements</div>
+  <div class="tab" onclick="show('sg')">📋 Study Guide</div>
+  <div class="tab" onclick="show('quiz')">🎯 Quiz</div>
+</div>
+
+<!-- CIVIL RIGHTS FOUNDATIONS -->
+<div class="section active" id="civilrights">
+  <div class="sec-title">Civil Rights Foundations</div>
+  <div class="sec-sub">1896–1960 · from Plessy to the sit-ins</div>
+
+  <div class="card">
+    <div class="card-title">The Legal Background</div>
+    <ul>
+      <li><strong>Plessy v. Ferguson (1896)</strong>: Supreme Court said segregation was constitutional — established "separate but equal" doctrine</li>
+      <li><strong>De jure segregation</strong>: segregation by law (Jim Crow laws) — buses, trains, schools, restaurants, pools, parks</li>
+      <li><strong>De facto segregation</strong>: segregation by custom/tradition even without laws (common in the North)</li>
+      <li><strong>NAACP</strong>: founded 1909, led the legal fight to overturn segregation through the courts</li>
+      <li><strong>Jackie Robinson</strong>: first Black player in modern MLB (April 15, 1947, Brooklyn Dodgers) — broke baseball's color barrier</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Brown v. Board of Education (1954)</div>
+    <p>NAACP attorney <strong>Thurgood Marshall</strong> argued the case. Linda Brown was denied admission to her neighborhood school in Topeka, Kansas.</p>
+    <div class="hl">Chief Justice <strong>Earl Warren</strong> wrote the unanimous decision: "Separate educational facilities are inherently unequal." Overturned Plessy v. Ferguson. Violated the 14th Amendment's equal protection clause.</div>
+    <p style="margin-top:8px;"><strong>Brown II (1955)</strong>: ordered desegregation to happen "with all deliberate speed" — considered a weak follow-up because it gave no firm deadline.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Little Rock, Arkansas (1957)</div>
+    <p>School board won a court order to admit <strong>9 Black students</strong> to Central High (2,000 white students). Governor <strong>Orval Faubus</strong> sent the National Guard to block them — first time a state used armed force to defy the federal government since the Civil War.</p>
+    <p style="margin-top:8px;">Eisenhower sent <strong>1,000 soldiers of the 101st Airborne Division</strong> to escort the Little Rock Nine into school. Troops stayed the whole year.</p>
+    <div class="hl orange">The Little Rock conflict was tied to the <strong>Brown v. Board</strong> decision — Faubus was defying that ruling.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Montgomery Bus Boycott (1955–1956)</div>
+    <ul>
+      <li><strong>Rosa Parks</strong> refused to give up her bus seat on December 1, 1955</li>
+      <li>Boycott lasted <strong>over a year</strong> (381 days)</li>
+      <li><strong>Martin Luther King Jr.</strong> (26 years old) was chosen to lead it</li>
+      <li>Strategy: nonviolent passive resistance, inspired by <strong>Gandhi</strong></li>
+      <li>December 1956: Supreme Court declared Alabama's bus segregation laws unconstitutional</li>
+      <li>Led to formation of the <strong>SCLC</strong> (Southern Christian Leadership Conference) — King was first president</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Sit-ins & Student Movements</div>
+    <ul>
+      <li><strong>CORE</strong> (Congress of Racial Equality, founded 1942 in Chicago): first used sit-ins — protesters sat at segregated establishments and refused to leave</li>
+      <li><strong>SNCC</strong> (Student Nonviolent Coordinating Committee): formed at Shaw University in Raleigh, NC — sent volunteers to register voters and desegregate bus terminals</li>
+      <li><strong>Freedom Riders</strong>: SNCC volunteers who rode buses into the Deep South to desegregate interstate bus terminals — met by violent white mobs in Alabama</li>
+      <li>Jesse Jackson participated in sit-ins as a student</li>
+    </ul>
+    <div class="hl orange">CORE believed in <strong>direct nonviolent action</strong>. NAACP led the way in <strong>court action</strong>.</div>
+  </div>
+</div>
+
+<!-- CHALLENGING SEGREGATION -->
+<div class="section" id="challenges">
+  <div class="sec-title">Challenging Segregation</div>
+  <div class="sec-sub">1960–1965 · Kennedy, Birmingham, the big laws</div>
+
+  <div class="card">
+    <div class="card-title">Kennedy & Civil Rights</div>
+    <p>Kennedy promised to support civil rights but was initially cautious — he was worried about looking weak to Khrushchev and the USSR, and didn't want to divide the nation during the Cold War.</p>
+    <p style="margin-top:8px;"><strong>James Meredith</strong> (Black Air Force veteran) tried to enroll at the University of Mississippi in 1962. Governor <strong>Ross Barnett</strong> physically blocked him. Kennedy sent 500 federal marshals, then thousands of troops after riots broke out. Meredith attended class under federal guard all year.</p>
+    <div class="hl orange">In return for the desegregation of interstate transportation (Freedom Riders), Kennedy agreed to <strong>not prosecute the mob members who attacked the Freedom Riders</strong> — essentially a deal to keep the peace politically.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Birmingham (Spring 1963)</div>
+    <p>MLK deliberately chose Birmingham, Alabama because he knew it would provoke a violent response — and that only violence getting out of hand would force federal action.</p>
+    <p style="margin-top:8px;">Commissioner of Public Safety <strong>"Bull" Connor (T. Eugene Connor)</strong> ordered police to use clubs, attack dogs, and high-pressure fire hoses on demonstrators including women and children. Millions watched on TV.</p>
+    <p style="margin-top:8px;">King was arrested. From jail he wrote the <strong>"Letter from Birmingham Jail"</strong> — one of the most important defenses of civil disobedience ever written. Kennedy decided to introduce a new civil rights bill.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">March on Washington — Aug 28, 1963</div>
+    <p>200,000+ people of all races at the Lincoln Memorial. King delivered the <strong>"I Have a Dream"</strong> speech. Organized to pressure Congress to pass the civil rights bill. Involved NAACP, SCLC, SNCC, labor unions, religious groups.</p>
+    <p style="margin-top:8px;">Three weeks later: <strong>Sixteenth Street Baptist Church bombing</strong> in Birmingham killed four young Black girls.</p>
+    <p style="margin-top:8px;">November 22, 1963: <strong>Kennedy assassinated</strong> in Dallas. LBJ becomes president and pushes hard for the civil rights bill.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">The Big Laws</div>
+    <table>
+      <tr><th>Law</th><th>What It Did</th></tr>
+      <tr><td><strong>Civil Rights Act of 1964</strong></td><td>Banned discrimination based on race, religion, sex. Gave federal government broad power to enforce. Title VII outlawed job discrimination by sex. Passed after an 80-day Senate filibuster by Southerners.</td></tr>
+      <tr><td><strong>24th Amendment (1964)</strong></td><td>Eliminated poll taxes — fees required to vote that had been used to disenfranchise poor Black voters.</td></tr>
+      <tr><td><strong>Voting Rights Act of 1965</strong></td><td>Authorized federal officials to register voters wherever local officials were blocking Black registration. Triggered by "Bloody Sunday" in Selma.</td></tr>
+    </table>
+    <div class="hl">"Bloody Sunday": Marchers from Selma to Montgomery were attacked by 200+ state troopers on the Edmund Pettus Bridge. 50 hospitalized. Johnson watched on TV and proposed the Voting Rights Act 8 days later.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Urban Riots</div>
+    <p>Less than a week after LBJ signed the Voting Rights Act, the <strong>Watts Riot</strong> erupted in LA (1965). Watts, Detroit (43 dead, $50M damage, 1967), and Newark were among the worst. The difference from old race riots: now Black people were fighting back against police and white business owners in their own neighborhoods.</p>
+    <div class="hl orange">The Great Migration had moved millions of Black Americans from the South to Northern cities. They faced de facto segregation and poverty there — laws didn't fix that.</div>
+  </div>
+</div>
+
+<!-- BLACK POWER -->
+<div class="section" id="blackpower">
+  <div class="sec-title">Black Power & MLK's End</div>
+  <div class="sec-sub">1965–1968 · the movement fractures</div>
+
+  <div class="card">
+    <div class="card-title">Malcolm X</div>
+    <ul>
+      <li>Born Malcolm Little — rough childhood, burglary conviction at 21</li>
+      <li>In prison, converted to the <strong>Nation of Islam</strong> — a Black nationalist religious sect that preached separation from whites</li>
+      <li>Became the Nation of Islam's most prominent minister after release</li>
+      <li>1964: pilgrimage to Mecca → changed his views, became willing to consider limited acceptance of whites</li>
+      <li>February 1965: <strong>assassinated by Nation of Islam members</strong> upset with his departure from the organization</li>
+    </ul>
+    <div class="hl">Malcolm X vs. MLK: Malcolm X initially rejected nonviolence and integration. MLK preached working within the system. Malcolm X came to represent a more militant alternative.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Black Power Movement</div>
+    <ul>
+      <li><strong>Black power</strong>: broad term — stressed racial pride, cultural distinctiveness over assimilation. Some interpreted it as justifying self-defense and even violence.</li>
+      <li>Cultural expressions: Afro hairstyles, African clothing, rediscovering African heritage</li>
+      <li><strong>Black Panthers (1966)</strong>: founded in Oakland, CA — armed organization that patrolled Black neighborhoods to protect against police brutality. Believed revolution was necessary.</li>
+      <li>By late 1960s the civil rights movement had fragmented into dozens of competing organizations</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-title">MLK's Assassination</div>
+    <p>April 4, 1968: King was in <strong>Memphis, Tennessee</strong> supporting a strike by Black sanitation workers. Shot by a sniper while standing on his hotel balcony.</p>
+    <p style="margin-top:8px;">His death triggered riots in <strong>more than 100 cities</strong> including Washington D.C. It marked the end of an era in the civil rights movement.</p>
+  </div>
+</div>
+
+<!-- JFK -->
+<div class="section" id="kennedy">
+  <div class="sec-title">Kennedy / New Frontier</div>
+  <div class="sec-sub">1961–1963 · Camelot and crisis</div>
+
+  <div class="card">
+    <div class="card-title">New Frontier Domestic Policy</div>
+    <ul>
+      <li>Kennedy's legislative agenda: medical care for the poor, urban renewal, education</li>
+      <li>Congress (conservative coalition + Southern Dixiecrats) blocked most of it — same problem Truman had</li>
+      <li>Kennedy was cautious, lacked a strong voter mandate (won by only 119,000 votes)</li>
+      <li>Used deficit spending to boost the economy: tax cuts, higher minimum wage, increased spending</li>
+      <li><strong>Peace Corps (1961)</strong>: volunteer program to help poor nations in Asia, Africa, Latin America — also a Cold War tool to prevent communism</li>
+      <li><strong>Alliance for Progress</strong>: aid program specifically for Latin America to reduce poverty and prevent communist revolutions</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Space Race</div>
+    <ul>
+      <li>1957: USSR launched <strong>Sputnik</strong> → Eisenhower started NASA</li>
+      <li>1961: USSR sent first man to space; US sent one a month later</li>
+      <li>Kennedy challenged the nation to reach the moon by end of the decade</li>
+      <li><strong>Alan Shepard</strong>: first American in space; <strong>John Glenn</strong>: first American to orbit Earth</li>
+      <li>July 1969: <strong>Neil Armstrong</strong> became first man on the moon</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Cold War Crises</div>
+    <ul>
+      <li><strong>Berlin Wall (1961)</strong>: East Germany built the wall to stop citizens from fleeing to West Berlin. The issue: East Germans were escaping in huge numbers, embarrassing the USSR. Kennedy accepted the wall rather than risk war.</li>
+      <li><strong>Cuban Missile Crisis (Oct 1962)</strong>: USSR placed nuclear missiles in Cuba. 13-day standoff. Kennedy blockaded Cuba. USSR agreed to remove missiles in exchange for US pledge not to invade Cuba (and secretly removing US missiles from Turkey). Khrushchev was seen as backing down — weakened him domestically, led to his removal from power in 1964.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-title">JFK's Assassination</div>
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-dot o"></div><div class="tl-date">Nov 22, 1963</div><div class="tl-text">Shot in Dallas while riding in open-air limo. Texas School Book Depository.</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-date">Arrest</div><div class="tl-text"><strong>Lee Harvey Oswald</strong> arrested — rifle with fingerprints, shady past (dishonorable discharge, briefly lived in USSR, supported Castro)</div></div>
+      <div class="tl-item"><div class="tl-dot o"></div><div class="tl-date">Days later</div><div class="tl-text"><strong>Jack Ruby</strong> shot and killed Oswald on live TV</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-date">Warren Commission</div><div class="tl-text">Investigated and concluded Oswald was the <strong>lone assassin</strong> — no conspiracy. Later Congressional investigation suggested possible other involvement.</div></div>
+    </div>
+    <div class="hl orange">Kennedy developed <strong>missile and submarine programs</strong> for the military. His defense buildup was a major part of the New Frontier.</div>
+  </div>
+</div>
+
+<!-- LBJ -->
+<div class="section" id="lbj">
+  <div class="sec-title">LBJ & The Great Society</div>
+  <div class="sec-sub">1963–1968 · the most ambitious domestic agenda since the New Deal</div>
+
+  <div class="card">
+    <div class="card-title">Who Was LBJ?</div>
+    <p>Middle-class Texan, served in House then Senate. FDR follower who wanted to help the common man. Legendary political persuader — known for getting in people's faces and twisting arms until he got what he wanted (the "Johnson treatment"). Had helped pass the Civil Rights Act of 1957.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Great Society Programs</div>
+    <table>
+      <tr><th>Program</th><th>What It Did</th></tr>
+      <tr><td><strong>Civil Rights Act (1964)</strong></td><td>Banned discrimination by race, religion, gender</td></tr>
+      <tr><td><strong>War on Poverty</strong></td><td>$1 billion to aid the poor; umbrella for many programs</td></tr>
+      <tr><td><strong>Head Start</strong></td><td>Education for poor preschoolers</td></tr>
+      <tr><td><strong>Job Corps</strong></td><td>Job training for poor young adults</td></tr>
+      <tr><td><strong>VISTA</strong></td><td>Volunteers in Service to America — domestic Peace Corps</td></tr>
+      <tr><td><strong>Medicare</strong></td><td>Hospital + low-cost insurance for those over 65</td></tr>
+      <tr><td><strong>Medicaid</strong></td><td>Health care for welfare recipients</td></tr>
+      <tr><td><strong>Secondary Education Act</strong></td><td>$1 billion to help schools buy books</td></tr>
+      <tr><td><strong>HUD</strong></td><td>Low-rent housing, urban renewal</td></tr>
+      <tr><td><strong>Immigration Act (1965)</strong></td><td>Ended national-origin quotas, allowed non-European immigrants</td></tr>
+    </table>
+    <p style="margin-top:8px; font-size:0.82rem; color:var(--muted);">Result: Poverty rate dropped from <strong>21% → 11%</strong>. But it grew the national debt and triggered a <strong>conservative backlash</strong>.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">The Warren Court</div>
+    <p>Chief Justice Earl Warren led the court on an activist path — interpreted constitutional rights broadly.</p>
+    <table>
+      <tr><th>Case</th><th>Ruling</th></tr>
+      <tr><td><strong>Brown v. Board (1954)</strong></td><td>Segregated schools unconstitutional — overturned Plessy</td></tr>
+      <tr><td><strong>Mapp v. Ohio (1961)</strong></td><td>Evidence obtained without a warrant cannot be used in court (exclusionary rule)</td></tr>
+      <tr><td><strong>Gideon v. Wainwright (1963)</strong></td><td>Everyone has the right to an attorney (even if they can't afford one)</td></tr>
+      <tr><td><strong>Miranda v. Arizona (1966)</strong></td><td>Police must inform suspects of their rights — "Miranda rights"</td></tr>
+      <tr><td><strong>Hernandez v. Texas (1954)</strong></td><td>Mexican Americans have equal protection under the law — first Mexican-American civil rights case before SCOTUS</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title">"Guns or Butter"</div>
+    <div class="hl orange">LBJ's biggest problem: he couldn't fund both the Great Society AND the Vietnam War. He tried to do both and ended up with a massive budget deficit. Conservatives used this to attack him. He chose not to run for re-election in 1968.</div>
+  </div>
+</div>
+
+<!-- VIETNAM -->
+<div class="section" id="vietnam">
+  <div class="sec-title">The Vietnam War</div>
+  <div class="sec-sub">1954–1975 · America's longest war</div>
+
+  <div class="card">
+    <div class="card-title">Background</div>
+    <ul>
+      <li>France controlled Vietnam until WWII, then Japan took it. After WWII France tried to take it back.</li>
+      <li><strong>Ho Chi Minh</strong>: Vietnamese nationalist and communist who fought for independence</li>
+      <li><strong>Domino theory</strong>: if Vietnam fell to communism, neighboring countries would too. Truman agreed to help France financially — that's why the US got involved.</li>
+      <li>France was defeated. Vietnam split at the 17th parallel: communist North, US-backed South</li>
+      <li>Also under French control in Indochina: <strong>Laos and Cambodia</strong></li>
+    </ul>
+    <div class="hl orange"><strong>Truman agreed to aid France</strong> because of the domino theory — fear that communism would spread across Southeast Asia.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">US Escalation</div>
+    <ul>
+      <li>Ho Chi Minh organized the <strong>Vietcong</strong> — guerilla army fighting to reunite Vietnam under communism</li>
+      <li><strong>Gulf of Tonkin Resolution (1964)</strong>: Congress gave LBJ power to "take all necessary measures" against North Vietnam after a reported attack on US ships. Only 2 votes against. Effectively handed war powers to the president.</li>
+      <li><strong>Operation Rolling Thunder</strong>: sustained US bombing campaign of North Vietnam</li>
+      <li>By end of 1965: 180,000 US troops. By 1966: doubled.</li>
+      <li>During the Vietnam War, African American soldiers <strong>served in disproportionately high combat roles and suffered disproportionate casualties</strong> — the draft hit poor and minority communities hardest.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Why the US Struggled</div>
+    <ul>
+      <li>Vietcong used <strong>guerrilla warfare</strong> — hit-and-run, booby traps, landmines, underground tunnels, blended with civilians</li>
+      <li>US used <strong>napalm</strong> (jellied gasoline bombs) and <strong>Agent Orange</strong> (chemical defoliant — stripped leaves off trees to eliminate hiding spots, destroyed farmland)</li>
+      <li>US went on <strong>"search and destroy"</strong> missions — trying to find and bomb enemy positions</li>
+      <li>LBJ had to fight a "limited war" — afraid of provoking China and the USSR to intervene (like Korea)</li>
+      <li>Soldiers became demoralized — alcohol, drug use, some even killed their own officers ("fragging")</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Tet Offensive → Nixon</div>
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-dot o"></div><div class="tl-date">Jan 30, 1968</div><div class="tl-text"><strong>Tet Offensive</strong>: Vietcong launched massive coordinated surprise attack on all US airbases and South Vietnamese cities during the Vietnamese New Year. US military leaders had said the war was nearly won. This shattered that narrative.</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-date">1968</div><div class="tl-text">LBJ announces he won't seek re-election. <strong>Richard Nixon</strong> wins presidency promising to end the war.</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-date">May 1970</div><div class="tl-text">Nixon secretly orders bombing of <strong>Ho Chi Minh Trail in Cambodia</strong> to cut Vietcong supply lines. Massive public outrage when revealed.</div></div>
+      <div class="tl-item"><div class="tl-dot o"></div><div class="tl-date">May 4, 1970</div><div class="tl-text"><strong>Kent State</strong>: Ohio National Guard kills 4 students at anti-war protest. Nation is shocked.</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-date">April 30, 1975</div><div class="tl-text">Vietcong unify Vietnam under communism. Capital renamed <strong>Ho Chi Minh City</strong>. US involvement ends. 55,000 Americans killed, 365,000 wounded.</div></div>
+    </div>
+    <div class="hl orange">Nixon tried to break the peace stalemate in 1970 by <strong>invading Cambodia</strong> — this backfired massively and intensified protests at home.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Hawks vs. Doves</div>
+    <p><strong>Hawks</strong>: wanted to escalate — bomb harder, win decisively, stop communism at all costs.</p>
+    <p style="margin-top:6px;"><strong>Doves</strong>: wanted to withdraw — the war was unwinnable, too costly, morally questionable. The difference was fundamentally whether the US should stay and fight or leave.</p>
+  </div>
+</div>
+
+<!-- NIXON -->
+<div class="section" id="nixon">
+  <div class="sec-title">Nixon, Détente & Watergate</div>
+  <div class="sec-sub">1969–1975 · foreign policy wins, domestic collapse</div>
+
+  <div class="card">
+    <div class="card-title">Nixon's Foreign Policy — Détente</div>
+    <p>Nixon called his approach <strong>realpolitik</strong> (or just "pragmatic realism") — deal with the world as it is, not as you wish it to be. His national security advisor was <strong>Henry Kissinger</strong>.</p>
+    <ul style="margin-top:8px;">
+      <li><strong>China</strong>: Nixon visited China in 1972 to open diplomatic relations. China had signaled willingness to talk by <strong>inviting the US ping-pong team</strong> to China ("ping-pong diplomacy").</li>
+      <li><strong>Soviet Union</strong>: After Nixon normalized relations with China, the USSR responded by becoming <strong>more willing to negotiate</strong> — they didn't want the US and China allied against them.</li>
+      <li><strong>SALT I (Strategic Arms Limitation Treaty)</strong>: Nixon and Brezhnev agreed to <strong>freeze the number of nuclear missiles</strong> each side had — first major nuclear arms control agreement.</li>
+      <li><strong>Nixon visited China</strong> to improve trade relations (and play the China card against the USSR).</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-title">New Federalism & Domestic Policy</div>
+    <p><strong>New Federalism</strong>: Nixon's plan to shift power from the federal government back to states and local governments — gave states "block grants" to spend as they chose rather than specific federal programs.</p>
+    <div class="hl orange">This was a conservative pushback against the Great Society's expansion of federal power.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Watergate & Resignation</div>
+    <ul>
+      <li>June 1972: Burglars (connected to Nixon's re-election campaign) broke into the <strong>Democratic National Committee headquarters</strong> at the Watergate hotel in DC</li>
+      <li>Nixon tried to cover it up — used the CIA to block the FBI investigation</li>
+      <li>Senate investigation revealed Nixon had been taping all White House conversations</li>
+      <li>Tapes showed Nixon was involved in the cover-up from the start</li>
+      <li>August 9, 1974: Nixon resigned — the only US president to do so</li>
+      <li><strong>Result</strong>: Deepened Americans' distrust of government. Ford pardoned Nixon, which was very controversial.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Ford & Carter</div>
+    <ul>
+      <li><strong>Ford</strong>: focused on <strong>détente</strong> with the Soviet Union. Economy was in bad shape when he left office — stagflation (high inflation + high unemployment).</li>
+      <li><strong>Carter</strong>: greatest achievement was the <strong>Camp David Accords (1978)</strong> — brokered a peace deal between Egypt (Sadat) and Israel (Begin). First Arab-Israeli peace agreement.</li>
+      <li>Carter <strong>withdrew support</strong> from <strong>Nicaragua's dictator Somoza</strong> during a leftist (Sandinista) rebellion.</li>
+      <li><strong>Iran Hostage Crisis (1979)</strong>: Iranian revolutionaries seized the US embassy and held 52 Americans hostage for 444 days. Rescue mission failed. Hostages released the day Reagan was inaugurated. Important consequence: <strong>destroyed Carter's presidency and helped elect Reagan.</strong></li>
+      <li>When Ford left office the economy was struggling with <strong>stagflation</strong> — high inflation + slow growth.</li>
+    </ul>
+  </div>
+</div>
+
+<!-- OTHER MOVEMENTS -->
+<div class="section" id="other">
+  <div class="sec-title">Other Movements</div>
+  <div class="sec-sub">Women · Hispanic · Native American · Environment · Counterculture</div>
+
+  <div class="card">
+    <div class="card-title">Women's Rights Movement</div>
+    <ul>
+      <li><strong>Betty Friedan</strong>: wrote <em>The Feminine Mystique</em> (1963) — argued women were trapped in the housewife role; helped launch second-wave feminism</li>
+      <li>Founded <strong>NOW</strong> (National Organization for Women) — fought for equal opportunity in work and education</li>
+      <li><strong>Title VII (Civil Rights Act 1964)</strong>: outlawed discrimination based on sex — first federal law banning gender discrimination</li>
+      <li><strong>Title IX (1972)</strong>: banned sex discrimination in education — opened up sports and academic programs to women</li>
+      <li><strong>ERA (Equal Rights Amendment)</strong>: proposed in 1972 to guarantee gender equality in the Constitution. <strong>Phyllis Schlafly</strong> led conservative opposition. Fell 3 states short of the 38 needed. Still not ratified.</li>
+      <li><strong>Roe v. Wade (1973)</strong>: Supreme Court ruled abortion was a constitutional right. Overturned by <strong>Dobbs v. Jackson (2022)</strong> — court ruled the Constitution does NOT confer a right to abortion.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Hispanic Rights Movement</div>
+    <ul>
+      <li><strong>Hernandez v. Texas (1954)</strong>: first Mexican-American civil rights case before SCOTUS — ruled Mexican Americans have equal protection under the law</li>
+      <li><strong>Cesar Chavez</strong>: most influential Hispanic activist; fought for farm laborers (most exploited workers in the country — long hours, no benefits)</li>
+      <li>1962: Chavez organized the <strong>United Farm Workers (UFW)</strong> in California</li>
+      <li>Strategy: nonviolent — worker strikes + consumer boycott of California grapes → forced better working conditions</li>
+      <li><strong>Chicano movement</strong>: broader Hispanic political movement that led to greater representation in state, county, and city governments; pushed for ethnic pride and political power</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Native American Movement</div>
+    <p>Native Americans organized activist groups due to issues including <strong>poverty, loss of tribal lands, lack of services, and broken treaty obligations.</strong></p>
+    <p style="margin-top:8px;"><strong>AIM</strong> (American Indian Movement): major activist group. People with disabilities also gained expanded civil rights through legislation in this era.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Environmental Movement</div>
+    <ul>
+      <li><strong>Rachel Carson</strong>: marine biologist, wrote <em>Silent Spring</em> (1962) — warned about pesticides (especially DDT), sparked the modern environmental movement</li>
+      <li>DDT caused eggshell thinning → nearly wiped out bald eagles</li>
+      <li>The <strong>Cuyahoga River in Cleveland</strong> literally caught fire (1969) from industrial pollution — became a symbol of environmental crisis and helped push the Clean Air Act</li>
+      <li>Carson's book + activism → <strong>Earth Day</strong> (first 1970) → Congress created the <strong>EPA (Environmental Protection Agency, 1970)</strong></li>
+      <li>Nixon signed: Clean Air Act (1970), Clean Water Act (1973), Endangered Species Act (1973)</li>
+      <li>Industrial pollution had become a problem partly because <strong>few people had anticipated the harmful side effects of industrial chemicals</strong></li>
+      <li><strong>Three Mile Island (1979)</strong>: nuclear reactor meltdown in PA → US banned new nuclear plants for 25 years</li>
+      <li><strong>OPEC oil embargo (1973)</strong>: Arab nations cut off oil to US for supporting Israel. Gas lines, prices spiked. US realized its oil dependence.</li>
+      <li>Carter created the <strong>Department of Energy</strong>, pushed conservation. Congress passed the National Energy Act.</li>
+      <li><strong>Ralph Nader</strong>: consumer safety activist — National Traffic and Motor Vehicle Safety Act (1966) was significant because it <strong>established federal safety standards for cars for the first time</strong>.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Counterculture</div>
+    <p>The counterculture of the 1960s/70s was partly created by the <strong>Vietnam War</strong> — young people rejected mainstream values, authority, and the military draft. Also fueled by the civil rights movement's challenge to the status quo.</p>
+    <p style="margin-top:8px;">College campuses became centers of protest. Kent State (1970) was a turning point — when the government kills students for protesting, it radicalizes more people.</p>
+  </div>
+</div>
+
+<!-- STUDY GUIDE ANSWERS -->
+<div class="section" id="sg">
+  <div class="sec-title">Study Guide — All 48 Qs</div>
+  <div class="sec-sub">Tap each question to see the answer</div>
+
+  <div id="sg-list"></div>
+</div>
+
+<!-- QUIZ -->
+<div class="section" id="quiz">
+  <div class="sec-title">Practice Quiz</div>
+  <div class="sec-sub">Tap to reveal — covers study guide topics</div>
+
+  <div class="quiz-card" onclick="this.classList.toggle('open')">
+    <div class="quiz-tag">Civil Rights</div>
+    <div class="quiz-q">What doctrine did Plessy v. Ferguson establish, and what overturned it?</div>
+    <div class="quiz-a">"Separate but equal" — segregation was constitutional as long as facilities were equal. Brown v. Board of Education (1954) overturned it, ruling segregated schools inherently unequal.</div>
+    <div class="tap-hint">tap to reveal</div>
+  </div>
+
+  <div class="quiz-card" onclick="this.classList.toggle('open')">
+    <div class="quiz-tag">Civil Rights</div>
+    <div class="quiz-q">What did CORE believe in vs. what did the NAACP lead?</div>
+    <div class="quiz-a">CORE believed in direct nonviolent action (sit-ins, Freedom Rides). The NAACP led the way through court action — legal challenges to segregation.</div>
+    <div class="tap-hint">tap to reveal</div>
+  </div>
+
+  <div class="quiz-card" onclick="this.classList.toggle('open')">
+    <div class="quiz-tag o">JFK</div>
+    <div class="quiz-q">Why did the construction of the Berlin Wall happen, and what was Kennedy's response?</div>
+    <div class="quiz-a">East Germans were fleeing to West Berlin in massive numbers. The Wall was built in 1961 to stop the flow. Kennedy accepted the Wall rather than risk war with the USSR — he saw it as a containment move, not an act of aggression.</div>
+    <div class="tap-hint">tap to reveal</div>
+  </div>
+
+  <div class="quiz-card" onclick="this.classList.toggle('open')">
+    <div class="quiz-tag o">JFK</div>
+    <div class="quiz-q">How did the Cuban Missile Crisis affect Khrushchev?</div>
+    <div class="quiz-a">Khrushchev was seen as backing down by removing the missiles. This humiliated him domestically and contributed to his removal from power by Soviet leadership in 1964.</div>
+    <div class="tap-hint">tap to reveal</div>
+  </div>
+
+  <div class="quiz-card" onclick="this.classList.toggle('open')">
+    <div class="quiz-tag">LBJ</div>
+    <div class="quiz-q">Name 3 Warren Court decisions and what they ruled.</div>
+    <div class="quiz-a">Mapp v. Ohio (1961) — evidence without warrant is excluded. Gideon v. Wainwright (1963) — right to an attorney. Miranda v. Arizona (1966) — police must read suspects their rights. (Also: Brown v. Board, Hernandez v. Texas)</div>
+    <div class="tap-hint">tap to reveal</div>
+  </div>
+
+  <div class="quiz-card" onclick="this.classList.toggle('open')">
+    <div class="quiz-tag">Vietnam</div>
+    <div class="quiz-q">What did the Gulf of Tonkin Resolution do, and why was it controversial?</div>
+    <div class="quiz-a">Gave LBJ authority to take "all necessary measures" against North Vietnam after a reported attack on US ships. Only 2 votes against. It effectively handed Congress's war-declaring power to the president with no formal declaration of war.</div>
+    <div class="tap-hint">tap to reveal</div>
+  </div>
+
+  <div class="quiz-card" onclick="this.classList.toggle('open')">
+    <div class="quiz-tag">Vietnam</div>
+    <div class="quiz-q">What was the Tet Offensive and why did it matter?</div>
+    <div class="quiz-a">January 30, 1968 — Vietcong launched a massive surprise attack on all US airbases and major South Vietnamese cities during the Vietnamese New Year. The US military had been claiming the war was almost won. Tet shattered that story and destroyed public support for the war. LBJ decided not to run for re-election.</div>
+    <div class="tap-hint">tap to reveal</div>
+  </div>
+
+  <div class="quiz-card" onclick="this.classList.toggle('open')">
+    <div class="quiz-tag p">Nixon</div>
+    <div class="quiz-q">How did China signal willingness to open talks with the US, and what was the result?</div>
+    <div class="quiz-a">China invited the US ping-pong team to visit China — "ping-pong diplomacy." Nixon then visited China in 1972. After that, the USSR became more willing to negotiate (SALT I) because they didn't want the US and China united against them.</div>
+    <div class="tap-hint">tap to reveal</div>
+  </div>
+
+  <div class="quiz-card" onclick="this.classList.toggle('open')">
+    <div class="quiz-tag p">Nixon</div>
+    <div class="quiz-q">What was Nixon's "new federalism" and what did it do?</div>
+    <div class="quiz-a">Shifted power from the federal government back to states and local governments by giving "block grants" — money states could spend however they chose rather than on specific federal programs. A conservative rollback of Great Society centralization.</div>
+    <div class="tap-hint">tap to reveal</div>
+  </div>
+
+  <div class="quiz-card" onclick="this.classList.toggle('open')">
+    <div class="quiz-tag p">Nixon</div>
+    <div class="quiz-q">What was the main result of Nixon's resignation?</div>
+    <div class="quiz-a">Deep, lasting public distrust in the US government. Ford became president and controversially pardoned Nixon, costing Ford the 1976 election. Americans became broadly more skeptical of political leaders.</div>
+    <div class="tap-hint">tap to reveal</div>
+  </div>
+
+  <div class="quiz-card" onclick="this.classList.toggle('open')">
+    <div class="quiz-tag">Other Movements</div>
+    <div class="quiz-q">What was the significance of the Cuyahoga River catching fire?</div>
+    <div class="quiz-a">The Cuyahoga River in Cleveland, Ohio caught fire in 1969 due to industrial pollution. It became a powerful symbol of how bad industrial pollution had gotten and helped build public support for the Clean Air Act and EPA.</div>
+    <div class="tap-hint">tap to reveal</div>
+  </div>
+
+  <div class="quiz-card" onclick="this.classList.toggle('open')">
+    <div class="quiz-tag">Other Movements</div>
+    <div class="quiz-q">What did the Chicano movement do?</div>
+    <div class="quiz-a">The broader Hispanic American social and political movement that pushed for ethnic pride, political power, and greater representation in state, county, and city governments. Different from Cesar Chavez's focus specifically on farmworkers.</div>
+    <div class="tap-hint">tap to reveal</div>
+  </div>
+
+  <div class="quiz-card" onclick="this.classList.toggle('open')">
+    <div class="quiz-tag">Other Movements</div>
+    <div class="quiz-q">Why did the ERA fail?</div>
+    <div class="quiz-a">Needed 38 states to ratify — fell 3 states short. Phyllis Schlafly led the conservative opposition arguing it would hurt women (eliminate military exemptions, etc.). Several Southern and Western states never ratified.</div>
+    <div class="tap-hint">tap to reveal</div>
+  </div>
+
+  <div class="quiz-card" onclick="this.classList.toggle('open')">
+    <div class="quiz-tag o">Carter</div>
+    <div class="quiz-q">What was Carter's greatest foreign policy achievement and what was the Iran hostage crisis' main consequence?</div>
+    <div class="quiz-a">Camp David Accords (1978) — peace deal between Egypt and Israel. The Iran hostage crisis (444 days, failed rescue) destroyed Carter's re-election chances and helped elect Ronald Reagan.</div>
+    <div class="tap-hint">tap to reveal</div>
+  </div>
+</div>
+
+<script>
+const sgData = [
+  ["1","Who is Jackie Robinson most known for?","Breaking Major League Baseball's color barrier on April 15, 1947 as the first Black player in the modern MLB (Brooklyn Dodgers)."],
+  ["2","What was Hernandez v. Texas?","The first and only Mexican-American civil rights case heard by SCOTUS in the postwar era (1954). Unanimous ruling that Mexican Americans have equal protection under the 14th Amendment."],
+  ["3","How long was the Montgomery Bus Boycott?","Over a year — 381 days (Dec 1955 – Dec 1956)."],
+  ["4","In return for desegregation of interstate transportation, what did Kennedy agree to?","Not to prosecute the white mob members who attacked the Freedom Riders — a quiet political deal to reduce violence and tension."],
+  ["5","Why did MLK choose Birmingham for his protest?","He knew Birmingham's Public Safety Commissioner 'Bull' Connor would respond with brutal violence, which would be filmed and aired on TV nationwide, forcing Kennedy to act."],
+  ["6","CORE believed in what kind of action?","Direct nonviolent action (sit-ins, Freedom Rides)."],
+  ["7","Which organization led the way in Civil Rights court action?","The NAACP (National Association for the Advancement of Colored People)."],
+  ["8","What is Brown II considered to be?","A weak follow-up to Brown I — it ordered desegregation to happen 'with all deliberate speed' but gave no firm timeline, allowing Southern states to delay."],
+  ["9","What school had rioting when James Meredith enrolled?","The University of Mississippi ('Ole Miss')."],
+  ["10","What did T. Eugene Connor inflict on the protestors?","Clubs, police attack dogs, and high-pressure fire hoses — on demonstrators including women and children in Birmingham."],
+  ["11","The conflict over Little Rock High School involved which Supreme Court decision?","Brown v. Board of Education — Governor Faubus was defying the court-ordered desegregation."],
+  ["12","The Alliance for Progress provided what kind of support for Latin America?","Economic aid to poverty-stricken Latin American nations to reduce inequality and prevent communist revolutions."],
+  ["13","The Cuban Missile Crisis affected Khrushchev in what way?","He was seen as backing down by removing the missiles from Cuba. This humiliated him and led to his removal from power by Soviet leadership in 1964."],
+  ["14","What did the Warren Commission determine about Oswald?","That Lee Harvey Oswald was the lone assassin — the assassination was not a conspiracy. (A later Congressional investigation suggested possible other involvement.)"],
+  ["15","What did Kennedy develop for the military?","Expanded missile programs, submarines, and service positions — boosted defense spending significantly."],
+  ["16","What issue led to the construction of the Berlin Wall?","East Germans were fleeing to the West in huge numbers through Berlin, embarrassing the Soviet Union. The Wall was built in 1961 to stop the exodus."],
+  ["17","What was one result of the Great Society?","Poverty rate dropped from 21% to 11%. Also: Medicare/Medicaid created, federal education funding expanded, immigration quotas ended. (Also: budget deficit grew, conservative backlash followed.)"],
+  ["18","The Warren Court often made rulings that did what?","Broadly interpreted and expanded constitutional rights — an 'activist' approach to the law protecting individual rights against government."],
+  ["19","The Gulf of Tonkin Resolution allowed President Johnson to do what?","Take 'all necessary measures' to repel attacks on US forces and prevent further aggression in Vietnam — effectively gave him unlimited war powers without a formal declaration of war."],
+  ["20","Operation Rolling Thunder was a?","A sustained, large-scale bombing campaign of North Vietnam ordered by LBJ to destroy supply lines and force North Vietnam to negotiate."],
+  ["21","President Truman agreed to aid France's efforts to regain control over Vietnam because?","He feared Vietnam would fall to communism (domino theory) — if one country fell to communism, neighboring countries would follow."],
+  ["22","American soldiers used Agent Orange to do what?","Strip leaves from trees and shrubs to destroy jungle cover and deny Vietcong hiding places — it turned forests and farmland into wasteland."],
+  ["23","In addition to Vietnam, what areas of French Indochina were under French control in 1954?","Laos and Cambodia."],
+  ["24","During the Vietnam War, African American soldiers were?","Disproportionately drafted into combat roles and suffered higher casualty rates than white soldiers — the draft fell hardest on poor and minority communities."],
+  ["25","Who won the 1968 Presidential election?","Richard Nixon (Republican), who promised to end the Vietnam War."],
+  ["26","What 1968 event caused US military leaders to be concerned a quick end to the war was not possible?","The Tet Offensive — a massive coordinated Vietcong attack on all US airbases and major South Vietnamese cities that shattered claims the US was winning."],
+  ["27","President Nixon ordered the secret bombing of the Ho Chi Minh Trail in Cambodia to?","Cut Vietcong supply lines running through Cambodia from North to South Vietnam — he hoped to force North Vietnam to negotiate."],
+  ["28","In 1970, Nixon tried to break the stalemate in the peace process by?","Ordering a ground invasion of Cambodia (in addition to the bombing) — which triggered massive protests at home and the Kent State shootings."],
+  ["29","President Nixon considered his approach to foreign policy to be?","Realpolitik — pragmatic, deal with the world as it is rather than based on ideology. Flexibility over rigid anti-communism."],
+  ["30","China demonstrated its willingness to open talks with the US by?","Inviting the US table tennis (ping-pong) team to China in 1971 — 'ping-pong diplomacy.'"],
+  ["31","How did the Soviet Union respond to normalization of US-China relations?","By becoming more willing to negotiate with the US — they didn't want the US and China allied against them, so they agreed to SALT I."],
+  ["32","What was the main difference between Doves and Hawks regarding Vietnam?","Hawks wanted to escalate the war and win decisively. Doves wanted to withdraw — they believed the war was unwinnable and not worth the cost."],
+  ["33","Which country did Nixon visit to improve trade relations?","China — Nixon's visit in 1972 opened diplomatic and trade relations for the first time since the Communist revolution."],
+  ["34","The Strategic Arms Limitation Treaty (SALT I) did what?","Froze the number of nuclear missiles both the US and USSR could have — the first major nuclear arms control agreement between the superpowers."],
+  ["35","Which event helped create the counterculture of the 1960s and 1970s?","The Vietnam War — especially the military draft, which turned millions of young people against the government and mainstream American values."],
+  ["36","What issues led Native Americans to organize activist groups?","Poverty, loss of tribal lands, broken treaty obligations, lack of federal services, and discrimination."],
+  ["37","The National Traffic and Motor Vehicle Safety Act of 1966 was significant because?","It established federal safety standards for automobiles for the first time — triggered by Ralph Nader's consumer advocacy."],
+  ["38","The Cuyahoga River helped promote the environmental movement because?","It caught fire in 1969 due to extreme industrial pollution, becoming a dramatic symbol of how bad pollution had gotten and building public support for the EPA and Clean Air Act."],
+  ["39","The Chicano movement did what?","Pushed for Hispanic ethnic pride and political power, leading to greater representation of Hispanic Americans in state, county, and city governments."],
+  ["40","People with disabilities gained expanded civil rights how?","Through federal legislation, primarily the Rehabilitation Act of 1973 (banned discrimination against disabled people in federal programs) — precursor to the ADA."],
+  ["41","Industrial pollution had become a problem partly because few people had anticipated?","The harmful side effects — toxic byproducts, chemical accumulation in ecosystems, long-term health impacts — of industrialization and widespread chemical use (like DDT)."],
+  ["42","Nixon's establishment of 'new federalism' did what?","Shifted power from the federal government back to states and localities by giving block grants that states could spend as they chose, rather than specific federally-directed programs."],
+  ["43","What was a result of Nixon's resignation?","Deep, lasting public distrust of the US government. Ford became president and pardoned Nixon, which was deeply unpopular and likely cost Ford the 1976 election."],
+  ["44","President Ford's policy toward the Soviet Union focused on?","Détente — continuing Nixon's policy of easing Cold War tensions through negotiation rather than confrontation."],
+  ["45","Which country's dictator did Carter withdraw US support for during a leftist rebellion?","Nicaragua — Carter withdrew support from Somoza during the Sandinista Revolution."],
+  ["46","Carter's greatest foreign policy achievement was?","The Camp David Accords (1978) — brokered a peace deal between Egypt (Sadat) and Israel (Begin), the first Arab-Israeli peace agreement."],
+  ["47","What was an important consequence of the Iran hostage crisis?","It destroyed Carter's presidency — the 444-day crisis made him look weak and incompetent, directly contributing to Reagan's landslide victory in 1980."],
+  ["48","When Gerald Ford left the office of President, how was the economy?","Struggling — stagflation (simultaneous high inflation and slow economic growth/unemployment)."]
+];
+
+const sgList = document.getElementById('sg-list');
+sgData.forEach(([num, q, a]) => {
+  const div = document.createElement('div');
+  div.className = 'sg-q';
+  div.innerHTML = `<div class="sg-num">Q${num}</div><div class="sg-question">${q}</div><div class="sg-answer">${a}</div>`;
+  div.addEventListener('click', () => div.classList.toggle('open'));
+  sgList.appendChild(div);
+});
+
+function show(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  const map = ['civilrights','challenges','blackpower','kennedy','lbj','vietnam','nixon','other','sg','quiz'];
+  document.querySelectorAll('.tab')[map.indexOf(id)].classList.add('active');
+  window.scrollTo(0,0);
+}
+</script>
+</body>
+</html>
