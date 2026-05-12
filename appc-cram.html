@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AP Precalculus — Cram Sheet</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0f10;
+    --bg2: #161719;
+    --bg3: #1e2023;
+    --border: rgba(255,255,255,0.08);
+    --border2: rgba(255,255,255,0.14);
+    --text: #e8e9ea;
+    --muted: #888b8f;
+    --dim: #555860;
+    --accent: #5b8fff;
+    --accent2: #ff6b6b;
+    --green: #4ecb8d;
+    --amber: #f5a623;
+    --purple: #a78bfa;
+    --teal: #34d399;
+    --mono: 'IBM Plex Mono', monospace;
+    --serif: 'Instrument Serif', serif;
+    --sans: 'DM Sans', sans-serif;
+    --radius: 10px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* ─── Header ─── */
+  header {
+    padding: 32px 20px 20px;
+    max-width: 900px;
+    margin: 0 auto;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 24px;
+  }
+  .header-top {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  h1 {
+    font-family: var(--serif);
+    font-size: clamp(26px, 5vw, 38px);
+    font-weight: 400;
+    font-style: italic;
+    color: var(--text);
+    letter-spacing: -0.5px;
+  }
+  .exam-tag {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--accent);
+    background: rgba(91,143,255,0.12);
+    border: 1px solid rgba(91,143,255,0.25);
+    padding: 3px 8px;
+    border-radius: 4px;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+  }
+  .subtitle {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 6px;
+    font-family: var(--mono);
+  }
+
+  /* ─── Nav tabs ─── */
+  nav {
+    max-width: 900px;
+    margin: 0 auto 24px;
+    padding: 0 20px;
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .tab {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 500;
+    padding: 6px 14px;
+    border-radius: 6px;
+    border: 1px solid var(--border2);
+    background: var(--bg2);
+    color: var(--muted);
+    cursor: pointer;
+    transition: all .15s;
+    letter-spacing: .03em;
+    user-select: none;
+  }
+  .tab:hover { color: var(--text); border-color: rgba(255,255,255,0.25); }
+  .tab.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+  /* ─── Main layout ─── */
+  main {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 20px 60px;
+  }
+
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* ─── Section heading ─── */
+  .sec-title {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--dim);
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    margin-bottom: 14px;
+    margin-top: 28px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .sec-title:first-child { margin-top: 0; }
+
+  /* ─── Cards ─── */
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+  .full { grid-column: 1 / -1; }
+
+  @media (max-width: 620px) {
+    .grid, .grid-3 { grid-template-columns: 1fr; }
+    .full { grid-column: 1; }
+  }
+
+  .card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+  }
+  .card-title {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: .07em;
+    margin-bottom: 12px;
+  }
+
+  /* ─── Rule rows ─── */
+  .rule {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+  }
+  .rule:last-child { border-bottom: none; }
+  .rule-name {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    min-width: 96px;
+    flex-shrink: 0;
+  }
+  .rule-math {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--text);
+    flex: 1;
+  }
+  .rule-note {
+    font-size: 12px;
+    color: var(--dim);
+    text-align: right;
+    max-width: 120px;
+    flex-shrink: 0;
+  }
+
+  /* ─── Alert boxes ─── */
+  .warn {
+    background: rgba(255,107,107,0.08);
+    border-left: 3px solid var(--accent2);
+    border-radius: 0 6px 6px 0;
+    padding: 8px 12px;
+    margin-top: 10px;
+    font-size: 13px;
+    color: #ff9b9b;
+    line-height: 1.5;
+  }
+  .note {
+    background: rgba(245,166,35,0.08);
+    border-left: 3px solid var(--amber);
+    border-radius: 0 6px 6px 0;
+    padding: 8px 12px;
+    margin-top: 10px;
+    font-size: 13px;
+    color: #f5d080;
+    line-height: 1.5;
+  }
+  .info {
+    background: rgba(91,143,255,0.08);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 6px 6px 0;
+    padding: 8px 12px;
+    margin-top: 10px;
+    font-size: 13px;
+    color: #99b8ff;
+    line-height: 1.5;
+  }
+  .success {
+    background: rgba(78,203,141,0.08);
+    border-left: 3px solid var(--green);
+    border-radius: 0 6px 6px 0;
+    padding: 8px 12px;
+    margin-top: 10px;
+    font-size: 13px;
+    color: #7ee8b4;
+    line-height: 1.5;
+  }
+
+  /* ─── Tables ─── */
+  .table-wrap { overflow-x: auto; margin-top: 4px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 480px; }
+  th {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--dim);
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    text-align: left;
+    padding: 6px 10px;
+    border-bottom: 1px solid var(--border2);
+  }
+  td {
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    vertical-align: top;
+    line-height: 1.5;
+    font-size: 13px;
+  }
+  td:first-child {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--accent);
+    white-space: nowrap;
+  }
+  tr:last-child td { border-bottom: none; }
+
+  /* ─── Polar specifics ─── */
+  .polar-item {
+    display: flex;
+    gap: 12px;
+    padding: 7px 0;
+    border-bottom: 1px solid var(--border);
+    align-items: flex-start;
+  }
+  .polar-item:last-child { border-bottom: none; }
+  .polar-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--purple);
+    min-width: 130px;
+    flex-shrink: 0;
+    padding-top: 2px;
+  }
+  .polar-desc {
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.5;
+  }
+
+  /* ─── Highlight pill ─── */
+  .pill {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 2px 7px;
+    border-radius: 4px;
+    font-weight: 500;
+  }
+  .pill-blue { background: rgba(91,143,255,0.15); color: #99b8ff; }
+  .pill-red  { background: rgba(255,107,107,0.15); color: #ff9b9b; }
+  .pill-green { background: rgba(78,203,141,0.15); color: #7ee8b4; }
+  .pill-amber { background: rgba(245,166,35,0.15); color: #f5d080; }
+
+  .big-formula {
+    font-family: var(--mono);
+    font-size: clamp(16px, 3vw, 22px);
+    color: var(--green);
+    background: rgba(78,203,141,0.06);
+    border: 1px solid rgba(78,203,141,0.18);
+    border-radius: 8px;
+    padding: 14px 18px;
+    text-align: center;
+    margin: 10px 0 6px;
+    letter-spacing: .04em;
+  }
+  .mnemonic {
+    font-family: var(--serif);
+    font-size: 18px;
+    font-style: italic;
+    color: var(--amber);
+    text-align: center;
+    margin-bottom: 4px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-top">
+    <h1>AP Precalculus</h1>
+    <span class="exam-tag">Cram Sheet</span>
+  </div>
+  <div class="subtitle">logs · exponents · rational functions · polar · exam reminders</div>
+</header>
+
+<nav>
+  <div class="tab active" onclick="showTab('exponents')">Exponents</div>
+  <div class="tab" onclick="showTab('logs')">Logarithms</div>
+  <div class="tab" onclick="showTab('rationals')">Rational Functions</div>
+  <div class="tab" onclick="showTab('polar')">Polar Graphs</div>
+  <div class="tab" onclick="showTab('reminders')">Exam Reminders</div>
+</nav>
+
+<main>
+
+  <!-- ═══════════════ EXPONENTS ═══════════════ -->
+  <div class="section active" id="exponents">
+    <div class="sec-title">Exponent Rules</div>
+    <div class="grid">
+      <div class="card">
+        <div class="card-title">Core Rules</div>
+        <div class="rule"><span class="rule-name">product</span><span class="rule-math">aᵐ · aⁿ = aᵐ⁺ⁿ</span></div>
+        <div class="rule"><span class="rule-name">quotient</span><span class="rule-math">aᵐ / aⁿ = aᵐ⁻ⁿ</span></div>
+        <div class="rule"><span class="rule-name">power of power</span><span class="rule-math">(aᵐ)ⁿ = aᵐⁿ</span></div>
+        <div class="rule"><span class="rule-name">zero exponent</span><span class="rule-math">a⁰ = 1 &nbsp;&nbsp;(a ≠ 0)</span></div>
+        <div class="rule"><span class="rule-name">negative exp</span><span class="rule-math">a⁻ⁿ = 1/aⁿ</span></div>
+        <div class="rule"><span class="rule-name">fractional exp</span><span class="rule-math">aᵐ/ⁿ = ⁿ√(aᵐ)</span></div>
+        <div class="rule"><span class="rule-name">specifically</span><span class="rule-math">a¹/ⁿ = ⁿ√a</span></div>
+        <div class="warn">a⁻ⁿ moves to the denominator — it does NOT make the base negative. (-a)ⁿ and -(aⁿ) are different things.</div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Distribution Rules</div>
+        <div class="rule"><span class="rule-name">product dist.</span><span class="rule-math">(ab)ⁿ = aⁿ · bⁿ</span></div>
+        <div class="rule"><span class="rule-name">quotient dist.</span><span class="rule-math">(a/b)ⁿ = aⁿ / bⁿ</span></div>
+        <div class="rule"><span class="rule-name">neg base (even)</span><span class="rule-math">(-a)ⁿ → positive</span></div>
+        <div class="rule"><span class="rule-name">neg base (odd)</span><span class="rule-math">(-a)ⁿ → negative</span></div>
+        <div class="rule"><span class="rule-name">1 raised to any</span><span class="rule-math">1ⁿ = 1</span></div>
+        <div class="rule"><span class="rule-name">any raised to 1</span><span class="rule-math">a¹ = a</span></div>
+        <div class="note">You CANNOT distribute an exponent over addition: (a+b)ⁿ ≠ aⁿ + bⁿ. This is probably the most common algebra error on this exam.</div>
+      </div>
+    </div>
+
+    <div class="sec-title" style="margin-top:24px">Exponential Functions — Key Behaviors</div>
+    <div class="grid">
+      <div class="card">
+        <div class="card-title">f(x) = bˣ, base b &gt; 0, b ≠ 1</div>
+        <div class="rule"><span class="rule-name">b &gt; 1</span><span class="rule-math">exponential growth</span></div>
+        <div class="rule"><span class="rule-name">0 &lt; b &lt; 1</span><span class="rule-math">exponential decay</span></div>
+        <div class="rule"><span class="rule-name">domain</span><span class="rule-math">all real numbers</span></div>
+        <div class="rule"><span class="rule-name">range</span><span class="rule-math">y &gt; 0 (always positive)</span></div>
+        <div class="rule"><span class="rule-name">y-intercept</span><span class="rule-math">(0, 1) always</span></div>
+        <div class="rule"><span class="rule-name">asymptote</span><span class="rule-math">horizontal: y = 0</span></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Transformations of bˣ</div>
+        <div class="rule"><span class="rule-name">a·bˣ</span><span class="rule-math">vertical stretch/shrink by a</span></div>
+        <div class="rule"><span class="rule-name">bˣ + k</span><span class="rule-math">horizontal asymptote shifts to y = k</span></div>
+        <div class="rule"><span class="rule-name">b^(x−h)</span><span class="rule-math">horizontal shift right by h</span></div>
+        <div class="rule"><span class="rule-name">b^(cx)</span><span class="rule-math">horizontal compression by factor c</span></div>
+        <div class="rule"><span class="rule-name">−bˣ</span><span class="rule-math">reflection over x-axis; range: y &lt; 0</span></div>
+        <div class="info">The horizontal asymptote of a·bˣ + k is always y = k (the vertical shift). Watch for this on MCQs.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ LOGS ═══════════════ -->
+  <div class="section" id="logs">
+    <div class="sec-title">Logarithm Rules</div>
+    <div class="grid">
+      <div class="card">
+        <div class="card-title">Definition &amp; Core Rules</div>
+        <div class="rule"><span class="rule-name">definition</span><span class="rule-math">logₐ(x) = y &nbsp;↔&nbsp; aʸ = x</span></div>
+        <div class="rule"><span class="rule-name">product</span><span class="rule-math">log(xy) = log x + log y</span></div>
+        <div class="rule"><span class="rule-name">quotient</span><span class="rule-math">log(x/y) = log x − log y</span></div>
+        <div class="rule"><span class="rule-name">power</span><span class="rule-math">log(xⁿ) = n · log x</span></div>
+        <div class="rule"><span class="rule-name">change of base</span><span class="rule-math">logₐ(x) = ln x / ln a</span></div>
+        <div class="rule"><span class="rule-name">also</span><span class="rule-math">logₐ(x) = log x / log a</span></div>
+        <div class="warn">log(x + y) ≠ log x + log y. You can ONLY split/combine logs across multiplication and division, never addition or subtraction inside the argument.</div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Special Values &amp; Inverses</div>
+        <div class="rule"><span class="rule-name">log of 1</span><span class="rule-math">logₐ(1) = 0</span></div>
+        <div class="rule"><span class="rule-name">log of base</span><span class="rule-math">logₐ(a) = 1</span></div>
+        <div class="rule"><span class="rule-name">inverse #1</span><span class="rule-math">logₐ(aˣ) = x</span></div>
+        <div class="rule"><span class="rule-name">inverse #2</span><span class="rule-math">a^(logₐ x) = x</span></div>
+        <div class="rule"><span class="rule-name">ln of e</span><span class="rule-math">ln(e) = 1</span></div>
+        <div class="rule"><span class="rule-name">ln of 1</span><span class="rule-math">ln(1) = 0</span></div>
+        <div class="rule"><span class="rule-name">domain</span><span class="rule-math">x &gt; 0 strictly</span></div>
+        <div class="note">Domain of log is always x &gt; 0. If the argument is an expression, set it &gt; 0 and solve. This is a very common trap question.</div>
+      </div>
+    </div>
+
+    <div class="sec-title" style="margin-top:24px">Logarithmic Functions — Key Behaviors</div>
+    <div class="grid">
+      <div class="card">
+        <div class="card-title">f(x) = logₐ(x)</div>
+        <div class="rule"><span class="rule-name">domain</span><span class="rule-math">x &gt; 0</span></div>
+        <div class="rule"><span class="rule-name">range</span><span class="rule-math">all real numbers</span></div>
+        <div class="rule"><span class="rule-name">x-intercept</span><span class="rule-math">(1, 0) always</span></div>
+        <div class="rule"><span class="rule-name">asymptote</span><span class="rule-math">vertical: x = 0</span></div>
+        <div class="rule"><span class="rule-name">b &gt; 1</span><span class="rule-math">increasing</span></div>
+        <div class="rule"><span class="rule-name">0 &lt; b &lt; 1</span><span class="rule-math">decreasing</span></div>
+        <div class="success">Log and exponential are inverses — their graphs are reflections over y = x. Their domain and range are swapped.</div>
+      </div>
+      <div class="card">
+        <div class="card-title">Solving Exponential &amp; Log Equations</div>
+        <div class="rule"><span class="rule-name">isolate base</span><span class="rule-math">get bˣ alone, then log both sides</span></div>
+        <div class="rule"><span class="rule-name">same base</span><span class="rule-math">bᵐ = bⁿ → m = n</span></div>
+        <div class="rule"><span class="rule-name">isolate log</span><span class="rule-math">get log alone, then convert to exp</span></div>
+        <div class="rule"><span class="rule-name">check domain</span><span class="rule-math">plug answers back in — log arg must be &gt; 0</span></div>
+        <div class="warn">Always check for extraneous solutions in log equations. A valid algebraic answer might require log(negative) which is undefined.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ RATIONAL FUNCTIONS ═══════════════ -->
+  <div class="section" id="rationals">
+    <div class="sec-title">Asymptotes &amp; Holes — f(x) = p(x)/q(x)</div>
+
+    <div class="card full" style="margin-bottom:12px;">
+      <div class="card-title">Step-by-Step Process — always do in this order</div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap; padding: 4px 0 10px;">
+        <span class="pill pill-blue">① Factor fully</span>
+        <span style="color:var(--dim); align-self:center;">→</span>
+        <span class="pill pill-amber">② Cancel common factors → Holes</span>
+        <span style="color:var(--dim); align-self:center;">→</span>
+        <span class="pill pill-red">③ Remaining denom zeros → VAs</span>
+        <span style="color:var(--dim); align-self:center;">→</span>
+        <span class="pill pill-green">④ Compare degrees → HA or Slant</span>
+      </div>
+      <div class="warn">Domain = all x except zeros of the ORIGINAL denominator (before canceling). Holes are excluded even though they cancel out.</div>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <div class="card-title">Finding Each Feature</div>
+        <div class="rule"><span class="rule-name">vertical asymp.</span><span class="rule-math">zeros of remaining denom after cancel</span></div>
+        <div class="rule"><span class="rule-name">hole</span><span class="rule-math">factors that cancel from both num &amp; denom</span></div>
+        <div class="rule"><span class="rule-name">hole y-coord</span><span class="rule-math">plug x = a into simplified function</span></div>
+        <div class="rule"><span class="rule-name">x-intercepts</span><span class="rule-math">zeros of numerator (after canceling holes)</span></div>
+        <div class="rule"><span class="rule-name">y-intercept</span><span class="rule-math">plug x = 0 into simplified form</span></div>
+        <div class="rule"><span class="rule-name">domain</span><span class="rule-math">ℝ minus all original denom zeros</span></div>
+        <div class="info">A zero in the numerator → x-intercept. A zero in the denominator (after cancel) → VA. A zero in both → hole. Never mix these up.</div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Horizontal &amp; Slant Asymptotes</div>
+        <div class="rule"><span class="rule-name">n &lt; m</span><span class="rule-math">y = 0</span><span class="rule-note">denom wins</span></div>
+        <div class="rule"><span class="rule-name">n = m</span><span class="rule-math">y = (leading coeff ratio)</span><span class="rule-note">aₙ/bₘ</span></div>
+        <div class="rule"><span class="rule-name">n = m + 1</span><span class="rule-math">slant asymptote (long divide)</span></div>
+        <div class="rule"><span class="rule-name">n &gt; m + 1</span><span class="rule-math">no HA, no slant → ±∞</span></div>
+        <div class="rule"><span class="rule-name">slant form</span><span class="rule-math">y = quotient (ignore remainder)</span></div>
+        <div class="success">Can a graph cross an asymptote? YES for HA (crosses in the middle, approaches at ±∞). NO for VA — never crosses a vertical asymptote.</div>
+      </div>
+    </div>
+
+    <div class="sec-title" style="margin-top:20px">Behavior Near Vertical Asymptotes</div>
+    <div class="grid">
+      <div class="card">
+        <div class="card-title">Sign Analysis Near VAs</div>
+        <div class="rule"><span class="rule-name">method</span><span class="rule-math">pick test point on each side of VA</span></div>
+        <div class="rule"><span class="rule-name">positive f →</span><span class="rule-math">→ +∞</span></div>
+        <div class="rule"><span class="rule-name">negative f →</span><span class="rule-math">→ −∞</span></div>
+        <div class="rule"><span class="rule-name">odd mult. VA</span><span class="rule-math">opposite signs left &amp; right → crosses axis</span></div>
+        <div class="rule"><span class="rule-name">even mult. VA</span><span class="rule-math">same sign both sides → both go same direction</span></div>
+        <div class="note">End behavior: as x → ±∞, only leading terms matter. Divide leading term of numerator by leading term of denominator.</div>
+      </div>
+      <div class="card">
+        <div class="card-title">Quick Reference: HA Degree Rules</div>
+        <div style="margin-top:4px">
+          <div class="big-formula">deg(num) vs deg(denom)</div>
+          <div class="rule"><span class="rule-name">n &lt; m</span><span class="rule-math">y = 0</span></div>
+          <div class="rule"><span class="rule-name">n = m</span><span class="rule-math">y = a/b &nbsp;&nbsp;(lead coeffs)</span></div>
+          <div class="rule"><span class="rule-name">n &gt; m</span><span class="rule-math">no HA (slant or none)</span></div>
+          <div class="warn" style="margin-top:8px">Slant asymptote ONLY when deg(num) = deg(denom) + 1 exactly. Use polynomial long division to find it.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ POLAR ═══════════════ -->
+  <div class="section" id="polar">
+    <div class="sec-title">Polar Fundamentals</div>
+    <div class="grid">
+      <div class="card">
+        <div class="card-title">Basics</div>
+        <div class="rule"><span class="rule-name">point (r, θ)</span><span class="rule-math">r = distance from pole, θ = angle</span></div>
+        <div class="rule"><span class="rule-name">x = </span><span class="rule-math">r cos θ</span></div>
+        <div class="rule"><span class="rule-name">y = </span><span class="rule-math">r sin θ</span></div>
+        <div class="rule"><span class="rule-name">r = </span><span class="rule-math">√(x² + y²)</span></div>
+        <div class="rule"><span class="rule-name">θ = </span><span class="rule-math">arctan(y/x) &nbsp;(adjust for quadrant!)</span></div>
+        <div class="rule"><span class="rule-name">same point</span><span class="rule-math">(r, θ) = (−r, θ+π) = (r, θ+2π)</span></div>
+        <div class="warn">⚠ The quadrant of θ does NOT determine where the point is plotted. r can be negative. ALWAYS compute (x, y) = (r cos θ, r sin θ) to confirm the actual location.</div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Negative r — Critical Concept</div>
+        <div style="font-size:14px; line-height:1.7; color:var(--text);">
+          <p>When r &lt; 0, the point is plotted in the <strong style="color:var(--accent2)">opposite direction</strong> from θ — 180° away.</p>
+          <br>
+          <p>Example: (−3, π/4) plots in the same spot as (3, π/4 + π) = (3, 5π/4), which is in quadrant III — not quadrant I where π/4 points.</p>
+          <div class="warn" style="margin-top:10px">The curve still EXISTS when r is negative. Many MCQ traps rely on students assuming a negative r means the point doesn't exist in that region.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec-title" style="margin-top:20px">Increasing &amp; Decreasing in Polar</div>
+    <div class="card full" style="margin-bottom:12px;">
+      <div class="card-title">The Key Insight — think rectangular</div>
+      <div style="font-size:14px; line-height:1.7; color:var(--text); padding: 4px 0;">
+        For r = f(θ), draw the rectangular graph with θ on the x-axis and r on the y-axis. This rectangular graph tells you everything.
+      </div>
+      <div class="grid" style="margin-top:10px; gap:10px;">
+        <div>
+          <div class="polar-item"><span class="polar-label">rect. f(θ) rising</span><span class="polar-desc">→ r increasing → point moving away from pole</span></div>
+          <div class="polar-item"><span class="polar-label">rect. f(θ) falling toward 0</span><span class="polar-desc">→ r decreasing → curve spiraling toward pole</span></div>
+          <div class="polar-item"><span class="polar-label">rect. f(θ) = 0</span><span class="polar-desc">→ r = 0 → curve passes through the pole at that θ</span></div>
+        </div>
+        <div>
+          <div class="polar-item"><span class="polar-label">rect. f(θ) goes below 0</span><span class="polar-desc">→ r negative → point flips direction, traced in opposite quadrant</span></div>
+          <div class="polar-item"><span class="polar-label">rect. f(θ) at max</span><span class="polar-desc">→ farthest point from pole (tip of petal, outer loop)</span></div>
+          <div class="polar-item"><span class="polar-label">one arch on rect. graph (0 → max → 0)</span><span class="polar-desc">→ one complete petal traced in polar</span></div>
+        </div>
+      </div>
+      <div class="info" style="margin-top:10px">When asked "is r increasing?" — look at the rectangular graph. Is f(θ) going up? That's increasing r. Going toward zero? That's decreasing r. Dipping below zero? r is negative — still real, just flipped.</div>
+    </div>
+
+    <div class="sec-title" style="margin-top:20px">Common Polar Curve Types</div>
+    <div class="card full">
+      <div class="card-title">Shapes to Recognize Instantly</div>
+      <div class="table-wrap">
+        <table>
+          <tr><th>Equation</th><th>Name</th><th>Key Features</th><th>Rectangular hint</th></tr>
+          <tr>
+            <td>r = a</td>
+            <td>Circle (centered at pole)</td>
+            <td>Radius |a|</td>
+            <td>Horizontal line y = a on rect. graph</td>
+          </tr>
+          <tr>
+            <td>r = a cos θ</td>
+            <td>Circle (off-center)</td>
+            <td>Diameter |a|, on x-axis, passes through pole</td>
+            <td>Full sinusoidal cycle → one circle</td>
+          </tr>
+          <tr>
+            <td>r = a sin θ</td>
+            <td>Circle (off-center)</td>
+            <td>Diameter |a|, on y-axis, passes through pole</td>
+            <td>Same but phase-shifted</td>
+          </tr>
+          <tr>
+            <td>r = a ± b cos θ (a/b &gt; 1)</td>
+            <td>Limaçon (no inner loop)</td>
+            <td>r stays same sign, convex or dimpled</td>
+            <td>Shifted cosine, never crosses zero</td>
+          </tr>
+          <tr>
+            <td>r = a ± b cos θ (a/b = 1)</td>
+            <td>Cardioid (heart shape)</td>
+            <td>Passes through pole exactly once, cusp at pole</td>
+            <td>Cosine just touches zero</td>
+          </tr>
+          <tr>
+            <td>r = a ± b cos θ (a/b &lt; 1)</td>
+            <td>Limaçon with inner loop</td>
+            <td>Inner loop traced when r &lt; 0</td>
+            <td>Cosine dips below zero → inner loop region</td>
+          </tr>
+          <tr>
+            <td>r = a cos(nθ), n odd</td>
+            <td>Rose curve</td>
+            <td>n petals, symmetric about x-axis</td>
+            <td>n arches above zero → n petals (neg arches overlap)</td>
+          </tr>
+          <tr>
+            <td>r = a cos(nθ), n even</td>
+            <td>Rose curve</td>
+            <td>2n petals</td>
+            <td>n arches above + n arches below → 2n petals</td>
+          </tr>
+          <tr>
+            <td>r² = a² cos(2θ)</td>
+            <td>Lemniscate (∞ shape)</td>
+            <td>Only exists where cos(2θ) ≥ 0</td>
+            <td>Undefined for many θ values</td>
+          </tr>
+          <tr>
+            <td>r = aθ</td>
+            <td>Archimedean spiral</td>
+            <td>Expands outward each revolution</td>
+            <td>Linear increase on rect. graph</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="sec-title" style="margin-top:20px">Symmetry &amp; Intersections</div>
+    <div class="grid">
+      <div class="card">
+        <div class="card-title">Symmetry Rules</div>
+        <div class="rule"><span class="rule-name">cos function</span><span class="rule-math">symmetric about polar axis (x-axis)</span></div>
+        <div class="rule"><span class="rule-name">sin function</span><span class="rule-math">symmetric about θ = π/2 (y-axis)</span></div>
+        <div class="rule"><span class="rule-name">replace θ → −θ, same eq.</span><span class="rule-math">symmetric about polar axis</span></div>
+        <div class="rule"><span class="rule-name">replace r → −r, same eq.</span><span class="rule-math">symmetric about pole</span></div>
+        <div class="rule"><span class="rule-name">replace θ → π−θ, same eq.</span><span class="rule-math">symmetric about θ=π/2</span></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Intersection Traps</div>
+        <div style="font-size:13px; line-height:1.7; color:var(--text);">
+          Two polar curves can intersect at the same physical point with <em style="color:var(--purple)">different (r, θ) pairs</em>.
+          <div class="warn" style="margin-top:8px">Always check: (1) set curves equal and solve, (2) check if both pass through the pole (r = 0 at different θ values still means they meet at the pole).</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ REMINDERS ═══════════════ -->
+  <div class="section" id="reminders">
+    <div class="sec-title">Residuals</div>
+    <div class="card full" style="margin-bottom:12px;">
+      <div class="mnemonic">RAP: Real minus Approximated (Predicted)</div>
+      <div class="big-formula">residual = actual − predicted</div>
+      <div class="grid" style="margin-top:12px; gap:10px;">
+        <div class="card" style="background:var(--bg3);">
+          <div class="card-title">Interpreting Residuals</div>
+          <div class="rule"><span class="rule-name">positive residual</span><span class="rule-math">data point is above the model</span></div>
+          <div class="rule"><span class="rule-name">negative residual</span><span class="rule-math">data point is below the model</span></div>
+          <div class="rule"><span class="rule-name">residual = 0</span><span class="rule-math">model passes exactly through that point</span></div>
+        </div>
+        <div class="card" style="background:var(--bg3);">
+          <div class="card-title">Residual Plots</div>
+          <div class="rule"><span class="rule-name">random scatter</span><span class="rule-math">good model fit</span></div>
+          <div class="rule"><span class="rule-name">curved pattern</span><span class="rule-math">wrong model type (e.g. used linear on exponential data)</span></div>
+          <div class="rule"><span class="rule-name">funnel shape</span><span class="rule-math">non-constant variance issue</span></div>
+          <div class="warn">predicted − actual = wrong sign. It is ALWAYS actual − predicted.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec-title">Polar Function Traps — Exam Watch List</div>
+    <div class="card full" style="margin-bottom:12px;">
+      <div class="card-title">High-Frequency Traps</div>
+      <div class="polar-item"><span class="polar-label" style="color:var(--accent2);">⚠ Quadrant trap</span><span class="polar-desc">θ tells you the angle of the ray, but a negative r plots the point in the OPPOSITE direction. Always compute actual (x, y) before declaring the quadrant.</span></div>
+      <div class="polar-item"><span class="polar-label" style="color:var(--accent2);">⚠ Increasing/decreasing</span><span class="polar-desc">Think about the rectangular graph of r = f(θ). If f is decreasing toward zero, r is decreasing (getting closer to pole). If f goes negative, r is negative — curve flips sides.</span></div>
+      <div class="polar-item"><span class="polar-label" style="color:var(--accent2);">⚠ Inner loop</span><span class="polar-desc">Traced entirely when r &lt; 0. Don't skip those θ intervals — the curve is still being drawn.</span></div>
+      <div class="polar-item"><span class="polar-label" style="color:var(--accent2);">⚠ Rose petal count</span><span class="polar-desc">r = a cos(nθ): n odd → n petals; n even → 2n petals. Same rule applies with sin.</span></div>
+      <div class="polar-item"><span class="polar-label" style="color:var(--accent2);">⚠ Same point, diff coords</span><span class="polar-desc">A point can be represented multiple ways. (r, θ) = (−r, θ+π). Check all representations when finding intersections.</span></div>
+    </div>
+
+    <div class="sec-title">General High-Priority Reminders</div>
+    <div class="grid">
+      <div class="card">
+        <div class="card-title">Rational Function Traps</div>
+        <div class="polar-item"><span class="polar-label" style="color:var(--accent2);">hole vs. VA</span><span class="polar-desc">Cancels out → hole. Doesn't cancel → VA. Never mix these up.</span></div>
+        <div class="polar-item"><span class="polar-label" style="color:var(--accent2);">crossing HA</span><span class="polar-desc">Graphs CAN cross horizontal asymptotes. They CANNOT cross vertical asymptotes.</span></div>
+        <div class="polar-item"><span class="polar-label" style="color:var(--accent2);">domain</span><span class="polar-desc">Use ORIGINAL denominator before simplifying. Holes still excluded from domain.</span></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Log &amp; Exponent Traps</div>
+        <div class="polar-item"><span class="polar-label" style="color:var(--accent2);">log domain</span><span class="polar-desc">Argument must be strictly positive. Always check — common source of extraneous solutions.</span></div>
+        <div class="polar-item"><span class="polar-label" style="color:var(--accent2);">(a+b)ⁿ</span><span class="polar-desc">Does NOT equal aⁿ + bⁿ. Cannot distribute exponent over addition.</span></div>
+        <div class="polar-item"><span class="polar-label" style="color:var(--accent2);">a⁻ⁿ</span><span class="polar-desc">Moves to denominator as 1/aⁿ. Does NOT make the base negative.</span></div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+function showTab(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>
