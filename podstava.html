@@ -1,0 +1,1551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ПОДСТАВА 🎭</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Unbounded:wght@400;700;900&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --card: #1a1a28;
+    --accent: #ff2d55;
+    --gold: #ffd700;
+    --cyan: #00fff0;
+    --purple: #9b5de5;
+    --green: #39ff14;
+    --text: #f0f0f0;
+    --muted: #888;
+    --danger-glow: 0 0 20px rgba(255,45,85,0.6), 0 0 60px rgba(255,45,85,0.2);
+    --gold-glow: 0 0 20px rgba(255,215,0,0.5), 0 0 60px rgba(255,215,0,0.15);
+    --cyan-glow: 0 0 20px rgba(0,255,240,0.4), 0 0 60px rgba(0,255,240,0.1);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Space Mono', monospace;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+    cursor: default;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 40% at 20% 10%, rgba(155,93,229,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 50% at 80% 80%, rgba(255,45,85,0.07) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* SCANLINE OVERLAY */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
+    pointer-events: none;
+    z-index: 999;
+  }
+
+  #app {
+    position: relative;
+    z-index: 1;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+    min-height: 100vh;
+  }
+
+  /* ===== SCREENS ===== */
+  .screen { display: none; }
+  .screen.active { display: block; animation: fadeIn 0.4s ease; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ===== HEADER ===== */
+  .logo {
+    text-align: center;
+    padding: 40px 0 20px;
+  }
+
+  .logo-main {
+    font-family: 'Bebas Neue', cursive;
+    font-size: clamp(72px, 15vw, 140px);
+    letter-spacing: 8px;
+    color: var(--accent);
+    text-shadow: var(--danger-glow), 4px 4px 0 #8b0020;
+    line-height: 1;
+    animation: glitch 8s infinite;
+  }
+
+  .logo-sub {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 6px;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-top: 6px;
+  }
+
+  @keyframes glitch {
+    0%, 92%, 100% { transform: translate(0); }
+    93% { transform: translate(-2px, 1px); filter: hue-rotate(90deg); }
+    94% { transform: translate(2px, -1px); }
+    95% { transform: translate(0); filter: hue-rotate(0); }
+    96% { transform: translate(-1px, 2px); filter: hue-rotate(-90deg); }
+    97% { transform: translate(0); filter: hue-rotate(0); }
+  }
+
+  /* ===== BUTTONS ===== */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px 32px;
+    font-family: 'Unbounded', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    border: none;
+    cursor: pointer;
+    transition: all 0.15s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255,255,255,0.1);
+    transform: translateX(-100%);
+    transition: transform 0.2s;
+  }
+
+  .btn:hover::before { transform: translateX(0); }
+  .btn:active { transform: scale(0.97); }
+
+  .btn-primary {
+    background: var(--accent);
+    color: white;
+    clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+    box-shadow: var(--danger-glow);
+  }
+
+  .btn-primary:hover { box-shadow: 0 0 30px rgba(255,45,85,0.8), 0 0 80px rgba(255,45,85,0.3); }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--cyan);
+    border: 1px solid var(--cyan);
+    clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+  }
+
+  .btn-secondary:hover { background: rgba(0,255,240,0.1); box-shadow: var(--cyan-glow); }
+
+  .btn-gold {
+    background: var(--gold);
+    color: #000;
+    clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+    box-shadow: var(--gold-glow);
+    font-size: 13px;
+  }
+
+  .btn-gold:hover { box-shadow: 0 0 30px rgba(255,215,0,0.7), 0 0 80px rgba(255,215,0,0.3); }
+
+  .btn-danger {
+    background: transparent;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+    font-size: 11px;
+    padding: 10px 20px;
+  }
+
+  .btn-danger:hover { background: rgba(255,45,85,0.1); }
+
+  .btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  /* ===== INPUTS ===== */
+  .input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 16px;
+  }
+
+  label {
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  input[type="text"], textarea, select {
+    background: var(--card);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: var(--text);
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    padding: 12px 16px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    width: 100%;
+    clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+  }
+
+  input[type="text"]:focus, textarea:focus, select:focus {
+    border-color: var(--cyan);
+    box-shadow: 0 0 0 1px var(--cyan), 0 0 20px rgba(0,255,240,0.1);
+  }
+
+  textarea { resize: vertical; min-height: 60px; }
+
+  select option { background: var(--card); }
+
+  /* ===== CARDS ===== */
+  .card {
+    background: var(--card);
+    border: 1px solid rgba(255,255,255,0.06);
+    padding: 24px;
+    margin-bottom: 20px;
+    position: relative;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+    opacity: 0.4;
+  }
+
+  .card-title {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: var(--cyan);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  /* ===== CATEGORY GRID ===== */
+  .cat-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin: 24px 0;
+  }
+
+  @media (max-width: 600px) {
+    .cat-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  .cat-btn {
+    aspect-ratio: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-family: 'Unbounded', sans-serif;
+    font-size: 28px;
+    font-weight: 900;
+    border: 2px solid rgba(255,255,255,0.1);
+    background: var(--card);
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+    clip-path: none;
+  }
+
+  .cat-btn .cat-num {
+    font-size: 32px;
+    font-weight: 900;
+    line-height: 1;
+  }
+
+  .cat-btn .cat-label {
+    font-size: 9px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-family: 'Space Mono', monospace;
+  }
+
+  .cat-btn:not(.used):not(.disabled):hover {
+    border-color: var(--cyan);
+    background: rgba(0,255,240,0.05);
+    box-shadow: var(--cyan-glow);
+    transform: scale(1.04);
+  }
+
+  .cat-btn.used {
+    opacity: 0.25;
+    cursor: not-allowed;
+    filter: grayscale(1);
+  }
+
+  .cat-btn.disabled { cursor: not-allowed; }
+
+  /* ===== PLAYERS ===== */
+  .player-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .player-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    background: var(--surface);
+    border: 1px solid rgba(255,255,255,0.05);
+    gap: 12px;
+  }
+
+  .player-name-display {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 13px;
+    flex: 1;
+  }
+
+  .player-score {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 28px;
+    color: var(--gold);
+    text-shadow: var(--gold-glow);
+    min-width: 40px;
+    text-align: right;
+  }
+
+  .player-turn-marker {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: var(--danger-glow);
+    animation: pulse 1s ease infinite;
+    flex-shrink: 0;
+  }
+
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.4); opacity: 0.7; }
+  }
+
+  .player-item.active-turn {
+    border-color: rgba(255,45,85,0.4);
+    background: rgba(255,45,85,0.05);
+  }
+
+  .player-item.nominated {
+    border-color: var(--gold);
+    background: rgba(255,215,0,0.07);
+    animation: nominated-pulse 0.8s ease infinite alternate;
+  }
+
+  @keyframes nominated-pulse {
+    from { box-shadow: 0 0 10px rgba(255,215,0,0.2); }
+    to { box-shadow: 0 0 30px rgba(255,215,0,0.5); }
+  }
+
+  /* ===== TIMER ===== */
+  .timer-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    padding: 32px;
+  }
+
+  .timer-ring {
+    position: relative;
+    width: 160px;
+    height: 160px;
+  }
+
+  .timer-ring svg {
+    transform: rotate(-90deg);
+    width: 160px;
+    height: 160px;
+  }
+
+  .timer-ring .bg-ring {
+    fill: none;
+    stroke: rgba(255,255,255,0.05);
+    stroke-width: 6;
+  }
+
+  .timer-ring .progress-ring {
+    fill: none;
+    stroke-width: 6;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 1s linear, stroke 0.5s;
+  }
+
+  .timer-number {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Bebas Neue', cursive;
+    font-size: 64px;
+    letter-spacing: 2px;
+  }
+
+  .timer-label {
+    font-size: 10px;
+    letter-spacing: 4px;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  /* ===== CATEGORY REVEAL ===== */
+  .reveal-banner {
+    text-align: center;
+    padding: 32px;
+    border: 2px solid var(--cyan);
+    background: rgba(0,255,240,0.04);
+    margin: 20px 0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .reveal-banner::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: conic-gradient(from 0deg, transparent 0%, rgba(0,255,240,0.05) 25%, transparent 50%);
+    animation: spin 6s linear infinite;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  .reveal-cat-name {
+    font-family: 'Bebas Neue', cursive;
+    font-size: clamp(36px, 8vw, 64px);
+    color: var(--cyan);
+    text-shadow: var(--cyan-glow);
+    letter-spacing: 4px;
+    position: relative;
+    z-index: 1;
+    animation: revealIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .reveal-emoji {
+    font-size: 48px;
+    position: relative;
+    z-index: 1;
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  @keyframes revealIn {
+    from { transform: scale(0.4) rotate(-5deg); opacity: 0; }
+    to { transform: scale(1) rotate(0deg); opacity: 1; }
+  }
+
+  /* ===== QUESTION DISPLAY ===== */
+  .question-box {
+    border: 2px solid var(--accent);
+    background: rgba(255,45,85,0.05);
+    padding: 28px;
+    text-align: center;
+    margin: 20px 0;
+    position: relative;
+  }
+
+  .question-text {
+    font-size: clamp(16px, 3vw, 22px);
+    line-height: 1.6;
+    font-style: italic;
+  }
+
+  .answer-box {
+    border: 2px solid var(--green);
+    background: rgba(57,255,20,0.05);
+    padding: 20px;
+    text-align: center;
+    margin: 16px 0;
+    animation: fadeIn 0.4s ease;
+  }
+
+  .answer-label {
+    font-size: 9px;
+    letter-spacing: 4px;
+    color: var(--green);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .answer-text {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 32px;
+    color: var(--green);
+    text-shadow: 0 0 20px rgba(57,255,20,0.5);
+    letter-spacing: 2px;
+  }
+
+  /* ===== NOMINATE SECTION ===== */
+  .nominate-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 10px;
+    margin: 16px 0;
+  }
+
+  .nominate-btn {
+    padding: 14px;
+    background: var(--surface);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: var(--text);
+    font-family: 'Unbounded', sans-serif;
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .nominate-btn:hover:not(:disabled) {
+    border-color: var(--gold);
+    background: rgba(255,215,0,0.08);
+    color: var(--gold);
+    box-shadow: var(--gold-glow);
+  }
+
+  .nominate-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+  /* ===== RESULT SPLASH ===== */
+  .result-splash {
+    text-align: center;
+    padding: 40px 20px;
+    animation: fadeIn 0.3s ease;
+  }
+
+  .result-big {
+    font-family: 'Bebas Neue', cursive;
+    font-size: clamp(48px, 12vw, 100px);
+    line-height: 1;
+    letter-spacing: 4px;
+  }
+
+  .result-big.correct {
+    color: var(--green);
+    text-shadow: 0 0 30px rgba(57,255,20,0.6), 0 0 80px rgba(57,255,20,0.2);
+    animation: bounceIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .result-big.wrong {
+    color: var(--accent);
+    text-shadow: var(--danger-glow);
+    animation: shakeWrong 0.5s ease;
+  }
+
+  .result-big.подстава {
+    color: var(--gold);
+    text-shadow: var(--gold-glow);
+    animation: bounceIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  @keyframes bounceIn {
+    from { transform: scale(0.3) rotate(-10deg); opacity: 0; }
+    to { transform: scale(1) rotate(0deg); opacity: 1; }
+  }
+
+  @keyframes shakeWrong {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-10px); }
+    40% { transform: translateX(10px); }
+    60% { transform: translateX(-8px); }
+    80% { transform: translateX(8px); }
+  }
+
+  .result-sub {
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 12px;
+    line-height: 1.8;
+  }
+
+  .points-delta {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 36px;
+    margin-top: 8px;
+  }
+
+  .points-delta.plus { color: var(--green); }
+  .points-delta.minus { color: var(--accent); }
+
+  /* ===== SCOREBOARD ===== */
+  .scoreboard-item {
+    display: flex;
+    align-items: center;
+    padding: 16px 20px;
+    margin-bottom: 8px;
+    border: 1px solid rgba(255,255,255,0.05);
+    background: var(--card);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .scoreboard-item::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+  }
+
+  .scoreboard-item.rank-1::before { background: var(--gold); box-shadow: var(--gold-glow); }
+  .scoreboard-item.rank-2::before { background: #c0c0c0; }
+  .scoreboard-item.rank-3::before { background: #cd7f32; }
+
+  .rank-badge {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 24px;
+    width: 40px;
+    color: var(--muted);
+  }
+
+  .rank-1 .rank-badge { color: var(--gold); }
+
+  .sb-name {
+    flex: 1;
+    font-family: 'Unbounded', sans-serif;
+    font-size: 13px;
+  }
+
+  .sb-score {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 40px;
+    color: var(--gold);
+    text-shadow: var(--gold-glow);
+  }
+
+  /* ===== PODSTAVA BADGE ===== */
+  .podstava-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,215,0,0.1);
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    font-size: 9px;
+    letter-spacing: 2px;
+    padding: 4px 10px;
+    text-transform: uppercase;
+    font-family: 'Space Mono', monospace;
+    margin-left: 8px;
+  }
+
+  /* ===== SETUP SPECIFIC ===== */
+  .setup-cat-block {
+    border: 1px solid rgba(255,255,255,0.07);
+    padding: 20px;
+    margin-bottom: 14px;
+    background: var(--surface);
+    position: relative;
+    transition: border-color 0.2s;
+  }
+
+  .setup-cat-block.is-podstava {
+    border-color: var(--gold);
+    background: rgba(255,215,0,0.04);
+  }
+
+  .setup-cat-block.is-podstava::after {
+    content: '⚡ ПОДСТАВА';
+    position: absolute;
+    top: -10px;
+    right: 16px;
+    background: var(--gold);
+    color: #000;
+    font-family: 'Unbounded', sans-serif;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    padding: 2px 8px;
+  }
+
+  .cat-header-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .cat-num-badge {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 28px;
+    color: var(--accent);
+    text-shadow: var(--danger-glow);
+    min-width: 30px;
+  }
+
+  /* ===== DISCUSSION PHASE ===== */
+  .discussion-box {
+    border: 1px solid rgba(155,93,229,0.4);
+    background: rgba(155,93,229,0.05);
+    padding: 24px;
+    text-align: center;
+    margin: 20px 0;
+  }
+
+  .discussion-icon {
+    font-size: 48px;
+    display: block;
+    margin-bottom: 12px;
+    animation: float 3s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+
+  .whose-turn {
+    font-family: 'Unbounded', sans-serif;
+    font-size: clamp(14px, 3vw, 20px);
+    margin-bottom: 8px;
+  }
+
+  .whose-turn span {
+    color: var(--accent);
+    text-shadow: var(--danger-glow);
+  }
+
+  /* ===== SECTION DIVIDERS ===== */
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 24px 0;
+    color: var(--muted);
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+  }
+
+  .divider::before, .divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: rgba(255,255,255,0.06);
+  }
+
+  /* ===== HELPER ===== */
+  .text-center { text-align: center; }
+  .mt-16 { margin-top: 16px; }
+  .mt-24 { margin-top: 24px; }
+  .flex-center { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+  .tag {
+    display: inline-block;
+    font-size: 9px;
+    letter-spacing: 2px;
+    padding: 3px 8px;
+    text-transform: uppercase;
+    font-family: 'Space Mono', monospace;
+  }
+  .tag-cyan { border: 1px solid var(--cyan); color: var(--cyan); }
+  .tag-purple { border: 1px solid var(--purple); color: var(--purple); }
+  .tag-accent { border: 1px solid var(--accent); color: var(--accent); }
+  .hint { font-size: 11px; color: var(--muted); margin-top: 6px; line-height: 1.6; }
+
+  /* ===== PLAYER ADD ===== */
+  .player-add-row {
+    display: flex;
+    gap: 8px;
+  }
+
+  .player-add-row input { flex: 1; }
+
+  /* ===== ROUNDS INDICATOR ===== */
+  .rounds-row {
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+    margin: 12px 0;
+    flex-wrap: wrap;
+  }
+
+  .round-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.1);
+    transition: all 0.3s;
+  }
+
+  .round-dot.done { background: var(--accent); border-color: var(--accent); }
+  .round-dot.current { background: var(--cyan); border-color: var(--cyan); box-shadow: var(--cyan-glow); animation: pulse 1s ease infinite; }
+
+  /* ===== LOADING ===== */
+  .loading-dots {
+    display: inline-flex;
+    gap: 6px;
+    align-items: center;
+  }
+
+  .loading-dots span {
+    width: 6px;
+    height: 6px;
+    background: var(--muted);
+    border-radius: 50%;
+    animation: dot-bounce 1.2s ease infinite;
+  }
+
+  .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+  .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+  @keyframes dot-bounce {
+    0%, 80%, 100% { transform: translateY(0); opacity: 0.4; }
+    40% { transform: translateY(-6px); opacity: 1; }
+  }
+
+  /* ===== CONFETTI CANVAS ===== */
+  #confetti-canvas {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 998;
+    display: none;
+  }
+
+  /* ===== TOAST ===== */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--card);
+    border: 1px solid var(--cyan);
+    color: var(--text);
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    padding: 12px 24px;
+    z-index: 1000;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    white-space: nowrap;
+    box-shadow: var(--cyan-glow);
+  }
+
+  .toast.show { transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<canvas id="confetti-canvas"></canvas>
+<div class="toast" id="toast"></div>
+
+<div id="app">
+
+  <!-- ============================
+       SCREEN 1: WELCOME
+  ============================= -->
+  <div id="screen-welcome" class="screen active">
+    <div class="logo">
+      <div class="logo-main">ПОДСТАВА</div>
+      <div class="logo-sub">the party game where trust is a liability</div>
+    </div>
+    <div class="card mt-24">
+      <div class="card-title">// how it works</div>
+      <p style="font-size:13px;line-height:2;color:#ccc;">
+        The <strong style="color:var(--cyan)">Game Master</strong> sets up 8 secret categories — each with a question and answer.<br>
+        One of them is the <strong style="color:var(--gold)">ПОДСТАВА</strong> — a suspiciously easy question.<br><br>
+        On your turn: pick a number <span style="color:var(--accent)">1–8</span>. The category is revealed.<br>
+        Discuss → nominate the person you think doesn't know the answer.<br>
+        If they get it <span style="color:var(--accent)">wrong</span> → everyone else gets <strong>+1</strong>.<br>
+        If they get it <span style="color:var(--green)">right</span> → they get <strong>+2</strong> and everyone else gets zip.
+      </p>
+    </div>
+    <div class="flex-center mt-24">
+      <button class="btn btn-primary" onclick="showScreen('screen-setup-players')">⚡ start setup</button>
+    </div>
+  </div>
+
+  <!-- ============================
+       SCREEN 2: SETUP PLAYERS
+  ============================= -->
+  <div id="screen-setup-players" class="screen">
+    <div class="logo">
+      <div class="logo-main" style="font-size:60px;letter-spacing:4px;">PLAYERS</div>
+    </div>
+    <div class="card">
+      <div class="card-title">// add players (min 2, max 10)</div>
+      <div class="player-add-row">
+        <input type="text" id="player-input" placeholder="player name..." maxlength="20"
+          onkeydown="if(event.key==='Enter')addPlayer()">
+        <button class="btn btn-secondary" onclick="addPlayer()">+ add</button>
+      </div>
+      <p class="hint">The Game Master is separate — just add the actual players.</p>
+      <div id="player-list" class="player-list mt-16"></div>
+    </div>
+    <div class="flex-center mt-24">
+      <button class="btn btn-danger" onclick="showScreen('screen-welcome')">← back</button>
+      <button class="btn btn-primary" id="btn-to-setup-cats" onclick="goToSetupCats()" disabled>next: setup categories →</button>
+    </div>
+  </div>
+
+  <!-- ============================
+       SCREEN 3: SETUP CATEGORIES
+  ============================= -->
+  <div id="screen-setup-cats" class="screen">
+    <div class="logo">
+      <div class="logo-main" style="font-size:48px;letter-spacing:3px;">CATEGORIES</div>
+      <div class="logo-sub">only the game master should see this screen</div>
+    </div>
+    <div class="card">
+      <div class="card-title">// 8 categories — name, 1 question, 1 answer each</div>
+      <p class="hint">One of these is the <strong style="color:var(--gold)">ПОДСТАВА</strong> — the suspiciously easy one. Mark it using the toggle.</p>
+    </div>
+    <div id="cat-setup-blocks"></div>
+    <div class="flex-center mt-24">
+      <button class="btn btn-danger" onclick="showScreen('screen-setup-players')">← back</button>
+      <button class="btn btn-primary" id="btn-start-game" onclick="startGame()">⚡ START GAME</button>
+    </div>
+  </div>
+
+  <!-- ============================
+       SCREEN 4: GAME — PICK CATEGORY
+  ============================= -->
+  <div id="screen-game-pick" class="screen">
+    <div style="padding-top:20px;">
+      <div id="rounds-indicator" class="rounds-row"></div>
+      <div id="current-turn-display" class="whose-turn text-center" style="margin:16px 0;"></div>
+      <p class="hint text-center" style="margin-bottom:16px;">Pick a category number 1–8</p>
+      <div id="cat-grid" class="cat-grid"></div>
+      <div class="divider">scoreboard</div>
+      <div id="pick-scoreboard"></div>
+    </div>
+  </div>
+
+  <!-- ============================
+       SCREEN 5: GAME — CATEGORY REVEALED + DISCUSS
+  ============================= -->
+  <div id="screen-game-discuss" class="screen">
+    <div style="padding-top:20px;">
+      <div class="reveal-banner">
+        <span id="reveal-emoji" class="reveal-emoji">🎯</span>
+        <div id="reveal-cat-name" class="reveal-cat-name">CATEGORY</div>
+      </div>
+      <div class="discussion-box">
+        <span class="discussion-icon">🗣️</span>
+        <div class="whose-turn">It's <span id="discuss-turn-name">Player</span>'s turn to nominate</div>
+        <p class="hint">Discuss as a group — who's most likely to NOT know this category?</p>
+      </div>
+      <p style="font-size:11px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:12px;">Nominate someone:</p>
+      <div id="nominate-grid" class="nominate-grid"></div>
+    </div>
+  </div>
+
+  <!-- ============================
+       SCREEN 6: GAME — ANSWER PHASE
+  ============================= -->
+  <div id="screen-game-answer" class="screen">
+    <div style="padding-top:20px;">
+      <div style="text-align:center;margin-bottom:8px;">
+        <span style="font-size:11px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;">nominated: </span>
+        <span id="answer-nominee-name" style="font-family:'Unbounded',sans-serif;font-size:16px;color:var(--gold);"></span>
+      </div>
+      <div class="question-box">
+        <div style="font-size:9px;letter-spacing:3px;color:var(--accent);margin-bottom:12px;text-transform:uppercase;">question</div>
+        <div id="answer-question-text" class="question-text"></div>
+      </div>
+      <div class="timer-container">
+        <div class="timer-ring">
+          <svg viewBox="0 0 160 160">
+            <circle class="bg-ring" cx="80" cy="80" r="66"/>
+            <circle id="timer-progress" class="progress-ring" cx="80" cy="80" r="66"
+              stroke-dasharray="414.69"
+              stroke-dashoffset="0"
+              stroke="var(--cyan)"/>
+          </svg>
+          <div class="timer-number" id="timer-display">30</div>
+        </div>
+        <div class="timer-label">seconds remaining</div>
+      </div>
+      <div id="gm-reveal-section" style="display:none;">
+        <div class="answer-box" id="answer-box-reveal" style="display:none;">
+          <div class="answer-label">correct answer</div>
+          <div class="answer-text" id="answer-text-display"></div>
+        </div>
+        <div class="flex-center mt-16">
+          <button class="btn btn-secondary" onclick="showAnswer()">👁 reveal answer (GM only)</button>
+        </div>
+        <div id="verdict-buttons" style="display:none;" class="flex-center mt-16">
+          <button class="btn btn-danger" onclick="resolveRound(false)">✗ they got it WRONG</button>
+          <button class="btn btn-gold" onclick="resolveRound(true)">✓ they got it RIGHT</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================
+       SCREEN 7: RESULT
+  ============================= -->
+  <div id="screen-result" class="screen">
+    <div style="padding-top:20px;">
+      <div id="result-content" class="result-splash"></div>
+      <div class="divider">scores</div>
+      <div id="result-scoreboard"></div>
+      <div class="flex-center mt-24">
+        <button class="btn btn-primary" id="btn-next-round" onclick="nextRound()">next round →</button>
+        <button class="btn btn-danger" onclick="endGame()">end game</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================
+       SCREEN 8: FINAL SCOREBOARD
+  ============================= -->
+  <div id="screen-final" class="screen">
+    <div class="logo">
+      <div class="logo-main" style="color:var(--gold);text-shadow:var(--gold-glow);">ФИНАЛ</div>
+      <div class="logo-sub">final scores — someone is about to feel very judged</div>
+    </div>
+    <div id="final-scoreboard" style="margin-top:24px;"></div>
+    <div class="flex-center mt-24">
+      <button class="btn btn-primary" onclick="resetGame()">🔄 play again</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ============================================================
+//  GAME STATE
+// ============================================================
+const CATEGORY_EMOJIS = ['🎯','🧠','💀','🔥','🎲','👁','⚡','🎭','🐍','🤯','🌀','💎','🕳️','🧨','🦠','🔮'];
+
+const state = {
+  players: [],
+  categories: Array.from({length:8}, (_,i) => ({
+    name: '', question: '', answer: '', isPodstava: false, used: false, id: i
+  })),
+  podstavaIdx: -1,
+  currentTurnIdx: 0,
+  roundNum: 0,
+  totalRounds: 8,
+  nominatedPlayerIdx: -1,
+  currentCatIdx: -1,
+  timerInterval: null,
+  timerValue: 30,
+  gamePhase: 'setup', // setup | pick | discuss | answer | result | final
+};
+
+// ============================================================
+//  SCREEN MANAGEMENT
+// ============================================================
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+// ============================================================
+//  TOAST
+// ============================================================
+function showToast(msg, duration=2500) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), duration);
+}
+
+// ============================================================
+//  PLAYER SETUP
+// ============================================================
+function addPlayer() {
+  const input = document.getElementById('player-input');
+  const name = input.value.trim();
+  if (!name) return;
+  if (state.players.length >= 10) { showToast('max 10 players!'); return; }
+  if (state.players.find(p => p.name.toLowerCase() === name.toLowerCase())) {
+    showToast('name taken!'); return;
+  }
+  state.players.push({ name, score: 0 });
+  input.value = '';
+  input.focus();
+  renderPlayerSetupList();
+}
+
+function removePlayer(idx) {
+  state.players.splice(idx, 1);
+  renderPlayerSetupList();
+}
+
+function renderPlayerSetupList() {
+  const list = document.getElementById('player-list');
+  if (state.players.length === 0) {
+    list.innerHTML = '<p class="hint" style="padding:12px 0;">no players yet... awkward.</p>';
+  } else {
+    list.innerHTML = state.players.map((p,i) => `
+      <div class="player-item">
+        <span class="player-name-display">${escHtml(p.name)}</span>
+        <button class="btn btn-danger" style="padding:6px 14px;font-size:9px;" onclick="removePlayer(${i})">remove</button>
+      </div>
+    `).join('');
+  }
+  document.getElementById('btn-to-setup-cats').disabled = state.players.length < 2;
+}
+
+// ============================================================
+//  CATEGORY SETUP
+// ============================================================
+function goToSetupCats() {
+  renderCatSetupBlocks();
+  showScreen('screen-setup-cats');
+}
+
+function renderCatSetupBlocks() {
+  const container = document.getElementById('cat-setup-blocks');
+  container.innerHTML = state.categories.map((cat, i) => `
+    <div class="setup-cat-block ${cat.isPodstava ? 'is-podstava' : ''}" id="cat-block-${i}">
+      <div class="cat-header-row">
+        <span class="cat-num-badge">${i+1}</span>
+        <div style="flex:1">
+          <input type="text" placeholder="category name (e.g. 'Soviet history')"
+            value="${escHtml(cat.name)}"
+            oninput="updateCat(${i},'name',this.value)"
+            style="margin-bottom:8px">
+          <textarea placeholder="the question..."
+            oninput="updateCat(${i},'question',this.value)">${escHtml(cat.question)}</textarea>
+          <input type="text" placeholder="the answer..."
+            value="${escHtml(cat.answer)}"
+            oninput="updateCat(${i},'answer',this.value)"
+            style="margin-top:8px">
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;margin-top:8px;">
+        <input type="checkbox" id="podstava-check-${i}"
+          ${cat.isPodstava ? 'checked' : ''}
+          onchange="setPodstava(${i}, this.checked)"
+          style="width:16px;height:16px;accent-color:var(--gold);cursor:pointer;">
+        <label for="podstava-check-${i}" style="font-size:11px;color:var(--gold);cursor:pointer;letter-spacing:2px;text-transform:uppercase;">
+          this is the подстава (easy) category
+        </label>
+      </div>
+    </div>
+  `).join('');
+}
+
+function updateCat(idx, field, val) {
+  state.categories[idx][field] = val;
+}
+
+function setPodstava(idx, checked) {
+  state.categories.forEach((c, i) => {
+    c.isPodstava = (i === idx && checked);
+  });
+  // uncheck all other checkboxes
+  state.categories.forEach((_, i) => {
+    const cb = document.getElementById(`podstava-check-${i}`);
+    if (cb) cb.checked = (i === idx && checked);
+    const block = document.getElementById(`cat-block-${i}`);
+    if (block) {
+      if (i === idx && checked) block.classList.add('is-podstava');
+      else block.classList.remove('is-podstava');
+    }
+  });
+  state.podstavaIdx = checked ? idx : -1;
+}
+
+function startGame() {
+  // Validate
+  for (let i = 0; i < 8; i++) {
+    const c = state.categories[i];
+    if (!c.name.trim() || !c.question.trim() || !c.answer.trim()) {
+      showToast(`category ${i+1} is incomplete!`); return;
+    }
+  }
+  if (state.podstavaIdx === -1) {
+    showToast('mark one category as the ПОДСТАВА!'); return;
+  }
+  state.categories.forEach((c, i) => { c.id = i; c.used = false; });
+  state.currentTurnIdx = 0;
+  state.roundNum = 0;
+  state.players.forEach(p => p.score = 0);
+  showPickScreen();
+}
+
+// ============================================================
+//  GAME — PICK PHASE
+// ============================================================
+function showPickScreen() {
+  state.gamePhase = 'pick';
+  renderRoundsIndicator();
+  renderCatGrid();
+  renderPickScoreboard();
+  const cp = state.players[state.currentTurnIdx];
+  document.getElementById('current-turn-display').innerHTML =
+    `<span style="color:var(--accent);">${escHtml(cp.name)}</span>'s turn — pick a number`;
+  showScreen('screen-game-pick');
+}
+
+function renderRoundsIndicator() {
+  const el = document.getElementById('rounds-indicator');
+  el.innerHTML = state.categories.map((c, i) => `
+    <div class="round-dot ${c.used ? 'done' : (i===state.currentCatIdx ? 'current' : '')}"></div>
+  `).join('');
+}
+
+function renderCatGrid() {
+  const grid = document.getElementById('cat-grid');
+  grid.innerHTML = state.categories.map((cat, i) => `
+    <button class="cat-btn ${cat.used ? 'used' : ''}"
+      ${cat.used ? 'disabled' : `onclick="selectCategory(${i})"`}>
+      <span class="cat-num">${i+1}</span>
+      ${cat.used ? `<span class="cat-label">used</span>` : `<span class="cat-label">pick me</span>`}
+    </button>
+  `).join('');
+}
+
+function renderPickScoreboard() {
+  const el = document.getElementById('pick-scoreboard');
+  const sorted = [...state.players].sort((a,b) => b.score - a.score);
+  el.innerHTML = sorted.map((p,i) => `
+    <div class="player-item ${state.players.indexOf(p) === state.currentTurnIdx ? 'active-turn' : ''}">
+      <span class="player-name-display">
+        ${state.players.indexOf(p) === state.currentTurnIdx ? '<span class="player-turn-marker"></span> ' : ''}
+        ${escHtml(p.name)}
+      </span>
+      <span class="player-score">${p.score}</span>
+    </div>
+  `).join('');
+}
+
+function selectCategory(idx) {
+  state.currentCatIdx = idx;
+  showDiscussScreen(idx);
+}
+
+// ============================================================
+//  GAME — DISCUSS PHASE
+// ============================================================
+function showDiscussScreen(catIdx) {
+  state.gamePhase = 'discuss';
+  const cat = state.categories[catIdx];
+  const cp = state.players[state.currentTurnIdx];
+
+  document.getElementById('reveal-emoji').textContent = CATEGORY_EMOJIS[catIdx % CATEGORY_EMOJIS.length];
+  document.getElementById('reveal-cat-name').textContent = cat.name.toUpperCase();
+  document.getElementById('discuss-turn-name').textContent = cp.name;
+
+  // Nominate grid — everyone except current turn player
+  const grid = document.getElementById('nominate-grid');
+  grid.innerHTML = state.players.map((p, i) => `
+    <button class="nominate-btn"
+      onclick="nominatePlayer(${i})">
+      ${escHtml(p.name)}
+    </button>
+  `).join('');
+
+  showScreen('screen-game-discuss');
+}
+
+function nominatePlayer(playerIdx) {
+  state.nominatedPlayerIdx = playerIdx;
+  showAnswerScreen();
+}
+
+// ============================================================
+//  GAME — ANSWER PHASE
+// ============================================================
+function showAnswerScreen() {
+  state.gamePhase = 'answer';
+  const cat = state.categories[state.currentCatIdx];
+  const nominee = state.players[state.nominatedPlayerIdx];
+
+  document.getElementById('answer-nominee-name').textContent = nominee.name;
+  document.getElementById('answer-question-text').textContent = cat.question;
+  document.getElementById('answer-text-display').textContent = cat.answer;
+  document.getElementById('answer-box-reveal').style.display = 'none';
+  document.getElementById('gm-reveal-section').style.display = 'none';
+  document.getElementById('verdict-buttons').style.display = 'none';
+
+  showScreen('screen-game-answer');
+  startTimer();
+}
+
+function startTimer() {
+  clearInterval(state.timerInterval);
+  state.timerValue = 30;
+  updateTimerDisplay();
+
+  state.timerInterval = setInterval(() => {
+    state.timerValue--;
+    updateTimerDisplay();
+    if (state.timerValue <= 0) {
+      clearInterval(state.timerInterval);
+      onTimerEnd();
+    }
+  }, 1000);
+}
+
+function updateTimerDisplay() {
+  const v = state.timerValue;
+  document.getElementById('timer-display').textContent = v;
+
+  const circumference = 414.69;
+  const offset = circumference * (1 - v / 30);
+  const ring = document.getElementById('timer-progress');
+  ring.style.strokeDashoffset = offset;
+
+  // Color shift
+  if (v > 15) ring.style.stroke = 'var(--cyan)';
+  else if (v > 8) ring.style.stroke = 'var(--gold)';
+  else ring.style.stroke = 'var(--accent)';
+
+  document.getElementById('timer-display').style.color =
+    v <= 8 ? 'var(--accent)' : v <= 15 ? 'var(--gold)' : 'var(--cyan)';
+}
+
+function onTimerEnd() {
+  document.getElementById('gm-reveal-section').style.display = 'block';
+}
+
+function showAnswer() {
+  document.getElementById('answer-box-reveal').style.display = 'block';
+  document.getElementById('verdict-buttons').style.display = 'flex';
+}
+
+// ============================================================
+//  GAME — RESOLVE ROUND
+// ============================================================
+function resolveRound(nomineeWasCorrect) {
+  clearInterval(state.timerInterval);
+  const cat = state.categories[state.currentCatIdx];
+  const nominee = state.players[state.nominatedPlayerIdx];
+  const isActuallyPodstava = state.currentCatIdx === state.podstavaIdx;
+  cat.used = true;
+  state.roundNum++;
+
+  let resultHTML = '';
+  let scoreDeltas = {};
+
+  if (nomineeWasCorrect) {
+    // Nominee answered correctly → they get +2, everyone else gets 0
+    state.players[state.nominatedPlayerIdx].score += 2;
+    scoreDeltas[state.nominatedPlayerIdx] = +2;
+
+    if (isActuallyPodstava) {
+      resultHTML = `
+        <div class="result-big подстава">⚡ ПОДСТАВА ⚡</div>
+        <div style="font-family:'Bebas Neue',cursive;font-size:28px;color:var(--gold);margin-top:8px;">
+          AND THEY KNEW IT
+        </div>
+        <div class="result-sub">
+          ${escHtml(nominee.name)} answered correctly on the ПОДСТАВА category.<br>
+          Either they're a genius or they knew exactly what they were doing.
+        </div>
+        <div class="points-delta plus">+2 for ${escHtml(nominee.name)}</div>
+      `;
+      triggerConfetti();
+    } else {
+      resultHTML = `
+        <div class="result-big correct">ПРАВИЛЬНО!</div>
+        <div class="result-sub">
+          ${escHtml(nominee.name)} got it right against all odds.<br>
+          Whoever nominated them: that's on you.
+        </div>
+        <div class="points-delta plus">+2 for ${escHtml(nominee.name)}</div>
+      `;
+    }
+  } else {
+    // Nominee got it wrong → everyone else gets +1
+    state.players.forEach((p, i) => {
+      if (i !== state.nominatedPlayerIdx) {
+        p.score += 1;
+        scoreDeltas[i] = +1;
+      } else {
+        scoreDeltas[i] = 0;
+      }
+    });
+
+    if (isActuallyPodstava) {
+      resultHTML = `
+        <div class="result-big wrong">КАК?!</div>
+        <div style="font-family:'Bebas Neue',cursive;font-size:28px;color:var(--gold);margin-top:8px;">
+          THAT WAS THE ПОДСТАВА
+        </div>
+        <div class="result-sub">
+          Category "${escHtml(cat.name)}" was the easy one.<br>
+          ${escHtml(nominee.name)} still got it wrong. Somehow.<br>
+          Everyone else gets +1 but you should all reflect.
+        </div>
+        <div class="points-delta plus">+1 for everyone else</div>
+      `;
+    } else {
+      resultHTML = `
+        <div class="result-big wrong">НЕПРАВИЛЬНО!</div>
+        <div class="result-sub">
+          ${escHtml(nominee.name)} went down as predicted.<br>
+          Everyone else gets +1 for their devastating accuracy.
+        </div>
+        <div class="points-delta plus">+1 for everyone else</div>
+      `;
+    }
+  }
+
+  // Render scoreboard for result screen
+  document.getElementById('result-content').innerHTML = resultHTML;
+  renderResultScoreboard(scoreDeltas);
+
+  const allUsed = state.categories.every(c => c.used);
+  document.getElementById('btn-next-round').textContent =
+    allUsed ? 'see final scores →' : 'next round →';
+  document.getElementById('btn-next-round').onclick =
+    allUsed ? endGame : nextRound;
+
+  showScreen('screen-result');
+}
+
+function renderResultScoreboard(deltas) {
+  const el = document.getElementById('result-scoreboard');
+  const sorted = [...state.players.entries()].sort((a,b) => b[1].score - a[1].score);
+  el.innerHTML = sorted.map(([i, p]) => `
+    <div class="player-item ${i === state.nominatedPlayerIdx ? 'nominated' : ''}">
+      <span class="player-name-display">${escHtml(p.name)}</span>
+      ${deltas[i] > 0 ? `<span style="font-size:12px;color:var(--green);margin-right:8px;font-family:'Space Mono'">+${deltas[i]}</span>` :
+        deltas[i] === 0 ? `<span style="font-size:12px;color:var(--muted);margin-right:8px;font-family:'Space Mono'">+0</span>` : ''}
+      <span class="player-score">${p.score}</span>
+    </div>
+  `).join('');
+}
+
+// ============================================================
+//  NEXT ROUND / END
+// ============================================================
+function nextRound() {
+  // Advance turn
+  state.currentTurnIdx = (state.currentTurnIdx + 1) % state.players.length;
+  showPickScreen();
+}
+
+function endGame() {
+  const sorted = [...state.players].sort((a,b) => b.score - a.score);
+  const winner = sorted[0];
+  triggerConfetti();
+
+  document.getElementById('final-scoreboard').innerHTML = `
+    <div class="text-center" style="margin-bottom:24px;">
+      <div style="font-size:48px;margin-bottom:8px;">🏆</div>
+      <div style="font-family:'Bebas Neue',cursive;font-size:40px;color:var(--gold);text-shadow:var(--gold-glow);">
+        ${escHtml(winner.name)} wins
+      </div>
+      <div class="hint">with ${winner.score} point${winner.score!==1?'s':''}</div>
+    </div>
+    ${sorted.map((p, i) => `
+      <div class="scoreboard-item rank-${i+1}">
+        <div class="rank-badge">${i===0?'🥇':i===1?'🥈':i===2?'🥉':`#${i+1}`}</div>
+        <div class="sb-name">${escHtml(p.name)}</div>
+        <div class="sb-score">${p.score}</div>
+      </div>
+    `).join('')}
+  `;
+  showScreen('screen-final');
+}
+
+function resetGame() {
+  state.players.forEach(p => p.score = 0);
+  state.categories.forEach(c => { c.name=''; c.question=''; c.answer=''; c.isPodstava=false; c.used=false; });
+  state.podstavaIdx = -1;
+  state.currentTurnIdx = 0;
+  state.roundNum = 0;
+  renderPlayerSetupList();
+  showScreen('screen-welcome');
+}
+
+// ============================================================
+//  CONFETTI
+// ============================================================
+function triggerConfetti() {
+  const canvas = document.getElementById('confetti-canvas');
+  canvas.style.display = 'block';
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  const particles = Array.from({length: 120}, () => ({
+    x: Math.random() * canvas.width,
+    y: -10 - Math.random() * 100,
+    vx: (Math.random() - 0.5) * 6,
+    vy: 2 + Math.random() * 4,
+    size: 4 + Math.random() * 8,
+    color: ['#ff2d55','#ffd700','#00fff0','#9b5de5','#39ff14'][Math.floor(Math.random()*5)],
+    rotation: Math.random() * 360,
+    rotVel: (Math.random() - 0.5) * 10,
+    shape: Math.random() > 0.5 ? 'rect' : 'circle'
+  }));
+
+  let frame = 0;
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles.forEach(p => {
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rotation * Math.PI / 180);
+      ctx.fillStyle = p.color;
+      ctx.globalAlpha = Math.max(0, 1 - frame/200);
+      if (p.shape === 'rect') ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size/2);
+      else { ctx.beginPath(); ctx.arc(0, 0, p.size/2, 0, Math.PI*2); ctx.fill(); }
+      ctx.restore();
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += 0.08;
+      p.rotation += p.rotVel;
+    });
+    frame++;
+    if (frame < 220) requestAnimationFrame(draw);
+    else { ctx.clearRect(0,0,canvas.width,canvas.height); canvas.style.display='none'; }
+  }
+  draw();
+}
+
+// ============================================================
+//  UTILS
+// ============================================================
+function escHtml(str) {
+  return String(str)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;');
+}
+
+// ============================================================
+//  INIT
+// ============================================================
+renderPlayerSetupList();
+</script>
+</body>
+</html>
